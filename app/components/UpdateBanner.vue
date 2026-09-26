@@ -16,7 +16,7 @@ const open = computed({
 </script>
 
 <template>
-  <v-snackbar v-model="open" class="update" location="top" :timeout="-1" rounded="xl" color="surface">
+  <v-snackbar v-model="open" location="top" :timeout="-1" rounded="xl" color="surface">
     <div class="d-flex align-center ga-3">
       <v-icon :icon="mdiUpdate" color="primary" />
       <span>{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></span>
@@ -27,9 +27,3 @@ const open = computed({
     </template>
   </v-snackbar>
 </template>
-
-<style scoped lang="scss">
-.update :deep(.v-snackbar__wrapper) {
-  border: 1px solid var(--glass-border);
-}
-</style>

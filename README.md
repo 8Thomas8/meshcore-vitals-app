@@ -48,7 +48,7 @@ Open http://localhost:3000 (Node 24, see `.nvmrc`). Before opening a pull reques
 
 ## Privacy
 
-The app has no backend and no tracking. It only loads map tiles from OpenFreeMap, fonts from Google Fonts, and ground elevation from Open-Meteo (repeater positions, and yours when the GPS gives no altitude).
+The app has no backend and no tracking. It only loads map tiles from OpenFreeMap, fonts from Google Fonts, and ground elevation from Open-Meteo (repeater positions, yours when the GPS gives no altitude, and the path to a repeater whose terrain profile you open).
 
 ## License
 

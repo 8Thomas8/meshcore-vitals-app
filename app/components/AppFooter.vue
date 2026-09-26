@@ -33,6 +33,10 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
         />
       </v-list>
     </v-menu>
+    <i18n-t keypath="footer.elevation" tag="span" class="credit" scope="global">
+      <template #dem><a href="https://doi.org/10.5270/ESA-c5d3d65" target="_blank" rel="noopener">Copernicus DEM GLO-90</a></template>
+      <template #api><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></template>
+    </i18n-t>
   </footer>
 </template>
 
@@ -44,7 +48,8 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 0 8px;
   white-space: nowrap;
 
   a,
@@ -59,6 +64,11 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
     &:hover {
       color: rgb(var(--v-theme-primary));
     }
+  }
+
+  .credit {
+    flex-basis: 100%;
+    text-align: center;
   }
 
   .language {

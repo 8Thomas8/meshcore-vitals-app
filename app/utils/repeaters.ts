@@ -224,7 +224,7 @@ export function formatDistance(meters: number, locale = DEFAULT_LANGUAGE): strin
   return meters < 1000 ? `${formatNumber(meters, 0, 0, locale)} m` : `${formatNumber(meters / 1000, 1, 1, locale)} km`
 }
 
-const EARTH_RADIUS_M = 6_371_000
+export const EARTH_RADIUS_M = 6_371_000
 
 function radians(degrees: number): number {
   return degrees * Math.PI / 180
