@@ -89,8 +89,11 @@ const margin = computed(() => radio.value && selfInfo.value && linkMargin(radio.
 // This device's GPS altitude, else the ground under its position, as
 // desktops give a position without altitude.
 const altitudeStat = computed(() => {
-  if (altitude.value !== null) {
-    return { value: altitude.value, hint: altitudeAccuracy.value === null ? t('altitude.gps') : t('altitude.gpsAccuracy', { accuracy: formatNumber(altitudeAccuracy.value) }) }
+  if (altitude.value !== null && position.value) {
+    // Apple devices already report it above sea level, the others above the
+    // WGS84 ellipsoid.
+    const geoid = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? 0 : geoidHeight(position.value)
+    return { value: altitude.value - geoid, hint: altitudeAccuracy.value === null ? t('altitude.gps') : t('altitude.gpsAccuracy', { accuracy: formatNumber(altitudeAccuracy.value) }) }
   }
   if (typeof elevation.value === 'number') return { value: elevation.value, hint: t('altitude.ground') }
   if (noLocation.value) return { value: null, hint: t('altitude.blocked') }

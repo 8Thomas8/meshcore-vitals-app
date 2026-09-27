@@ -4,7 +4,7 @@
 // not report until you move.
 const fix = shallowRef<CompanionFix | null>(null)
 const position = computed(() => fix.value?.position ?? null)
-/** Metres above sea level, often null without a GPS fix. */
+/** Metres above sea level on Apple devices, above the WGS84 ellipsoid elsewhere, often null without a GPS fix. */
 const altitude = ref<number | null>(null)
 /** Metres. */
 const altitudeAccuracy = ref<number | null>(null)
