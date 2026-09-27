@@ -78,6 +78,10 @@ function margin(sample: LinkSample | null) {
   return sample && selfInfo.value ? linkMargin(sample.snr, selfInfo.value.radioSf) : null
 }
 
+function weaker(rx: LinkMargin | null, tx: LinkMargin | null) {
+  return rx && tx && tx.value < rx.value ? tx : rx ?? tx
+}
+
 function nameOf(id: string): string {
   const heard = repeaters.value.find(repeater => repeater.id.startsWith(id))
   return heard?.name ?? contactFor(heard?.id ?? id)?.advName ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
@@ -114,7 +118,7 @@ const rows = computed(() => repeaters.value
       // A repeater out of range keeps its last values, not their colors.
       rx: outOfRange ? null : rx,
       tx: outOfRange ? null : tx,
-      link: outOfRange ? null : rx && tx ? (tx.value < rx.value ? tx : rx) : rx ?? tx,
+      link: outOfRange ? null : weaker(rx, tx),
       outOfRange
     }
   })

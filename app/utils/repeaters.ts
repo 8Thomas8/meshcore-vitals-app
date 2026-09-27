@@ -193,15 +193,14 @@ export function assessCoverage(links: DirectLink[]): Coverage {
   const weaker = (link: DirectLink) => Math.min(link.rx, link.tx ?? link.rx)
   const usable = links.filter(link => weaker(link) >= MARGIN_FAIR_DB)
   const solid = usable.filter(link => weaker(link) >= MARGIN_COMFORTABLE_DB)
-  const confirmed = usable.filter(link => link.tx !== null)
-  const count = usable.length
+  const confirmed = usable.filter(link => link.tx !== null).length
   const confirmedSolid = solid.filter(link => link.tx !== null).length
-  const counts = { usable: count, confirmed: confirmed.length, solid: confirmedSolid, unconfirmed: count - confirmed.length }
-  if (!links.length) return { level: 'none', reason: 'nothing-heard', usable: 0, confirmed: 0, solid: 0, unconfirmed: 0 }
-  if (confirmed.length >= COVERAGE_GOOD_USABLE && confirmedSolid) return { level: 'good', reason: 'confirmed', ...counts }
-  if (count >= COVERAGE_GOOD_USABLE && solid.length) return { level: 'fair', reason: 'unconfirmed', ...counts }
-  if (count >= COVERAGE_GOOD_USABLE) return { level: 'fair', reason: 'none-solid', ...counts }
-  if (count === 1) return { level: 'fair', reason: 'single', ...counts }
+  const counts = { usable: usable.length, confirmed, solid: confirmedSolid, unconfirmed: usable.length - confirmed }
+  if (!links.length) return { level: 'none', reason: 'nothing-heard', ...counts }
+  if (confirmed >= COVERAGE_GOOD_USABLE && confirmedSolid) return { level: 'good', reason: 'confirmed', ...counts }
+  if (usable.length >= COVERAGE_GOOD_USABLE && solid.length) return { level: 'fair', reason: 'unconfirmed', ...counts }
+  if (usable.length >= COVERAGE_GOOD_USABLE) return { level: 'fair', reason: 'none-solid', ...counts }
+  if (usable.length === 1) return { level: 'fair', reason: 'single', ...counts }
   return { level: 'weak', reason: 'weak', ...counts }
 }
 
