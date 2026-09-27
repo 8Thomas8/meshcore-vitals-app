@@ -1,5 +1,4 @@
 const lastGrounds = new Map<string, number[]>()
-const open = ref(false)
 const heights = ref<{ you: number, repeaters: Record<string, number> }>({ you: DEFAULT_YOUR_ANTENNA_M, repeaters: {} })
 let restored = false
 
@@ -36,5 +35,5 @@ export function useTerrain() {
     restored = true
     heights.value = readHeights() ?? heights.value
   }
-  return { open, heights }
+  return { heights }
 }

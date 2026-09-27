@@ -8,7 +8,8 @@ const props = defineProps<{
 const { formatNumber, formatDistance } = useFormat()
 const { position: here } = useDevicePosition()
 const { selfInfo } = useRepeaters()
-const { open, heights } = useTerrain()
+const { heights } = useTerrain()
+const open = ref(false)
 
 const yourHeight = computed(() => heights.value.you)
 const repeaterHeight = computed(() => heights.value.repeaters[props.row.repeater.id] ?? DEFAULT_REPEATER_ANTENNA_M)
@@ -21,6 +22,9 @@ const toggle = ref<HTMLButtonElement | null>(null)
 const draftYou = ref<number | string>(yourHeight.value)
 const draftRepeater = ref<number | string>(repeaterHeight.value)
 watch([yourHeight, repeaterHeight, () => props.row.repeater.id], cancel)
+watch(() => props.row.repeater.id, () => {
+  open.value = false
+})
 
 function valid(value: number | string) {
   return typeof value === 'number' && value >= 0 && value <= MAX_ANTENNA_M
