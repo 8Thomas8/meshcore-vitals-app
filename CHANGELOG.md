@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.1.0...v1.2.0) (2026-09-27)
+
+
+### Features
+
+* add Vercel Web Analytics ([#19](https://github.com/8Thomas8/meshcore-vitals-app/issues/19)) ([bf55efe](https://github.com/8Thomas8/meshcore-vitals-app/commit/bf55efea56f9c505c1f1ed8c6183035791a83f00))
+
+
+### Bug Fixes
+
+* show the GPS altitude above sea level ([#17](https://github.com/8Thomas8/meshcore-vitals-app/issues/17)) ([6b18063](https://github.com/8Thomas8/meshcore-vitals-app/commit/6b18063e5368e00b6261938be3a9f7cf8319c3c1))
+
+
+### Refactor
+
+* clearer code, fewer comments ([#16](https://github.com/8Thomas8/meshcore-vitals-app/issues/16)) ([3eb666f](https://github.com/8Thomas8/meshcore-vitals-app/commit/3eb666f4e84c34f3e5976a70330156725261d18d))
+
 ## [1.1.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.0.3...v1.1.0) (2026-09-27)
 
 
