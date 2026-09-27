@@ -152,7 +152,7 @@
       "blocked": "Relief sur la ligne de vue"
     },
     "explain": {
-      "marginal": "L'écart avec la zone de Fresnel est plus petit que l'incertitude du relief (cellules de 90 m) et des positions. Seul un essai sur place tranchera.",
+      "marginal": "L'écart avec la zone de Fresnel est plus petit que l'incertitude du relief (cellules de 90 m) et des positions. Fiez-vous plutôt au signal mesuré.",
       "clear": "Le relief laisse passer toute la zone de Fresnel utile. Un signal faible viendrait d'ailleurs : bâtiments, végétation, antenne.",
       "partial": "Le sol reste sous la ligne de vue mais mord dans la zone de Fresnel. Comptez quelques dB de perte, davantage par temps humide.",
       "blocked": "Une crête passe au-dessus de la ligne entre vous et le répéteur. Le signal ne passe que par diffraction ou réflexion."

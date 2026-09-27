@@ -152,7 +152,7 @@
       "blocked": "Terrain in the way"
     },
     "explain": {
-      "marginal": "The gap to the Fresnel zone is smaller than the uncertainty of the terrain (90 m cells) and of the positions. Only a test on site will tell.",
+      "marginal": "The gap to the Fresnel zone is smaller than the uncertainty of the terrain (90 m cells) and of the positions. Trust the measured signal instead.",
       "clear": "The terrain leaves the useful Fresnel zone clear. A weak signal would come from something else: buildings, trees, the antenna.",
       "partial": "The ground stays below the line of sight but cuts into the Fresnel zone. Expect a few dB of loss, more in damp weather.",
       "blocked": "A ridge rises above the line between you and the repeater. The signal only gets through by diffraction or reflection."
