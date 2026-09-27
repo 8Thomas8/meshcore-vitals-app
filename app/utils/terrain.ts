@@ -8,7 +8,12 @@ export type TerrainVerdict = 'clear' | 'marginal' | 'partial' | 'blocked'
 
 export const TERRAIN_TONES = { clear: 'success', marginal: 'warning', partial: 'warning', blocked: 'error' } as const
 
-export function pathPositions(from: Position, to: Position, count = Math.min(TERRAIN_SAMPLES, Math.max(3, Math.floor(distanceMeters(from, to) / TERRAIN_SPACING_M) + 1))): Position[] {
+function sampleCount(from: Position, to: Position): number {
+  const count = Math.floor(distanceMeters(from, to) / TERRAIN_SPACING_M) + 1
+  return Math.min(TERRAIN_SAMPLES, Math.max(3, count))
+}
+
+export function pathPositions(from: Position, to: Position, count = sampleCount(from, to)): Position[] {
   return Array.from({ length: count }, (_, i) => {
     const share = i / (count - 1)
     return { lat: from.lat + (to.lat - from.lat) * share, lon: from.lon + (to.lon - from.lon) * share }
@@ -37,8 +42,13 @@ export function analyzeTerrain(ground: readonly number[], length: number, fromAn
     return { distance, ground: height, surface, sight, radius, clearance, shortfall: FRESNEL_CLEAR_SHARE * radius - clearance }
   })
   const tightest = points.slice(1, -1).reduce((worst, point) => point.shortfall > worst.shortfall ? point : worst, points[1]!)
-  const verdict: TerrainVerdict = Math.abs(tightest.shortfall) < TERRAIN_MARGIN_M ? 'marginal' : tightest.shortfall < 0 ? 'clear' : tightest.clearance >= 0 ? 'partial' : 'blocked'
-  return { points, tightest, verdict, from, to, length }
+  return { points, tightest, verdict: verdictFor(tightest), from, to, length }
+}
+
+function verdictFor({ shortfall, clearance }: { shortfall: number, clearance: number }): TerrainVerdict {
+  if (Math.abs(shortfall) < TERRAIN_MARGIN_M) return 'marginal'
+  if (shortfall < 0) return 'clear'
+  return clearance >= 0 ? 'partial' : 'blocked'
 }
 
 export type TerrainAnalysis = ReturnType<typeof analyzeTerrain>
