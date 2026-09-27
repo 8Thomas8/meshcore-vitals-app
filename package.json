@@ -21,6 +21,7 @@
     "@liamcottle/meshcore.js": "^1.15.0",
     "@mdi/js": "^7.4.47",
     "@nuxtjs/i18n": "^10.6.0",
+    "@vercel/analytics": "^2.0.1",
     "buffer": "^6.0.3",
     "maplibre-gl": "^6.11.1",
     "nuxt": "^4.5.2",
