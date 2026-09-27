@@ -24,8 +24,22 @@ onMounted(() => {
 
 onBeforeUnmount(() => observer?.disconnect())
 
-function path(points: { x: number, y: number }[]) {
+type Point = { x: number, y: number }
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
+}
+
+function path(points: Point[]) {
   return points.map((point, i) => `${i ? 'L' : 'M'}${point.x.toFixed(1)},${point.y.toFixed(1)}`).join('')
+}
+
+function band(upper: Point[], lower: Point[]) {
+  return `${path([...upper, ...lower.reverse()])}Z`
+}
+
+function steps(first: number, last: number, step: number) {
+  return Array.from({ length: Math.max(0, Math.floor((last - first) / step) + 1) }, (_, i) => first + i * step)
 }
 
 const chart = computed(() => {
@@ -35,40 +49,43 @@ const chart = computed(() => {
   const step = [25, 50, 100, 200, 500, 1000].find(value => (high - low) / value <= 5) ?? 2000
   const bottomValue = Math.floor((low - step * 0.3) / step) * step
   const topValue = Math.ceil(high / step) * step
-  const plotWidth = width.value - PAD.left - PAD.right
-  const plotHeight = HEIGHT - PAD.top - PAD.bottom
-  const x = (meters: number) => PAD.left + meters / length * plotWidth
-  const y = (meters: number) => PAD.top + (topValue - meters) / (topValue - bottomValue) * plotHeight
+  const kmStep = [1000, 2000, 5000, 10000, 20000, 50000].find(value => length / value <= 4) ?? 100000
   const bottom = HEIGHT - PAD.bottom
   const right = width.value - PAD.right
-  const edge = path(points.map(point => ({ x: x(point.distance), y: y(point.surface) })))
-  const upper = points.map(point => ({ x: x(point.distance), y: y(point.sight + point.radius) }))
-  const lower = points.map(point => ({ x: x(point.distance), y: y(point.sight - point.radius) })).reverse()
-  const intrusion = intrusions(points).map(run => `${path([
-    ...run.map(point => ({ x: x(point.distance), y: y(point.top) })),
-    ...run.map(point => ({ x: x(point.distance), y: y(point.bottom) })).reverse()
-  ])}Z`).join('')
-  const kmStep = [1000, 2000, 5000, 10000, 20000, 50000].find(value => length / value <= 4) ?? 100000
+  const x = (meters: number) => PAD.left + meters / length * (right - PAD.left)
+  const y = (meters: number) => PAD.top + (topValue - meters) / (topValue - bottomValue) * (bottom - PAD.top)
+  const at = (distance: number, height: number) => ({ x: x(distance), y: y(height) })
+  const edge = path(points.map(point => at(point.distance, point.surface)))
   return {
     x,
     y,
     edge,
     terrain: `${edge}L${right},${bottom}L${PAD.left},${bottom}Z`,
-    fresnel: `${path([...upper, ...lower])}Z`,
-    intrusion,
-    ticks: Array.from({ length: (topValue - bottomValue) / step + 1 }, (_, i) => ({ value: bottomValue + i * step, y: y(bottomValue + i * step) })),
-    distances: Array.from({ length: Math.max(0, Math.ceil(length / kmStep - 0.4) - 1) }, (_, i) => ({ value: (i + 1) * kmStep, x: x((i + 1) * kmStep) })),
+    fresnel: band(
+      points.map(point => at(point.distance, point.sight + point.radius)),
+      points.map(point => at(point.distance, point.sight - point.radius))
+    ),
+    intrusion: intrusions(points).map(run => band(
+      run.map(point => at(point.distance, point.top)),
+      run.map(point => at(point.distance, point.bottom))
+    )).join(''),
+    ticks: steps(bottomValue, topValue, step).map(value => ({ value, y: y(value) })),
+    distances: steps(kmStep, (Math.ceil(length / kmStep - 0.4) - 1) * kmStep, kmStep).map(value => ({ value, x: x(value) })),
     from: { x: x(0), y: y(from), ground: y(points[0]!.ground) },
     to: { x: right, y: y(to), ground: y(points.at(-1)!.ground) },
-    tightest: { x: x(tightest.distance), y: y(tightest.surface), labelX: Math.min(Math.max(x(tightest.distance), PAD.left + 44), right - 44), labelY: Math.min(Math.max(y(tightest.surface) + 30, y(tightest.sight) + 16), bottom - 6) },
+    tightest: {
+      ...at(tightest.distance, tightest.surface),
+      labelX: clamp(x(tightest.distance), PAD.left + 44, right - 44),
+      labelY: clamp(y(tightest.surface) + 30, y(tightest.sight) + 16, bottom - 6)
+    },
     bottom,
     right
   }
 })
 
 function onPointer(event: PointerEvent) {
-  const share = (event.clientX - (event.currentTarget as SVGElement).getBoundingClientRect().left - PAD.left) / (width.value - PAD.left - PAD.right)
-  hover.value = Math.round(Math.min(Math.max(share, 0), 1) * (props.terrain.points.length - 1))
+  const share = (event.clientX - (event.currentTarget as SVGElement).getBoundingClientRect().left - PAD.left) / (chart.value.right - PAD.left)
+  hover.value = Math.round(clamp(share, 0, 1) * (props.terrain.points.length - 1))
 }
 
 const tooltip = computed(() => {
@@ -76,7 +93,7 @@ const tooltip = computed(() => {
   if (!point) return null
   const x = chart.value.x(point.distance)
   const y = chart.value.y(point.surface)
-  return { point, x, y, left: Math.min(Math.max(x - 75, 0), width.value - 150), top: y > HEIGHT / 2 ? 0 : HEIGHT - 58 }
+  return { point, x, y, left: clamp(x - 75, 0, width.value - 150), top: y > HEIGHT / 2 ? 0 : HEIGHT - 58 }
 })
 
 const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain.chartShortfall' : 'terrain.chartSpare', {

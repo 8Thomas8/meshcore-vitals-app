@@ -55,7 +55,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('deviceorientationabsolute', onOrientation)
 })
 
-// Each scan, manual or auto, also places you afresh.
 watch(lastScanAttempt, (at) => {
   if (at) locate()
 })
@@ -77,6 +76,10 @@ function contactFor(id: string) {
 
 function margin(sample: LinkSample | null) {
   return sample && selfInfo.value ? linkMargin(sample.snr, selfInfo.value.radioSf) : null
+}
+
+function weaker(rx: LinkMargin | null, tx: LinkMargin | null) {
+  return rx && tx && tx.value < rx.value ? tx : rx ?? tx
 }
 
 function nameOf(id: string): string {
@@ -115,7 +118,7 @@ const rows = computed(() => repeaters.value
       // A repeater out of range keeps its last values, not their colors.
       rx: outOfRange ? null : rx,
       tx: outOfRange ? null : tx,
-      link: outOfRange ? null : rx && tx ? (tx.value < rx.value ? tx : rx) : rx ?? tx,
+      link: outOfRange ? null : weaker(rx, tx),
       outOfRange
     }
   })
@@ -126,7 +129,6 @@ const rows = computed(() => repeaters.value
     || (b.link?.value ?? -Infinity) - (a.link?.value ?? -Infinity)
     || b.repeater.lastHeard - a.repeater.lastHeard))
 
-// The ones silent at the last scan stay hidden until asked for.
 const showOutOfRange = ref(false)
 const inRange = computed(() => rows.value.filter(row => !row.outOfRange))
 const outOfRangeCount = computed(() => rows.value.length - inRange.value.length)
@@ -183,7 +185,6 @@ const coverage = computed(() => {
         <v-tooltip location="bottom" max-width="300" open-on-click :disabled="!coverage">
           <template #activator="{ props: activator }">
             <button v-bind="activator" type="button" class="coverage d-flex align-center ga-2 flex-grow-1 min-w-0">
-              <!-- Usable repeaters out of the ones good coverage needs. -->
               <v-progress-circular
                 :model-value="coverage ? Math.min(coverage.usable, COVERAGE_GOOD_USABLE) / COVERAGE_GOOD_USABLE * 100 : 0"
                 :color="coverage?.tone ?? 'primary'"

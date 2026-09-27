@@ -14,9 +14,11 @@ const open = ref(false)
 const yourHeight = computed(() => heights.value.you)
 const repeaterHeight = computed(() => heights.value.repeaters[props.row.repeater.id] ?? DEFAULT_REPEATER_ANTENNA_M)
 const ground = computed(() => open.value && here.value && props.row.position ? groundBetween(here.value, props.row.position) : null)
-const terrain = computed(() => ground.value && here.value && props.row.position && selfInfo.value
-  ? analyzeTerrain(ground.value, distanceMeters(here.value, props.row.position), yourHeight.value, repeaterHeight.value, selfInfo.value.radioFreq)
-  : null)
+const terrain = computed(() => {
+  if (!ground.value || !here.value || !props.row.position || !selfInfo.value) return null
+  const length = distanceMeters(here.value, props.row.position)
+  return analyzeTerrain(ground.value, length, yourHeight.value, repeaterHeight.value, selfInfo.value.radioFreq)
+})
 
 const toggle = ref<HTMLButtonElement | null>(null)
 const draftYou = ref<number | string>(yourHeight.value)

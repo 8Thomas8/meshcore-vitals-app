@@ -62,7 +62,6 @@ const chart = computed(() => {
   }
 })
 
-// The crosshair snaps to the nearest sample.
 function onPointer(event: PointerEvent) {
   const { points } = chart.value
   if (!points.length) return

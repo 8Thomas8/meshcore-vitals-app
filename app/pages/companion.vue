@@ -109,7 +109,6 @@ function errorTone(rate: number | null): Tone | undefined {
   return rate < ERROR_RATE_BAD ? 'warning' : 'error'
 }
 
-// Feeds the health check on recent receive errors.
 const session = computed(() => firstSample.value && lastSample.value && sessionErrors(firstSample.value, lastSample.value))
 const errorRate = computed(() => packets.value && receiveErrorRate(packets.value))
 const txShare = computed(() => radio.value && core.value && airtimeShare(radio.value.txAirSecs, core.value.uptimeSecs))
@@ -135,14 +134,13 @@ function errorCheck(name: string, rate: number, bad: number, detail: string): He
 
 const checks = computed(() => {
   if (!core.value || !battery.value) return null
+  const charge = t('checks.batteryCharge', { percent: formatNumber(battery.value.level * 100) })
   const list: HealthCheck[] = [{
     name: t('checks.battery'),
     value: `${formatNumber(core.value.batteryMilliVolts / 1000, 2)} V`,
     tone: battery.value.tone,
     status: battery.value.label,
-    detail: battery.value.tone === 'success'
-      ? t('checks.batteryCharge', { percent: formatNumber(battery.value.level * 100) })
-      : `${t('checks.batteryCharge', { percent: formatNumber(battery.value.level * 100) })} ${t('checks.plugIn')}`
+    detail: battery.value.tone === 'success' ? charge : `${charge} ${t('checks.plugIn')}`
   }]
   if (margin.value && radio.value && selfInfo.value) {
     list.push({
@@ -312,6 +310,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
 .health-dialog {
   background: rgb(var(--v-theme-surface)) !important;
 }
+
 .cards {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

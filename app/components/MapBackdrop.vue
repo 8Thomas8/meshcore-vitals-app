@@ -16,7 +16,6 @@ const props = defineProps<{
   companionName: string | null
 }>()
 
-// The dark style repainted with the app's colors.
 const PAINT: [RegExp, Parameters<MapLibreMap['setPaintProperty']>[1], string][] = [
   [/^background$/, 'background-color', THEME_COLORS.background],
   [/^water$/, 'fill-color', '#0f2b47'],
@@ -33,7 +32,6 @@ const { t } = useI18n()
 const { hops, formatNumber, formatDistance } = useFormat()
 
 const container = ref<HTMLElement | null>(null)
-// Where the card on top ends, its height depends on the screen and on what it says.
 const top = ref(MAP_TOP_FALLBACK)
 let map: MapLibreMap | undefined
 let MarkerClass: typeof Marker | undefined
@@ -69,13 +67,11 @@ const features = computed(() => {
   return {
     type: 'FeatureCollection' as const,
     features: [
-      // Solid from you to the repeaters in direct range.
       ...placed.filter(row => !row.repeater.hops && !row.outOfRange).map(row => ({
         type: 'Feature' as const,
         properties: { kind: 'direct', color: colorOf(row) },
         geometry: { type: 'LineString' as const, coordinates: [here, [row.position!.lon, row.position!.lat]] }
       })),
-      // Dashed from the repeater in direct range a relayed one is reached through.
       // A path hash can match several repeaters, then no line is drawn.
       ...placed.flatMap((row) => {
         const via = row.repeater.via
@@ -84,7 +80,6 @@ const features = computed(() => {
         const through = matches[0]!
         return [{
           type: 'Feature' as const,
-          // Coloured like the direct link it hangs from.
           properties: { kind: 'relayed', color: colorOf(through) },
           geometry: { type: 'LineString' as const, coordinates: [[through.position!.lon, through.position!.lat], [row.position!.lon, row.position!.lat]] }
         }]
@@ -129,7 +124,6 @@ function labelElement(): HTMLElement {
 
 let companionMarker: Marker | undefined
 
-// Only its name, placed around your dot like the repeaters' labels.
 function syncCompanionLabel() {
   if (!map || !MarkerClass) return
   const lngLat: [number, number] = [stableHere.value.lon, stableHere.value.lat]
@@ -193,7 +187,7 @@ function togglePin(id: string) {
 }
 
 // Your companion's label goes first, then the tapped one, then the others in
-// the list's order, best direct links first. Each takes the first place around its dot in full view
+// the list's order. Each takes the first place around its dot in full view
 // between the cards where it covers no link, no dot, no map control and no
 // label already shown, in full or else reduced to its name. With no such
 // place it is hidden until you zoom in or tap its dot.
@@ -214,7 +208,6 @@ function declutter() {
   const taken = [...dots, ...controls]
   const { clientWidth, clientHeight } = map.getContainer()
   const view: Box = { left: 0, top: top.value, right: clientWidth, bottom: bottomEdge(clientHeight) }
-  // Yours goes first and always shows, off the links if it can.
   if (companionMarker) {
     const element = companionMarker.getElement()
     const placements = labelPlacements(project([stableHere.value.lon, stableHere.value.lat]), element.offsetWidth, element.offsetHeight, MAP_LABEL_GAP, view)
@@ -267,7 +260,6 @@ function frame() {
   const height = map.getContainer().clientHeight
   const above = top.value + MAP_EDGE_MARGIN
   const bottom = height - bottomEdge(height) + MAP_EDGE_MARGIN
-  // Leaves at least MAP_MIN_FRAME_HEIGHT px of map to frame in.
   const fit = Math.min(1, (height - MAP_MIN_FRAME_HEIGHT) / (above + bottom))
   map.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], {
     padding: { top: above * fit, bottom: bottom * fit, left: MAP_SIDE_MARGIN, right: MAP_SIDE_MARGIN },
