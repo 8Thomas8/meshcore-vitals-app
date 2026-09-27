@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.0.3...v1.1.0) (2026-09-27)
+
+
+### Features
+
+* show the terrain profile to a repeater ([#14](https://github.com/8Thomas8/meshcore-vitals-app/issues/14)) ([edc42d8](https://github.com/8Thomas8/meshcore-vitals-app/commit/edc42d8aa1ac87df8ea8b31a6ca9cff4e2f22f81))
+
 ## [1.0.3](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.0.2...v1.0.3) (2026-09-25)
 
 
