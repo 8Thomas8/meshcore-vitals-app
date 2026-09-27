@@ -4,6 +4,7 @@ const elevations = reactive(new Map<string, number | null>())
 const requested = new Set<string>()
 const queue: string[] = []
 let flushTimer: ReturnType<typeof setTimeout> | undefined
+export const elevationThrottled = ref(false)
 
 // The API takes up to 100 points per call.
 const BATCH_SIZE = 100
@@ -18,15 +19,24 @@ async function flush() {
   if (queue.length) flushTimer = setTimeout(flush)
   const points = keys.map(key => key.split(','))
   try {
-    const response = await fetch(`${ELEVATION_API_URL}?latitude=${points.map(([lat]) => lat).join(',')}&longitude=${points.map(([, lon]) => lon).join(',')}`)
-    if (!response.ok) throw new Error(`Elevation lookup failed with ${response.status}.`)
+    const response = await fetch(`${ELEVATION_API_URL}?latitude=${points.map(([lat]) => lat).join(',')}&longitude=${points.map(([, lon]) => lon).join(',')}`).catch(() => null)
+    elevationThrottled.value = response?.status === 429
+    if (!response?.ok) throw new Error(`Elevation lookup failed with ${response?.status}.`)
     const { elevation } = await response.json() as { elevation: number[] }
     keys.forEach((key, i) => elevations.set(key, elevation[i] ?? null))
   }
   catch {
     keys.forEach(key => elevations.set(key, null))
     // Offline or throttled for now, asked again on a later render.
-    setTimeout(() => keys.forEach(key => requested.delete(key)), ELEVATION_RETRY_MS)
+    setTimeout(() => keys.filter(key => elevations.get(key) === null).forEach(key => requested.delete(key)), ELEVATION_RETRY_MS)
+  }
+}
+
+export function retryElevations() {
+  for (const [key, elevation] of elevations) {
+    if (elevation !== null) continue
+    elevations.delete(key)
+    requested.delete(key)
   }
 }
 

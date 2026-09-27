@@ -28,10 +28,4 @@ defineProps<{ title: string, chip?: string, chipColor?: Tone }>()
   font-weight: 500;
   letter-spacing: 0.0125em;
 }
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
-}
 </style>

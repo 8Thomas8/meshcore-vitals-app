@@ -223,3 +223,13 @@ export const CLOCK_DRIFT_BAD_SECS = 3600
 
 // Session rates over a shorter span are mostly noise.
 export const MIN_SESSION_MINUTES = 1
+
+export const TERRAIN_SAMPLES = 100
+export const TERRAIN_SPACING_M = 160
+export const TERRAIN_MARGIN_M = 15
+export const EARTH_K = 4 / 3
+export const FRESNEL_CLEAR_SHARE = 0.6
+export const DEFAULT_YOUR_ANTENNA_M = 1.5
+export const DEFAULT_REPEATER_ANTENNA_M = 5
+export const MAX_ANTENNA_M = 300
+export const ANTENNA_HEIGHTS_STORAGE_KEY = 'antenna-heights'

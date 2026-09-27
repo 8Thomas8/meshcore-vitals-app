@@ -20,7 +20,8 @@
   },
   "footer": {
     "source": "Code source sur GitHub",
-    "language": "Langue : {name}"
+    "language": "Langue : {name}",
+    "elevation": "Altitudes {dem} via {api}"
   },
   "connect": {
     "tagline": "Vérifiez le réseau MeshCore là où vous êtes : couverture, qualité des liaisons avec les répéteurs proches et santé générale.",
@@ -137,6 +138,51 @@
     "now": "maintenant",
     "floor": "plancher SF{sf}"
   },
+  "terrain": {
+    "title": "Relief jusqu'au répéteur",
+    "lookingUp": "Recherche du relief…",
+    "failed": "Relief indisponible",
+    "throttled": "Quota Open-Meteo atteint",
+    "throttledHelp": "Open-Meteo limite ses requêtes gratuites par minute, par heure et par jour pour chaque appareil. Le profil reviendra quand le quota sera renouvelé.",
+    "retry": "Réessayer",
+    "verdict": {
+      "clear": "Vue dégagée",
+      "marginal": "Cas limite",
+      "partial": "Zone de Fresnel en partie masquée",
+      "blocked": "Relief sur la ligne de vue"
+    },
+    "explain": {
+      "marginal": "L'écart avec la zone de Fresnel est plus petit que l'incertitude du relief (cellules de 90 m) et des positions. Fiez-vous plutôt au signal mesuré.",
+      "clear": "Le relief laisse passer toute la zone de Fresnel utile. Un signal faible viendrait d'ailleurs : bâtiments, végétation, antenne.",
+      "partial": "Le sol reste sous la ligne de vue mais mord dans la zone de Fresnel. Comptez quelques dB de perte, davantage par temps humide.",
+      "blocked": "Une crête passe au-dessus de la ligne entre vous et le répéteur. Le signal ne passe que par diffraction ou réflexion."
+    },
+    "shortfall": "il manque {height} m",
+    "shortfallShort": "manque {height} m",
+    "spare": "{height} m de marge",
+    "groundBelow": "Sol sous la ligne de vue",
+    "groundAbove": "Sol au-dessus de la ligne de vue",
+    "tightestAt": "au plus serré, à {distance}",
+    "missing": "Il manque",
+    "room": "Marge restante",
+    "needed": "il faut {height} m libres sous la ligne",
+    "you": "Vous",
+    "belowSight": "{height} m sous la ligne",
+    "aboveSight": "{height} m au-dessus",
+    "chartShortfall": "Relief sur {length}. {verdict}. Au plus serré, à {distance}, il manque {height} m.",
+    "chartSpare": "Relief sur {length}. {verdict}. Au plus serré, à {distance}, il reste {height} m de marge.",
+    "yourAntenna": "Votre antenne",
+    "repeaterAntenna": "Antenne du répéteur",
+    "default": "par défaut",
+    "defaultValue": "par défaut : {height} m",
+    "heightsHelp": "Au-dessus du sol. La vôtre vaut pour tous les répéteurs, celle du répéteur pour lui seul, sur cet appareil.",
+    "reset": "Rétablir",
+    "pending": "Hauteurs modifiées, le profil n'est pas encore recalculé.",
+    "invalid": "Entrez une hauteur entre 0 et {max} m.",
+    "cancel": "Annuler",
+    "apply": "Recalculer",
+    "source": "Relief {dem} via {api}, 90 m. Courbure k = 4/3, {frequency} MHz."
+  },
   "companion": {
     "reading": "Lecture du nœud…",
     "readFailed": "Impossible de lire le nœud, réessayez",
@@ -225,6 +271,9 @@
     "airtime": "Temps d'antenne",
     "split": "{direct} en direct · {flood} en flood",
     "badPackets": "{n} paquet invalide | {n} paquets invalides"
+  },
+  "quota": {
+    "reached": "Quota Open-Meteo atteint, relief et altitudes indisponibles pour le moment."
   },
   "update": {
     "available": "Une nouvelle version est disponible.",

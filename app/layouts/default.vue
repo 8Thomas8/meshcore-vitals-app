@@ -39,6 +39,7 @@ const menuOpen = ref(false)
         <AppFooter v-if="!connection || route.path === '/companion'" />
       </div>
       <UpdateBanner />
+      <QuotaToast />
     </v-main>
   </div>
 </template>

@@ -115,6 +115,8 @@ const shortKey = computed(() => {
       </p>
     </section>
 
+    <TerrainProfile :row="row" />
+
     <section class="section">
       <dl class="facts text-small">
         <dt class="text-medium-emphasis">{{ $t('detail.lastHeard') }}</dt>
@@ -168,12 +170,6 @@ const shortKey = computed(() => {
 
 h2 {
   margin: 0;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
 }
 
 .section {
