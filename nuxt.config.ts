@@ -53,6 +53,7 @@ export default defineNuxtConfig({
   build: { transpile: ['vuetify'] },
 
   vite: {
+    assetsInclude: ['**/*.bin'],
     vue: { template: { transformAssetUrls } }
   },
 

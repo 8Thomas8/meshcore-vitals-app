@@ -34,7 +34,10 @@ function onPosition({ coords }: GeolocationPosition) {
     accuracy: coords.accuracy,
     at: Date.now()
   }
-  altitude.value = coords.altitude
+  // Apple devices already report it above sea level, the others above the
+  // WGS84 ellipsoid.
+  const geoid = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? 0 : geoidHeight(next.position)
+  altitude.value = coords.altitude === null ? null : coords.altitude - geoid
   altitudeAccuracy.value = coords.altitudeAccuracy
   unavailable.value = false
   if (isBetterFix(next, fix.value)) fix.value = next
