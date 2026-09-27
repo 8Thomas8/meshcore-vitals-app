@@ -25,7 +25,6 @@ export interface Position {
   lon: number
 }
 
-// Where the GPS places the companion, carried along with this device.
 export interface CompanionFix {
   position: Position
   /** Metres, the radius the position is likely within. */
@@ -75,7 +74,6 @@ export const ELEVATION_RETRY_MS = 60_000
 // is known.
 export const DEFAULT_LANGUAGE = 'en-US'
 
-// The language chosen in the footer, kept for a year.
 export const LOCALE_COOKIE = 'locale'
 export const LOCALE_COOKIE_MAX_AGE_SECS = 365 * 86_400
 
@@ -130,10 +128,8 @@ export const MAX_RX_HISTORY = 120
 // it costs battery.
 export const WAKE_LOCK_STORAGE_KEY = 'keep-screen-on'
 
-// Share of the screen the repeater list may take, leaving the map visible.
 export const LIST_MAX_HEIGHT_SHARE = 0.45
 
-// Whether the repeater list is folded, remembered on this device.
 export const LIST_HIDDEN_STORAGE_KEY = 'repeaters-list-hidden'
 
 // Where the coverage card ends before it is measured, app bar included.
@@ -145,14 +141,12 @@ export const MAP_EDGE_MARGIN = 40
 // Room kept on each side of what the map frames, for the labels.
 export const MAP_SIDE_MARGIN = 60
 
-// How far from a dot a tap still picks it, for a finger.
 export const MAP_TAP_RADIUS = 20
 
 // How long the map attribution shows in full before it folds to its button.
 // OpenStreetMap's guidelines allow folding it after five seconds.
 export const MAP_ATTRIBUTION_FOLD_MS = 5_000
 
-// On a short screen the paddings shrink to leave the map at least this height.
 export const MAP_MIN_FRAME_HEIGHT = 60
 
 // Room kept between a map label and its dot, and around every dot, which no
@@ -203,13 +197,11 @@ export const BATTERY_FULL_MV = 4200
 export const BATTERY_OK_LEVEL = 0.5
 export const BATTERY_LOW_LEVEL = 0.2
 
-// The margin gauge fills up here.
 export const MARGIN_GAUGE_FULL_DB = 20
 
 // Only repeaters heard directly this recently count towards coverage.
 export const COVERAGE_RECENT_MS = 10 * 60_000
 
-// Coverage is good with this many usable repeaters in direct range.
 export const COVERAGE_GOOD_USABLE = 2
 
 export const MARGIN_COMFORTABLE_DB = 10

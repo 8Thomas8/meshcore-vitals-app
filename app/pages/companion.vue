@@ -109,7 +109,6 @@ function errorTone(rate: number | null): Tone | undefined {
   return rate < ERROR_RATE_BAD ? 'warning' : 'error'
 }
 
-// Feeds the health check on recent receive errors.
 const session = computed(() => firstSample.value && lastSample.value && sessionErrors(firstSample.value, lastSample.value))
 const errorRate = computed(() => packets.value && receiveErrorRate(packets.value))
 const txShare = computed(() => radio.value && core.value && airtimeShare(radio.value.txAirSecs, core.value.uptimeSecs))
