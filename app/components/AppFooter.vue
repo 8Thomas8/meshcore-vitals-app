@@ -10,29 +10,25 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
     <span>MeshCore Vitals v{{ version }}</span>
     <span aria-hidden="true">·</span>
     <a :href="REPOSITORY_URL" target="_blank" rel="noopener">
-      <v-icon :icon="mdiGithub" size="14" />
+      <AppIcon :icon="mdiGithub" size="14" />
       {{ $t('footer.source') }}
     </a>
     <span aria-hidden="true">·</span>
-    <v-menu location="top">
-      <template #activator="{ props: activator }">
-        <button v-bind="activator" type="button" class="language" :aria-label="$t('footer.language', { name: localeProperties.name })">
-          <v-icon :icon="mdiTranslate" size="14" />
-          {{ locale.toUpperCase() }}
-        </button>
-      </template>
-      <v-list density="compact" class="glass-dense">
-        <v-list-item
-          v-for="option in locales"
-          :key="option.code"
-          :title="option.name"
-          :active="option.code === locale"
-          color="primary"
-          :lang="option.language"
-          @click="setLocale(option.code)"
-        />
-      </v-list>
-    </v-menu>
+    <DropdownMenuRoot>
+      <DropdownMenuTrigger class="language" :aria-label="$t('footer.language', { name: localeProperties.name })">
+        <AppIcon :icon="mdiTranslate" size="14" />
+        {{ locale.toUpperCase() }}
+      </DropdownMenuTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuContent side="top" align="end" :side-offset="4" class="glass-dense languages">
+          <DropdownMenuRadioGroup :model-value="locale" @update:model-value="setLocale($event as typeof locale)">
+            <DropdownMenuRadioItem v-for="option in locales" :key="option.code" :value="option.code" :lang="option.language" class="language-option">
+              {{ option.name }}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
+    </DropdownMenuRoot>
     <i18n-t keypath="footer.elevation" tag="span" class="credit" scope="global">
       <template #dem><a href="https://doi.org/10.5270/ESA-c5d3d65" target="_blank" rel="noopener">Copernicus DEM GLO-90</a></template>
       <template #api><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></template>
@@ -62,7 +58,7 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
     text-decoration: none;
 
     &:hover {
-      color: rgb(var(--v-theme-primary));
+      color: rgb(var(--theme-primary));
     }
   }
 
@@ -77,6 +73,28 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
     background: none;
     font: inherit;
     cursor: pointer;
+  }
+}
+
+:deep(.languages) {
+  z-index: 30;
+  min-width: 140px;
+  padding: 4px 0;
+  border-radius: 4px;
+}
+
+.language-option {
+  padding: 8px 16px;
+  cursor: pointer;
+  outline: none;
+
+  &[data-highlighted] {
+    background: rgba(var(--theme-on-surface), 0.08);
+  }
+
+  &[data-state='checked'] {
+    color: rgb(var(--theme-primary));
+    background: rgba(var(--theme-primary), 0.12);
   }
 }
 </style>

@@ -8,15 +8,14 @@ const props = defineProps<{
   now: number
 }>()
 
-defineEmits<{ close: [], select: [id: string] }>()
+defineEmits<{ select: [id: string] }>()
 
 const { t } = useI18n()
 const { ago, hops, formatNumber, formatDistance } = useFormat()
 
-// The drawer does not move focus in, and following a via link removes the
-// button that had it.
+// Following a via link removes the button that had the focus.
 const closeButton = ref<{ $el: HTMLElement } | null>(null)
-watch(() => props.row.repeater.id, () => nextTick(() => closeButton.value?.$el.focus()), { immediate: true })
+watch(() => props.row.repeater.id, () => nextTick(() => closeButton.value?.$el.focus()))
 
 const history = computed(() => props.row.repeater.history)
 
@@ -42,7 +41,7 @@ const shortKey = computed(() => {
         :heading="heading"
       />
       <div class="flex-grow-1 min-w-0">
-        <h2 class="text-title text-truncate">{{ row.name }}</h2>
+        <DialogTitle class="text-title text-truncate">{{ row.name }}</DialogTitle>
         <!-- One line: only the key gets cut short. -->
         <div class="d-flex font-mono text-small text-medium-emphasis text-no-wrap min-w-0 overflow-hidden">
           <span v-if="row.distance !== null" class="flex-shrink-0">{{ formatDistance(row.distance) }} ·&nbsp;</span>
@@ -50,15 +49,17 @@ const shortKey = computed(() => {
           <span class="text-truncate">{{ shortKey }}</span>
         </div>
       </div>
-      <v-btn ref="closeButton" :icon="mdiClose" variant="text" :aria-label="$t('common.close')" @click="$emit('close')" />
+      <DialogClose ref="closeButton" class="btn btn-icon" :aria-label="$t('common.close')">
+        <AppIcon :icon="mdiClose" />
+      </DialogClose>
     </header>
 
     <template v-if="!row.repeater.hops">
       <div class="d-flex align-center ga-3">
         <MarginGauge :margin="row.link?.value ?? null" :tone="row.link?.tone" />
         <div class="d-flex flex-column align-start ga-1 min-w-0">
-          <v-chip v-if="row.outOfRange" size="small" variant="tonal">{{ $t('repeaters.outOfRange') }}</v-chip>
-          <v-chip v-else-if="row.link" size="small" variant="tonal" :color="row.link.tone">{{ $t(`margin.${row.link.grade}`) }}</v-chip>
+          <span v-if="row.outOfRange" class="chip chip-small">{{ $t('repeaters.outOfRange') }}</span>
+          <span v-else-if="row.link" class="chip chip-small" :class="`text-${row.link.tone}`">{{ $t(`margin.${row.link.grade}`) }}</span>
           <span v-if="row.outOfRange" class="text-small text-medium-emphasis">{{ $t('detail.outOfRange') }}</span>
           <span>{{ $t('detail.marginTitle') }}</span>
           <span v-if="spreadingFactor !== null" class="text-small text-medium-emphasis">
@@ -132,7 +133,7 @@ const shortKey = computed(() => {
           >
             <!-- Always with a decimal point, a comma would clash with the one between them. -->
             {{ row.position.lat.toFixed(5) }}, {{ row.position.lon.toFixed(5) }}
-            <v-icon :icon="mdiOpenInNew" size="12" />
+            <AppIcon :icon="mdiOpenInNew" size="12" class="external" />
           </a>
           <template v-else>{{ $t('detail.unknown') }}</template>
         </dd>
@@ -165,7 +166,7 @@ const shortKey = computed(() => {
   z-index: 1;
   margin: -16px -16px 0;
   padding: 16px;
-  background: rgb(var(--v-theme-surface));
+  background: rgb(var(--theme-surface));
 }
 
 h2 {
@@ -193,7 +194,7 @@ h2 {
   border: 0;
   background: none;
   font: inherit;
-  color: rgb(var(--v-theme-primary));
+  color: rgb(var(--theme-primary));
   cursor: pointer;
 }
 
@@ -207,6 +208,10 @@ h2 {
     margin: 0;
     text-align: right;
   }
+}
+
+.external {
+  display: inline;
 }
 
 .key {

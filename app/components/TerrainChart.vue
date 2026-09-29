@@ -169,24 +169,24 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
 }
 
 .grid line {
-  stroke: rgba(var(--v-theme-on-surface), 0.1);
+  stroke: rgba(var(--theme-on-surface), 0.1);
 }
 
 .axis,
 .axis text {
-  fill: rgba(var(--v-theme-on-surface), 0.6);
+  fill: rgba(var(--theme-on-surface), 0.6);
   font-family: var(--font-mono);
   font-size: 10px;
 }
 
 .fresnel {
-  fill: rgba(var(--v-theme-primary), 0.1);
-  stroke: rgba(var(--v-theme-primary), 0.35);
+  fill: rgba(var(--theme-primary), 0.1);
+  stroke: rgba(var(--theme-primary), 0.35);
   stroke-dasharray: 3 3;
 }
 
 .terrain {
-  fill: rgba(var(--v-theme-on-surface), 0.12);
+  fill: rgba(var(--theme-on-surface), 0.12);
 }
 
 .intrusion {
@@ -196,37 +196,37 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
 
 .edge {
   fill: none;
-  stroke: rgba(var(--v-theme-on-surface), 0.55);
+  stroke: rgba(var(--theme-on-surface), 0.55);
   stroke-width: 1.5;
   stroke-linejoin: round;
 }
 
 .mast {
-  stroke: rgba(var(--v-theme-on-surface), 0.8);
+  stroke: rgba(var(--theme-on-surface), 0.8);
   stroke-width: 1.5;
 }
 
 .sight {
-  stroke: rgb(var(--v-theme-primary));
+  stroke: rgb(var(--theme-primary));
   stroke-width: 2;
   stroke-linecap: round;
 }
 
 .end {
-  fill: rgb(var(--v-theme-primary));
-  stroke: rgb(var(--v-theme-surface));
+  fill: rgb(var(--theme-primary));
+  stroke: rgb(var(--theme-surface));
   stroke-width: 2;
 }
 
 .end-label {
-  fill: rgb(var(--v-theme-on-surface));
+  fill: rgb(var(--theme-on-surface));
   font-size: 11px;
   font-weight: 500;
 }
 
 .tightest {
   fill: currentColor;
-  stroke: rgb(var(--v-theme-surface));
+  stroke: rgb(var(--theme-surface));
   stroke-width: 2;
 }
 
@@ -236,18 +236,18 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
   font-size: 10px;
   font-weight: 500;
   paint-order: stroke;
-  stroke: rgb(var(--v-theme-surface));
+  stroke: rgb(var(--theme-surface));
   stroke-width: 4px;
   stroke-linejoin: round;
 }
 
 .crosshair {
-  stroke: rgba(var(--v-theme-on-surface), 0.4);
+  stroke: rgba(var(--theme-on-surface), 0.4);
 }
 
 .dot {
-  fill: rgb(var(--v-theme-on-surface));
-  stroke: rgb(var(--v-theme-surface));
+  fill: rgb(var(--theme-on-surface));
+  stroke: rgb(var(--theme-surface));
   stroke-width: 2;
 }
 
@@ -257,7 +257,7 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
   padding: 6px 10px;
   border-radius: 10px;
   pointer-events: none;
-  background: rgb(var(--v-theme-surface));
+  background: rgb(var(--theme-surface));
   border: 1px solid var(--glass-border);
 }
 </style>

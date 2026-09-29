@@ -1,10 +1,10 @@
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { version } from './package.json'
 import { ELEVATION_API_URL, MAP_STYLE_URL } from './app/utils/constants'
 
-// Nuxt inlines its config and payload as scripts and Vuetify sets inline
-// styles, hence 'unsafe-inline'. The rest only allows what the app loads:
-// Google Fonts, OpenFreeMap for the map and Open-Meteo for the elevation.
+// The prerendered pages inline Nuxt's config as a script and the theme colors
+// as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
+// what the app loads: Google Fonts, OpenFreeMap for the map and Open-Meteo for
+// the elevation.
 const CONTENT_SECURITY_POLICY = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline'`,
@@ -44,18 +44,11 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxtjs/i18n',
     '@vercel/analytics',
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins?.push(vuetify({ autoImport: true }))
-      })
-    }
+    'reka-ui/nuxt'
   ],
 
-  build: { transpile: ['vuetify'] },
-
   vite: {
-    assetsInclude: ['**/*.bin'],
-    vue: { template: { transformAssetUrls } }
+    assetsInclude: ['**/*.bin']
   },
 
   devtools: { enabled: true },
@@ -68,7 +61,7 @@ export default defineNuxtConfig({
     checkOutdatedBuildInterval: false
   },
 
-  css: ['vuetify/styles', '~/assets/scss/main.scss'],
+  css: ['~/assets/scss/main.scss'],
 
   // Sent by Vercel. A route rule would become a Vercel route that ends the
   // routing, so the assets would miss the headers. This route lets the

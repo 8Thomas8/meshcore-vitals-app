@@ -9,19 +9,12 @@ watch(elevationThrottled, () => {
 </script>
 
 <template>
-  <v-snackbar v-model="open" class="quota" location="bottom" :timeout="6000" rounded="xl" color="surface">
-    <div class="d-flex align-center ga-3">
-      <v-icon :icon="mdiAlertCircleOutline" color="warning" />
-      <span>{{ $t('quota.reached') }}</span>
-    </div>
-    <template #actions>
-      <v-btn variant="text" @click="open = false">{{ $t('common.close') }}</v-btn>
-    </template>
-  </v-snackbar>
+  <ToastProvider :duration="6000" disable-swipe>
+    <ToastRoot v-model:open="open" type="background" class="toast" @escape-key-down.prevent>
+      <AppIcon :icon="mdiAlertCircleOutline" class="text-warning" />
+      <ToastDescription class="flex-grow-1">{{ $t('quota.reached') }}</ToastDescription>
+      <ToastClose class="btn">{{ $t('common.close') }}</ToastClose>
+    </ToastRoot>
+    <ToastViewport class="toasts toasts-bottom" />
+  </ToastProvider>
 </template>
-
-<style scoped lang="scss">
-.quota {
-  margin-bottom: calc(20px + env(safe-area-inset-bottom));
-}
-</style>

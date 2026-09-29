@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import { useLocale } from 'vuetify'
-
 const { locale } = useI18n()
-const { current: vuetifyLocale } = useLocale()
 
-useHead({ htmlAttrs: { lang: locale } })
-// Vuetify's own labels, such as its buttons' accessible names, follow along.
-watchEffect(() => {
-  vuetifyLocale.value = locale.value
-})
+const theme = Object.entries(THEME_COLORS)
+  .map(([name, hex]) => `--theme-${name}: ${[1, 3, 5].map(i => Number.parseInt(hex.slice(i, i + 2), 16)).join(', ')}`)
+  .join('; ')
+
+useHead({ htmlAttrs: { lang: locale, style: theme } })
 </script>
 
 <template>
-  <v-app>
-    <NuxtPwaManifest />
-    <NuxtRouteAnnouncer />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </v-app>
+  <NuxtPwaManifest />
+  <NuxtRouteAnnouncer />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

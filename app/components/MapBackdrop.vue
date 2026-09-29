@@ -489,11 +489,11 @@ onBeforeUnmount(() => {
     flex-direction: column;
     padding: 4px 10px;
     border-radius: 12px;
-    background: rgba(var(--v-theme-surface), 0.6);
+    background: rgba(var(--theme-surface), 0.6);
     border: 1px solid var(--glass-border);
     box-shadow: inset 0 1px 0 var(--glass-highlight), 0 6px 16px var(--glass-shadow);
     backdrop-filter: blur(12px);
-    color: rgb(var(--v-theme-on-surface));
+    color: rgb(var(--theme-on-surface));
     white-space: nowrap;
     cursor: pointer;
   }
@@ -520,7 +520,7 @@ onBeforeUnmount(() => {
   }
 
   :deep(.map-label-companion .map-label-dot) {
-    background: rgb(var(--v-theme-primary));
+    background: rgb(var(--theme-primary));
   }
 
   :deep(.map-label-dot) {
@@ -532,7 +532,7 @@ onBeforeUnmount(() => {
   :deep(.map-label-detail) {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: rgba(var(--v-theme-on-surface), 0.7);
+    color: rgba(var(--theme-on-surface), 0.7);
 
     b {
       font-weight: 600;
@@ -541,8 +541,8 @@ onBeforeUnmount(() => {
 
   // Required attribution, dark so it does not glow through the glass.
   :deep(.maplibregl-ctrl-attrib) {
-    background: rgba(var(--v-theme-background), 0.6);
-    color: rgba(var(--v-theme-on-surface), 0.6);
+    background: rgba(var(--theme-background), 0.6);
+    color: rgba(var(--theme-on-surface), 0.6);
 
     a {
       color: inherit;

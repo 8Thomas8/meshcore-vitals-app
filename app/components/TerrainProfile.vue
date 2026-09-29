@@ -68,17 +68,17 @@ function reset() {
         <span class="font-weight-medium">{{ $t('terrain.title') }}</span>
         <span v-if="open" class="d-flex align-center flex-wrap ga-2" aria-live="polite">
           <template v-if="terrain">
-            <v-chip size="small" variant="tonal" :color="TERRAIN_TONES[terrain.verdict]">{{ $t(`terrain.verdict.${terrain.verdict}`) }}</v-chip>
+            <span class="chip chip-small" :class="`text-${TERRAIN_TONES[terrain.verdict]}`">{{ $t(`terrain.verdict.${terrain.verdict}`) }}</span>
             <span class="text-small text-medium-emphasis">
               {{ $t(terrain.tightest.shortfall > 0 ? 'terrain.shortfall' : 'terrain.spare', { height: formatNumber(Math.abs(terrain.tightest.shortfall)) }) }}
             </span>
           </template>
-          <v-chip v-else size="small" variant="tonal" :class="{ pulse: ground === undefined }">
+          <span v-else class="chip chip-small" :class="{ pulse: ground === undefined }">
             {{ ground === undefined ? $t('terrain.lookingUp') : $t(elevationThrottled ? 'terrain.throttled' : 'terrain.failed') }}
-          </v-chip>
+          </span>
         </span>
       </span>
-      <v-icon :icon="open ? mdiChevronUp : mdiChevronDown" class="text-medium-emphasis" />
+      <AppIcon :icon="open ? mdiChevronUp : mdiChevronDown" class="text-medium-emphasis" />
     </button>
 
     <div v-if="open && terrain" id="terrain-body" class="d-flex flex-column ga-3">
@@ -102,53 +102,43 @@ function reset() {
 
       <form class="d-flex flex-column ga-2" novalidate @submit.prevent="apply">
         <div class="stats">
-          <v-text-field
-            v-model.number="draftYou"
-            type="number"
-            inputmode="decimal"
-            :label="$t('terrain.yourAntenna')"
-            suffix="m"
-            :min="0"
-            :max="MAX_ANTENNA_M"
-            :step="0.5"
-            variant="outlined"
-            density="compact"
-            persistent-hint
-            :hint="yourHeight === DEFAULT_YOUR_ANTENNA_M ? $t('terrain.default') : $t('terrain.defaultValue', { height: formatNumber(DEFAULT_YOUR_ANTENNA_M, 1) })"
-            :error-messages="valid(draftYou) ? [] : $t('terrain.invalid', { max: MAX_ANTENNA_M })"
-          />
-          <v-text-field
-            v-model.number="draftRepeater"
-            type="number"
-            inputmode="decimal"
-            :label="$t('terrain.repeaterAntenna')"
-            suffix="m"
-            :min="0"
-            :max="MAX_ANTENNA_M"
-            :step="0.5"
-            variant="outlined"
-            density="compact"
-            persistent-hint
-            :hint="repeaterHeight === DEFAULT_REPEATER_ANTENNA_M ? $t('terrain.default') : $t('terrain.defaultValue', { height: formatNumber(DEFAULT_REPEATER_ANTENNA_M) })"
-            :error-messages="valid(draftRepeater) ? [] : $t('terrain.invalid', { max: MAX_ANTENNA_M })"
-          />
+          <label class="field">
+            <span class="text-small text-medium-emphasis">{{ $t('terrain.yourAntenna') }}</span>
+            <span class="field-box" :class="{ invalid: !valid(draftYou) }">
+              <input v-model.number="draftYou" type="number" inputmode="decimal" min="0" :max="MAX_ANTENNA_M" step="0.5" :aria-invalid="!valid(draftYou)">
+              <span class="text-medium-emphasis">m</span>
+            </span>
+            <span class="text-small" :class="valid(draftYou) ? 'text-medium-emphasis' : 'text-error'">
+              {{ valid(draftYou) ? yourHeight === DEFAULT_YOUR_ANTENNA_M ? $t('terrain.default') : $t('terrain.defaultValue', { height: formatNumber(DEFAULT_YOUR_ANTENNA_M, 1) }) : $t('terrain.invalid', { max: MAX_ANTENNA_M }) }}
+            </span>
+          </label>
+          <label class="field">
+            <span class="text-small text-medium-emphasis">{{ $t('terrain.repeaterAntenna') }}</span>
+            <span class="field-box" :class="{ invalid: !valid(draftRepeater) }">
+              <input v-model.number="draftRepeater" type="number" inputmode="decimal" min="0" :max="MAX_ANTENNA_M" step="0.5" :aria-invalid="!valid(draftRepeater)">
+              <span class="text-medium-emphasis">m</span>
+            </span>
+            <span class="text-small" :class="valid(draftRepeater) ? 'text-medium-emphasis' : 'text-error'">
+              {{ valid(draftRepeater) ? repeaterHeight === DEFAULT_REPEATER_ANTENNA_M ? $t('terrain.default') : $t('terrain.defaultValue', { height: formatNumber(DEFAULT_REPEATER_ANTENNA_M) }) : $t('terrain.invalid', { max: MAX_ANTENNA_M }) }}
+            </span>
+          </label>
         </div>
         <div class="d-flex align-baseline ga-3">
           <span class="text-small text-disabled flex-grow-1">{{ $t('terrain.heightsHelp') }}</span>
-          <v-btn
+          <button
             v-if="yourHeight !== DEFAULT_YOUR_ANTENNA_M || repeaterHeight !== DEFAULT_REPEATER_ANTENNA_M"
-            variant="text"
-            color="primary"
+            type="button"
+            class="btn text-primary"
             @click="reset"
           >
             {{ $t('terrain.reset') }}
-          </v-btn>
+          </button>
         </div>
         <span class="d-sr-only" aria-live="polite">{{ dirty ? $t('terrain.pending') : '' }}</span>
         <div v-if="dirty" class="pending d-flex align-center flex-wrap ga-2">
           <span class="text-small flex-grow-1">{{ $t('terrain.pending') }}</span>
-          <v-btn variant="text" color="primary" rounded="pill" @click="cancel">{{ $t('terrain.cancel') }}</v-btn>
-          <v-btn type="submit" color="primary" rounded="pill" :disabled="!ready">{{ $t('terrain.apply') }}</v-btn>
+          <button type="button" class="btn text-primary" @click="cancel">{{ $t('terrain.cancel') }}</button>
+          <button type="submit" class="btn btn-filled" :disabled="!ready">{{ $t('terrain.apply') }}</button>
         </div>
       </form>
 
@@ -158,10 +148,10 @@ function reset() {
         <template #frequency>{{ formatNumber(selfInfo.radioFreq / 1000, 3) }}</template>
       </i18n-t>
     </div>
-    <v-progress-linear v-else-if="open && ground === undefined" id="terrain-body" :aria-label="$t('terrain.lookingUp')" indeterminate color="primary" height="4" rounded />
+    <AppProgress v-else-if="open && ground === undefined" id="terrain-body" class="text-primary" :aria-label="$t('terrain.lookingUp')" />
     <div v-else-if="open && ground === null" id="terrain-body" class="d-flex flex-column align-start ga-2">
       <p v-if="elevationThrottled" class="text-small text-medium-emphasis ma-0">{{ $t('terrain.throttledHelp') }}</p>
-      <v-btn variant="tonal" color="primary" rounded="pill" @click="retry">{{ $t('terrain.retry') }}</v-btn>
+      <button type="button" class="btn btn-tonal text-primary" @click="retry">{{ $t('terrain.retry') }}</button>
     </div>
   </section>
 </template>
@@ -180,14 +170,47 @@ function reset() {
 
   &:hover,
   &:focus-visible {
-    background: rgba(var(--v-theme-on-surface), 0.06);
+    background: rgba(var(--theme-on-surface), 0.06);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(var(--theme-on-surface), 0.38);
+  border-radius: 12px;
+
+  &:focus-within {
+    border-color: rgb(var(--theme-primary));
+    box-shadow: inset 0 0 0 1px rgb(var(--theme-primary));
+  }
+
+  &.invalid {
+    border-color: rgb(var(--theme-error));
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: none;
   }
 }
 
 .pending {
   padding: 8px 8px 8px 12px;
   border-radius: 14px;
-  background: rgba(var(--v-theme-primary), 0.08);
-  border: 1px solid rgba(var(--v-theme-primary), 0.3);
+  background: rgba(var(--theme-primary), 0.08);
+  border: 1px solid rgba(var(--theme-primary), 0.3);
 }
 </style>
