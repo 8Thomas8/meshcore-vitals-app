@@ -2,7 +2,7 @@
   <div class="logo" aria-hidden="true">
     <span class="ping" />
     <span class="ping late" />
-    <v-sheet rounded="xl" class="tile d-flex align-center justify-center">
+    <div class="glass tile d-flex align-center justify-center">
       <svg width="62" height="62" viewBox="0 0 64 64" fill="none">
         <defs>
           <linearGradient id="logo-pulse" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">
@@ -30,7 +30,7 @@
         />
         <circle cx="60" cy="34" r="3.5" :fill="THEME_COLORS.success" />
       </svg>
-    </v-sheet>
+    </div>
   </div>
 </template>
 
@@ -45,15 +45,16 @@
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 24px;
   background:
-    radial-gradient(circle at 30% 20%, rgba(var(--v-theme-primary), 0.28), transparent 70%),
-    var(--glass-fill) !important;
+    radial-gradient(circle at 30% 20%, rgba(var(--theme-primary), 0.28), transparent 70%),
+    var(--glass-fill);
 }
 
 .ping {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(var(--v-theme-primary), 0.5);
+  border: 1px solid rgba(var(--theme-primary), 0.5);
   border-radius: 50%;
   animation: ping 3s ease-out infinite;
 

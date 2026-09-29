@@ -46,7 +46,7 @@ circle {
 }
 
 .track {
-  stroke: rgba(var(--v-theme-on-surface), 0.14);
+  stroke: rgba(var(--theme-on-surface), 0.14);
 }
 
 .fill {
@@ -54,13 +54,13 @@ circle {
 }
 
 .value {
-  fill: rgb(var(--v-theme-on-surface));
+  fill: rgb(var(--theme-on-surface));
   font-size: 24px;
   font-weight: 700;
 }
 
 .unit {
-  fill: rgba(var(--v-theme-on-surface), 0.7);
+  fill: rgba(var(--theme-on-surface), 0.7);
   font-size: 11px;
 }
 </style>

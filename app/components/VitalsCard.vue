@@ -3,15 +3,15 @@ defineProps<{ title: string, chip?: string, chipColor?: Tone }>()
 </script>
 
 <template>
-  <v-card class="card">
+  <section class="glass card">
     <div class="d-flex align-center justify-space-between ga-3">
       <h2 class="title">{{ title }}</h2>
-      <v-chip v-if="chip" size="small" variant="tonal" :color="chipColor ?? 'primary'">{{ chip }}</v-chip>
+      <span v-if="chip" class="chip chip-small" :class="`text-${chipColor ?? 'primary'}`">{{ chip }}</span>
     </div>
     <div class="stats">
       <slot />
     </div>
-  </v-card>
+  </section>
 </template>
 
 <style scoped lang="scss">

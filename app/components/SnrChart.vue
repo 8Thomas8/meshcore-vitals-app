@@ -145,44 +145,44 @@ const summary = computed(() => {
 }
 
 .grid line {
-  stroke: rgba(var(--v-theme-on-surface), 0.1);
+  stroke: rgba(var(--theme-on-surface), 0.1);
 }
 
 .axis,
 .axis text {
-  fill: rgba(var(--v-theme-on-surface), 0.6);
+  fill: rgba(var(--theme-on-surface), 0.6);
   font-family: var(--font-mono);
   font-size: 10px;
 }
 
 .floor-zone {
-  fill: rgba(var(--v-theme-error), 0.1);
+  fill: rgba(var(--theme-error), 0.1);
 }
 
 .floor {
-  stroke: rgb(var(--v-theme-error));
+  stroke: rgb(var(--theme-error));
   stroke-opacity: 0.7;
 }
 
 .area {
-  fill: rgba(var(--v-theme-primary), 0.1);
+  fill: rgba(var(--theme-primary), 0.1);
 }
 
 .line {
   fill: none;
-  stroke: rgb(var(--v-theme-primary));
+  stroke: rgb(var(--theme-primary));
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
 .crosshair {
-  stroke: rgba(var(--v-theme-on-surface), 0.4);
+  stroke: rgba(var(--theme-on-surface), 0.4);
 }
 
 .dot {
-  fill: rgb(var(--v-theme-primary));
-  stroke: rgb(var(--v-theme-surface));
+  fill: rgb(var(--theme-primary));
+  stroke: rgb(var(--theme-surface));
   stroke-width: 2;
 }
 
@@ -193,7 +193,7 @@ const summary = computed(() => {
   padding: 6px 10px;
   border-radius: 10px;
   pointer-events: none;
-  background: rgb(var(--v-theme-surface));
+  background: rgb(var(--theme-surface));
   border: 1px solid var(--glass-border);
 }
 </style>

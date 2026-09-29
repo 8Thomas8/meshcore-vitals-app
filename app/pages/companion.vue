@@ -17,6 +17,7 @@ const lastSample = ref<CounterSample | null>(null)
 const failed = ref(false)
 const refreshing = ref(false)
 const now = ref(Date.now())
+const healthOpen = ref(false)
 const { position, altitude, altitudeAccuracy, unavailable: noLocation } = useDevicePosition()
 // Only asked when the GPS gives no altitude, so the position leaves the app
 // only then.
@@ -182,9 +183,9 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
 </script>
 
 <template>
-  <v-container class="page-width cards">
-    <v-card class="companion full-row">
-      <v-progress-linear :active="refreshing" indeterminate absolute location="top" color="primary" height="4" />
+  <div class="page-width cards">
+    <section class="glass card companion full-row">
+      <AppProgress v-if="refreshing" class="progress-top text-primary" />
       <div class="d-flex align-center ga-2">
         <div class="flex-grow-1 min-w-0">
           <div class="text-title">{{ selfInfo?.name ?? $t('nav.companion') }}</div>
@@ -194,47 +195,36 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
             <template v-else>&nbsp;</template>
           </div>
         </div>
-        <v-btn
-          :icon="mdiRefresh"
-          variant="tonal"
-          color="primary"
-          size="44"
-          :aria-label="$t('companion.refresh')"
-          :loading="refreshing"
-          @click="refresh"
-        />
-        <v-btn
-          :icon="mdiPower"
-          variant="tonal"
-          color="error"
-          size="44"
-          :aria-label="$t('companion.disconnect')"
-          @click="disconnect"
-        />
+        <button type="button" class="btn btn-icon btn-tonal text-primary" :aria-label="$t('companion.refresh')" :aria-busy="refreshing" @click="refresh">
+          <AppIcon :icon="mdiRefresh" :class="{ spin: refreshing }" />
+        </button>
+        <button type="button" class="btn btn-icon btn-tonal text-error" :aria-label="$t('companion.disconnect')" @click="disconnect">
+          <AppIcon :icon="mdiPower" />
+        </button>
       </div>
       <div class="status-row d-flex align-center ga-2 text-small text-medium-emphasis">
-        <v-badge dot inline :class="{ pulse: refreshing }" :color="refreshing ? 'primary' : failed ? 'error' : 'success'" />
+        <span class="dot" :class="[refreshing ? 'text-primary' : failed ? 'text-error' : 'text-success', { pulse: refreshing }]" />
         <span>{{ statusText }}</span>
-        <v-dialog v-if="health" max-width="440" scrollable opacity="0.6" transition="fade-transition" :disabled="!issues.length">
-          <template #activator="{ props: activator }">
-            <v-chip
-              v-bind="activator"
-              :tag="issues.length ? 'button' : 'span'"
-              class="ms-auto"
-              variant="tonal"
-              :link="!!issues.length"
-              :color="health.tone"
-              :prepend-icon="TONE_ICONS[health.tone]"
-              :append-icon="issues.length ? mdiChevronRight : undefined"
-            >
-              {{ health.label }}
-            </v-chip>
-          </template>
-          <template #default="{ isActive }">
-            <v-card class="health-dialog" :title="health.label">
-              <v-card-text class="d-flex flex-column ga-4">
+        <component
+          :is="issues.length ? 'button' : 'span'"
+          v-if="health"
+          :type="issues.length ? 'button' : undefined"
+          class="chip ms-auto"
+          :class="`text-${health.tone}`"
+          @click="healthOpen = !!issues.length"
+        >
+          <AppIcon :icon="TONE_ICONS[health.tone]" size="16" />
+          {{ health.label }}
+          <AppIcon v-if="issues.length" :icon="mdiChevronRight" size="16" />
+        </component>
+        <DialogRoot v-if="health" v-model:open="healthOpen">
+          <DialogPortal>
+            <DialogOverlay class="overlay health-overlay" />
+            <DialogContent class="card health-dialog" :aria-describedby="undefined">
+              <DialogTitle class="health-title">{{ health.label }}</DialogTitle>
+              <div class="health-checks d-flex flex-column ga-4">
                 <div v-for="check in issues" :key="check.name" class="d-flex ga-3">
-                  <v-icon :icon="TONE_ICONS[check.tone]" :color="check.tone" />
+                  <AppIcon :icon="TONE_ICONS[check.tone]" :class="`text-${check.tone}`" />
                   <div class="flex-grow-1 min-w-0">
                     <div class="d-flex justify-space-between ga-2">
                       <span class="font-weight-medium">{{ check.name }}</span>
@@ -244,15 +234,15 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
                     <div class="text-small text-medium-emphasis mt-1">{{ check.detail }}</div>
                   </div>
                 </div>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn :text="$t('common.close')" @click="isActive.value = false" />
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
+              </div>
+              <div class="d-flex health-actions">
+                <DialogClose class="btn ms-auto">{{ $t('common.close') }}</DialogClose>
+              </div>
+            </DialogContent>
+          </DialogPortal>
+        </DialogRoot>
       </div>
-    </v-card>
+    </section>
 
     <VitalsCard v-if="selfInfo" :title="$t('settings.title')" :chip="`SF${selfInfo.radioSf} · CR 4/${selfInfo.radioCr}`">
       <VitalStat :label="$t('settings.frequency')" :value="formatNumber(selfInfo.radioFreq / 1000, 3)" unit="MHz" />
@@ -276,7 +266,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
     <VitalsCard v-if="core && battery" :title="$t('health.title')" :chip="battery.label" :chip-color="battery.tone">
       <VitalStat :label="$t('checks.battery')" :value="formatNumber(core.batteryMilliVolts / 1000, 2)" unit="V" :tone="battery.tone" :hint="$t('battery.charged', { percent: formatNumber(battery.level * 100) })" />
       <VitalStat :label="$t('health.uptime')" :value="duration(core.uptimeSecs)" />
-      <v-progress-linear class="full-row" :model-value="battery.level * 100" :color="battery.tone" height="4" rounded />
+      <AppProgress class="full-row" :class="`text-${battery.tone}`" :value="battery.level * 100" />
       <VitalStat :label="$t('health.queue')" :value="formatNumber(core.queueLen)" :hint="core.queueLen ? $t('health.queueWaiting') : $t('health.queueEmpty')" />
     </VitalsCard>
 
@@ -293,7 +283,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
       <VitalStat :label="$t('traffic.errors')" :value="errorRate === null ? $t('common.na') : formatNumber(errorRate * 100, 1)" :unit="errorRate === null ? undefined : '%'" :tone="errorTone(errorRate)" :hint="$t('traffic.badPackets', { n: formatNumber(packets.nRecvErrors) }, packets.nRecvErrors)" />
       <VitalStat v-if="radio" :label="$t('traffic.airtime')" :value="txShare === null ? $t('common.na') : formatNumber(txShare * 100, 2)" :unit="txShare === null ? undefined : '% TX'" :hint="`RX ${formatNumber(radio.rxAirSecs / 60)} min`" />
     </VitalsCard>
-  </v-container>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -308,7 +298,39 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
 
 // Opaque, the glass lets the cards behind show through the text.
 .health-dialog {
-  background: rgb(var(--v-theme-surface)) !important;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 30;
+  width: calc(100% - 48px);
+  max-width: 440px;
+  max-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--glass-border);
+  background: rgb(var(--theme-surface));
+  box-shadow: 0 12px 32px var(--glass-shadow);
+  transform: translate(-50%, -50%);
+}
+
+.health-overlay {
+  background: rgb(0 0 0 / 60%);
+}
+
+.health-title {
+  margin: 0;
+  padding: 16px 24px 10px;
+  font-size: var(--text-title);
+  font-weight: 500;
+}
+
+.health-checks {
+  overflow-y: auto;
+  padding: 0 24px;
+}
+
+.health-actions {
+  padding: 8px;
 }
 
 .cards {

@@ -6,7 +6,7 @@ Check which repeaters hear you and how good each link is, from where you stand.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Nuxt 4](https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt&logoColor=white)
 ![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)
-![Vuetify 4](https://img.shields.io/badge/Vuetify-4-1867C0?logo=vuetify&logoColor=white)
+![Reka UI 2](https://img.shields.io/badge/Reka_UI-2-10B981?logo=vuedotjs&logoColor=white)
 ![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?logo=bluetooth&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?logo=pwa&logoColor=white)
 

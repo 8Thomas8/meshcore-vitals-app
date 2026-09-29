@@ -16,14 +16,19 @@ const open = computed({
 </script>
 
 <template>
-  <v-snackbar v-model="open" location="top" :timeout="-1" rounded="xl" color="surface">
-    <div class="d-flex align-center ga-3">
-      <v-icon :icon="mdiUpdate" color="primary" />
-      <span>{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></span>
-    </div>
-    <template #actions>
-      <v-btn variant="text" @click="open = false">{{ $t('update.later') }}</v-btn>
-      <v-btn variant="tonal" color="primary" @click="apply">{{ $t('update.reload') }}</v-btn>
-    </template>
-  </v-snackbar>
+  <ToastProvider :duration="0">
+    <ToastRoot v-model:open="open" class="toast">
+      <AppIcon :icon="mdiUpdate" class="text-primary" />
+      <ToastDescription class="flex-grow-1">{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></ToastDescription>
+      <ToastClose class="btn">{{ $t('update.later') }}</ToastClose>
+      <button type="button" class="btn btn-tonal text-primary" @click="apply">{{ $t('update.reload') }}</button>
+    </ToastRoot>
+    <ToastViewport class="toasts update" />
+  </ToastProvider>
 </template>
+
+<style scoped lang="scss">
+.update {
+  top: calc(12px + env(safe-area-inset-top));
+}
+</style>

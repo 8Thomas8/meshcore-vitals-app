@@ -79,6 +79,8 @@ export const LOCALE_COOKIE_MAX_AGE_SECS = 365 * 86_400
 
 export const REPOSITORY_URL = 'https://github.com/8Thomas8/meshcore-vitals-app'
 
+export const SM_AND_DOWN_QUERY = '(max-width: 959.98px)'
+
 export const NAV_ITEMS = [
   { title: 'nav.repeaters', to: '/', icon: mdiRadioTower },
   { title: 'nav.companion', to: '/companion', icon: mdiAccessPoint }
