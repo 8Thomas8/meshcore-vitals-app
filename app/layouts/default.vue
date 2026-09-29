@@ -6,6 +6,10 @@ const { connection } = useMeshCore()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const route = useRoute()
 const menuOpen = ref(false)
+
+watch(() => route.path, () => {
+  menuOpen.value = false
+})
 </script>
 
 <template>
@@ -13,9 +17,25 @@ const menuOpen = ref(false)
     <template v-if="connection">
       <header class="glass app-bar">
         <div class="page-width app-bar-content d-flex align-center ga-3">
-          <button v-if="!smAndDown" type="button" class="btn btn-icon menu-button" :aria-label="$t('nav.openMenu')" @click="menuOpen = true">
-            <AppIcon :icon="mdiMenu" />
-          </button>
+          <DialogRoot v-if="!smAndDown" v-model:open="menuOpen">
+            <DialogTrigger class="btn btn-icon menu-button" :aria-label="$t('nav.openMenu')">
+              <AppIcon :icon="mdiMenu" />
+            </DialogTrigger>
+            <DialogPortal>
+              <DialogOverlay class="overlay" />
+              <DialogContent class="glass drawer slide" :aria-describedby="undefined">
+                <DialogTitle class="d-sr-only">{{ $t('nav.menu') }}</DialogTitle>
+                <nav class="d-flex flex-column ga-1">
+                  <DialogClose v-for="item in NAV_ITEMS" :key="item.to" as-child>
+                    <NuxtLink :to="item.to" class="drawer-item">
+                      <AppIcon :icon="item.icon" />
+                      <span>{{ $t(item.title) }}</span>
+                    </NuxtLink>
+                  </DialogClose>
+                </nav>
+              </DialogContent>
+            </DialogPortal>
+          </DialogRoot>
           <img class="d-block" src="/favicon.svg" alt="" width="28" height="28">
           <span class="text-title">MeshCore Vitals</span>
         </div>
@@ -26,20 +46,6 @@ const menuOpen = ref(false)
           <span>{{ $t(item.title) }}</span>
         </NuxtLink>
       </nav>
-      <DialogRoot v-else v-model:open="menuOpen">
-        <DialogPortal>
-          <DialogOverlay class="overlay" />
-          <DialogContent class="glass drawer" :aria-describedby="undefined">
-            <DialogTitle class="d-sr-only">MeshCore Vitals</DialogTitle>
-            <nav class="d-flex flex-column ga-1">
-              <NuxtLink v-for="item in NAV_ITEMS" :key="item.to" :to="item.to" class="drawer-item" @click="menuOpen = false">
-                <AppIcon :icon="item.icon" />
-                <span>{{ $t(item.title) }}</span>
-              </NuxtLink>
-            </nav>
-          </DialogContent>
-        </DialogPortal>
-      </DialogRoot>
     </template>
     <div class="backdrop" aria-hidden="true" />
     <main class="content" :class="{ 'below-bar': connection, 'above-nav': connection && smAndDown }">
@@ -84,9 +90,9 @@ const menuOpen = ref(false)
     padding-top: $app-bar-height;
   }
 
-  // Room for the floating menu, clear of the home indicator.
+  // Room for the floating menu's offset, which v-main does not count.
   &.above-nav {
-    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+    padding-bottom: calc($bottom-nav-space + env(safe-area-inset-bottom));
   }
 }
 
@@ -94,7 +100,7 @@ const menuOpen = ref(false)
 .app-bar {
   position: fixed;
   inset: 0 0 auto;
-  z-index: 10;
+  z-index: $z-bar;
   height: $app-bar-height;
   display: flex;
   border-width: 0 0 1px;
@@ -115,7 +121,7 @@ const menuOpen = ref(false)
   left: 12px;
   right: 12px;
   bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 10;
+  z-index: $z-bar;
   height: 56px;
   display: flex;
   gap: 4px;
@@ -145,8 +151,9 @@ const menuOpen = ref(false)
   top: $app-bar-height;
   bottom: 0;
   left: 0;
-  z-index: 30;
+  z-index: $z-overlay;
   width: 260px;
+  --slide-from: translateX(-100%);
   padding: 8px;
   border-width: 0 1px 0 0;
 }

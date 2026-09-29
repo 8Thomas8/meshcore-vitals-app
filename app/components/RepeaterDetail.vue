@@ -41,7 +41,7 @@ const shortKey = computed(() => {
         :heading="heading"
       />
       <div class="flex-grow-1 min-w-0">
-        <DialogTitle as="h2" class="text-title text-truncate">{{ row.name }}</DialogTitle>
+        <DialogTitle class="text-title text-truncate">{{ row.name }}</DialogTitle>
         <!-- One line: only the key gets cut short. -->
         <div class="d-flex font-mono text-small text-medium-emphasis text-no-wrap min-w-0 overflow-hidden">
           <span v-if="row.distance !== null" class="flex-shrink-0">{{ formatDistance(row.distance) }} ·&nbsp;</span>

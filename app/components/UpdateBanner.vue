@@ -16,19 +16,15 @@ const open = computed({
 </script>
 
 <template>
-  <ToastProvider :duration="0">
-    <ToastRoot v-model:open="open" class="toast">
+  <ToastProvider :duration="0" disable-swipe>
+    <ToastRoot v-model:open="open" type="background" class="toast" @escape-key-down.prevent>
       <AppIcon :icon="mdiUpdate" class="text-primary" />
       <ToastDescription class="flex-grow-1">{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></ToastDescription>
       <ToastClose class="btn">{{ $t('update.later') }}</ToastClose>
-      <button type="button" class="btn btn-tonal text-primary" @click="apply">{{ $t('update.reload') }}</button>
+      <ToastAction :alt-text="$t('update.reload')" as-child>
+        <button type="button" class="btn btn-tonal text-primary" @click="apply">{{ $t('update.reload') }}</button>
+      </ToastAction>
     </ToastRoot>
-    <ToastViewport class="toasts update" />
+    <ToastViewport class="toasts toasts-top" />
   </ToastProvider>
 </template>
-
-<style scoped lang="scss">
-.update {
-  top: calc(12px + env(safe-area-inset-top));
-}
-</style>

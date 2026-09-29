@@ -9,18 +9,12 @@ watch(elevationThrottled, () => {
 </script>
 
 <template>
-  <ToastProvider :duration="6000">
-    <ToastRoot v-model:open="open" class="toast">
+  <ToastProvider :duration="6000" disable-swipe>
+    <ToastRoot v-model:open="open" type="background" class="toast" @escape-key-down.prevent>
       <AppIcon :icon="mdiAlertCircleOutline" class="text-warning" />
       <ToastDescription class="flex-grow-1">{{ $t('quota.reached') }}</ToastDescription>
       <ToastClose class="btn">{{ $t('common.close') }}</ToastClose>
     </ToastRoot>
-    <ToastViewport class="toasts quota" />
+    <ToastViewport class="toasts toasts-bottom" />
   </ToastProvider>
 </template>
-
-<style scoped lang="scss">
-.quota {
-  bottom: calc(20px + env(safe-area-inset-bottom));
-}
-</style>

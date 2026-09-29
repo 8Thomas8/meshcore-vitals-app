@@ -16,7 +16,8 @@
   "nav": {
     "repeaters": "Répéteurs",
     "companion": "Companion",
-    "openMenu": "Ouvrir le menu"
+    "openMenu": "Ouvrir le menu",
+    "menu": "Menu"
   },
   "footer": {
     "source": "Code source sur GitHub",

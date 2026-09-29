@@ -70,6 +70,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => clearInterval(clock))
 
+onBeforeRouteLeave(() => {
+  if (!healthOpen.value) return
+  healthOpen.value = false
+  return false
+})
+
 const statusText = computed(() => {
   if (refreshing.value) return t('companion.reading')
   if (failed.value) return t('companion.readFailed')
@@ -205,19 +211,12 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
       <div class="status-row d-flex align-center ga-2 text-small text-medium-emphasis">
         <span class="dot" :class="[refreshing ? 'text-primary' : failed ? 'text-error' : 'text-success', { pulse: refreshing }]" />
         <span>{{ statusText }}</span>
-        <component
-          :is="issues.length ? 'button' : 'span'"
-          v-if="health"
-          :type="issues.length ? 'button' : undefined"
-          class="chip ms-auto"
-          :class="`text-${health.tone}`"
-          @click="healthOpen = !!issues.length"
-        >
-          <AppIcon :icon="TONE_ICONS[health.tone]" size="16" />
-          {{ health.label }}
-          <AppIcon v-if="issues.length" :icon="mdiChevronRight" size="16" />
-        </component>
-        <DialogRoot v-if="health" v-model:open="healthOpen">
+        <DialogRoot v-if="health && issues.length" v-model:open="healthOpen">
+          <DialogTrigger class="chip ms-auto" :class="`text-${health.tone}`">
+            <AppIcon :icon="TONE_ICONS[health.tone]" size="16" />
+            {{ health.label }}
+            <AppIcon :icon="mdiChevronRight" size="16" />
+          </DialogTrigger>
           <DialogPortal>
             <DialogOverlay class="overlay health-overlay" />
             <DialogContent class="card health-dialog" :aria-describedby="undefined">
@@ -241,6 +240,10 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
             </DialogContent>
           </DialogPortal>
         </DialogRoot>
+        <span v-else-if="health" class="chip ms-auto" :class="`text-${health.tone}`">
+          <AppIcon :icon="TONE_ICONS[health.tone]" size="16" />
+          {{ health.label }}
+        </span>
       </div>
     </section>
 
@@ -301,7 +304,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
   position: fixed;
   top: 50%;
   left: 50%;
-  z-index: 30;
+  z-index: $z-overlay;
   width: calc(100% - 48px);
   max-width: 440px;
   max-height: calc(100dvh - 48px);

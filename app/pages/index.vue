@@ -62,7 +62,7 @@ watch(lastScanAttempt, (at) => {
 const scanning = computed(() => scanUntil.value !== null)
 const nextScanAt = computed(() => autoScan.value && !scanning.value ? (lastScanAttempt.value ?? 0) + AUTO_SCAN_INTERVAL_MS : null)
 const scanLeftMs = computed(() => scanUntil.value && Math.max(0, scanUntil.value - now.value))
-const scanProgress = computed(() => scanLeftMs.value === null ? 0 : 100 * (1 - scanLeftMs.value / DISCOVER_WINDOW_MS))
+const scanProgress = computed(() => scanLeftMs.value === null ? 0 : Math.min(100, Math.max(0, 100 * (1 - scanLeftMs.value / DISCOVER_WINDOW_MS))))
 
 const repeaterContacts = computed(() => contacts.value
   .filter(contact => contact.type === ADV_TYPE_REPEATER)
@@ -149,6 +149,12 @@ const detailOpen = computed({
   }
 })
 
+onBeforeRouteLeave(() => {
+  if (!detailOpen.value) return
+  detailOpen.value = false
+  return false
+})
+
 const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
 
 const coverage = computed(() => {
@@ -166,6 +172,11 @@ const coverage = computed(() => {
       : t(`coverage.reason.${reason}`, { usable, confirmed, solid, minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB }, solid)
   }
 })
+
+const coverageOpen = ref(false)
+watch(coverage, (value) => {
+  if (!value) coverageOpen.value = false
+})
 </script>
 
 <template>
@@ -175,9 +186,9 @@ const coverage = computed(() => {
     <section ref="summary" class="glass card summary">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
       <div class="d-flex align-center ga-2">
-        <PopoverRoot>
+        <PopoverRoot v-model:open="coverageOpen">
           <PopoverTrigger class="coverage d-flex align-center ga-2 flex-grow-1 min-w-0" :disabled="!coverage">
-            <svg class="ring flex-shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+            <svg class="flex-shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
               <circle class="ring-track" cx="20" cy="20" r="18" />
               <circle
                 class="ring-fill"
@@ -191,7 +202,7 @@ const coverage = computed(() => {
               <text v-if="coverage" class="score font-mono" x="20" y="20" text-anchor="middle" dominant-baseline="central">{{ coverage.usable }}</text>
             </svg>
               <span class="flex-grow-1 min-w-0">
-                <span class="d-block text-title headline">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
+                <span class="text-title headline">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
                 <span class="d-flex align-center ga-1 text-small text-medium-emphasis min-w-0">
                   <span class="text-truncate">
                     <template v-if="inRange.length">{{ $t('repeaters.counts', { direct: direct.length, relayed: $t('repeaters.relayed', inRange.length - direct.length) }) }}</template>
@@ -312,7 +323,7 @@ const coverage = computed(() => {
     <DialogRoot v-model:open="detailOpen">
       <DialogPortal>
         <DialogOverlay class="overlay" />
-        <DialogContent class="glass-dense panel" :class="smAndDown ? 'sheet' : 'side'" :aria-describedby="undefined">
+        <DialogContent class="glass-dense panel slide" :class="smAndDown ? 'sheet' : 'side'" :aria-describedby="undefined">
           <RepeaterDetail
             v-if="selected"
             :row="selected"
@@ -387,7 +398,6 @@ const coverage = computed(() => {
 }
 
 .out-of-range-toggle {
-  color: inherit;
   width: 100%;
   min-height: 44px;
   padding: 8px 16px;
@@ -437,11 +447,6 @@ const coverage = computed(() => {
   &[data-state='checked'] {
     background: rgb(var(--theme-primary));
   }
-
-  &:focus-visible {
-    outline: 2px solid rgb(var(--theme-primary));
-    outline-offset: 2px;
-  }
 }
 
 .switch-thumb {
@@ -457,10 +462,6 @@ const coverage = computed(() => {
   &[data-state='checked'] {
     transform: translateX(14px);
   }
-}
-
-.ring {
-  display: block;
 }
 
 .ring-track,
@@ -487,7 +488,7 @@ const coverage = computed(() => {
 
 // Two lines rather than cut, some languages need them on a phone.
 .headline {
-  display: -webkit-box !important;
+  display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -513,11 +514,12 @@ const coverage = computed(() => {
 
 .panel {
   position: fixed;
-  z-index: 30;
+  z-index: $z-overlay;
   overflow-y: auto;
 }
 
 .sheet {
+  --slide-from: translateY(100%);
   inset: auto 0 0;
   max-height: 85dvh;
   border-width: 1px 0 0;
@@ -525,11 +527,20 @@ const coverage = computed(() => {
 }
 
 .side {
+  --slide-from: translateX(100%);
   top: $app-bar-height;
   right: 0;
   bottom: 0;
   width: 400px;
   border-width: 0 0 0 1px;
+}
+
+.row,
+.list-toggle,
+.out-of-range-toggle {
+  &:focus-visible {
+    outline-offset: -2px;
+  }
 }
 
 .empty {

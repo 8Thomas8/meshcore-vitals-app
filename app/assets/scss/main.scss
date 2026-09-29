@@ -1,6 +1,8 @@
 @use 'variables' as *;
 
 :root {
+  color-scheme: dark;
+
   --font-mono: 'Roboto Mono', ui-monospace, monospace;
 
   --text-display: 32px;
@@ -49,6 +51,11 @@ button {
   cursor: pointer;
 }
 
+:focus-visible {
+  outline: 2px solid rgb(var(--theme-primary));
+  outline-offset: 2px;
+}
+
 .glass {
   background: var(--glass-fill);
   border: 1px solid var(--glass-border);
@@ -74,7 +81,7 @@ button {
 }
 
 .popover {
-  z-index: 30;
+  z-index: $z-overlay;
   max-width: 300px;
   padding: 10px 14px;
   border-radius: 16px;
@@ -84,19 +91,40 @@ button {
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 30;
+  z-index: $z-overlay;
   background: rgb(0 0 0 / 20%);
+}
+
+.overlay,
+.popover,
+.toast {
+  &[data-state='open'] {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  &[data-state='closed'] {
+    animation: fade-out 0.15s ease-in;
+  }
 }
 
 .toasts {
   position: fixed;
   left: 50%;
-  z-index: 20;
+  z-index: $z-toast;
   width: min(100% - 16px, 600px);
   margin: 0;
   padding: 0;
   list-style: none;
+  pointer-events: auto;
   transform: translateX(-50%);
+}
+
+.toasts-top {
+  top: calc($app-bar-height + 12px + env(safe-area-inset-top));
+}
+
+.toasts-bottom {
+  bottom: calc($bottom-nav-space + 12px + env(safe-area-inset-bottom));
 }
 
 .toast {
@@ -145,11 +173,6 @@ button {
     opacity: 0.08;
   }
 
-  &:focus-visible {
-    outline: 2px solid rgb(var(--theme-primary));
-    outline-offset: 2px;
-  }
-
   &:active::after {
     opacity: 0.16;
   }
@@ -170,7 +193,8 @@ button {
   box-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
 }
 
-.btn-tonal::before {
+.btn-tonal::before,
+.chip::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -199,16 +223,6 @@ button {
   background: none;
   font-size: 13px;
   white-space: nowrap;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: currentColor;
-    opacity: 0.12;
-    pointer-events: none;
-  }
 
   &:is(button):hover::before {
     opacity: 0.2;
@@ -280,6 +294,49 @@ button {
 @keyframes pulse {
   to {
     opacity: 0.3;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: var(--slide-from);
+  }
+}
+
+@keyframes slide-out {
+  to {
+    transform: var(--slide-from);
+  }
+}
+
+.slide {
+  &[data-state='open'] {
+    animation: slide-in 0.25s ease-out;
+  }
+
+  &[data-state='closed'] {
+    animation: slide-out 0.2s ease-in;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
