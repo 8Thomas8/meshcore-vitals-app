@@ -93,7 +93,7 @@ const summary = computed(() => {
 </script>
 
 <template>
-  <div ref="root" class="chart">
+  <div ref="root" class="relative touch-pan-y">
     <svg
       :width="width"
       :height="HEIGHT"
@@ -103,97 +103,34 @@ const summary = computed(() => {
       @pointerdown="onPointer"
       @pointerleave="hover = null"
     >
-      <g class="grid">
+      <g class="stroke-on-surface/10">
         <line v-for="tick in chart.ticks" :key="tick.value" :x1="PAD.left" :x2="chart.right" :y1="tick.y" :y2="tick.y" />
       </g>
-      <g class="axis">
+      <g class="fill-on-surface/60 font-mono text-[10px]">
         <text v-for="tick in chart.ticks" :key="tick.value" :x="PAD.left - 6" :y="tick.y" text-anchor="end" dominant-baseline="central">
           {{ formatNumber(tick.value) }}
         </text>
         <text :x="PAD.left" :y="HEIGHT - 4">{{ ago(chart.start, now) }}</text>
         <text :x="chart.right" :y="HEIGHT - 4" text-anchor="end">{{ $t('chart.now') }}</text>
       </g>
-      <rect class="floor-zone" :x="PAD.left" :y="chart.floorY" :width="chart.right - PAD.left" :height="chart.bottom - chart.floorY" />
-      <line class="floor" :x1="PAD.left" :x2="chart.right" :y1="chart.floorY" :y2="chart.floorY" />
-      <text class="axis" :x="chart.right - 4" :y="chart.floorY - 5" text-anchor="end">{{ $t('chart.floor', { sf: spreadingFactor }) }}</text>
-      <path v-if="chart.area" class="area" :d="chart.area" />
-      <path class="line" :d="chart.line" />
-      <line v-if="tooltip" class="crosshair" :x1="tooltip.point.x" :x2="tooltip.point.x" :y1="PAD.top" :y2="chart.bottom" />
+      <rect class="fill-error/10" :x="PAD.left" :y="chart.floorY" :width="chart.right - PAD.left" :height="chart.bottom - chart.floorY" />
+      <line class="stroke-error" stroke-opacity="0.7" :x1="PAD.left" :x2="chart.right" :y1="chart.floorY" :y2="chart.floorY" />
+      <text class="fill-on-surface/60 font-mono text-[10px]" :x="chart.right - 4" :y="chart.floorY - 5" text-anchor="end">{{ $t('chart.floor', { sf: spreadingFactor }) }}</text>
+      <path v-if="chart.area" class="fill-primary/10" :d="chart.area" />
+      <path class="stroke-primary" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" :d="chart.line" />
+      <line v-if="tooltip" class="stroke-on-surface/40" :x1="tooltip.point.x" :x2="tooltip.point.x" :y1="PAD.top" :y2="chart.bottom" />
       <circle
         v-if="tooltip ?? chart.points.at(-1)"
-        class="dot"
+        class="fill-primary stroke-surface"
+        stroke-width="2"
         :cx="(tooltip?.point ?? chart.points.at(-1)!).x"
         :cy="(tooltip?.point ?? chart.points.at(-1)!).y"
         r="4"
       />
     </svg>
-    <div v-if="tooltip" class="tooltip" :style="{ left: `${tooltip.left}px` }">
-      <div class="font-mono font-weight-medium">{{ formatNumber(tooltip.sample.snr, 2, 0) }} dB</div>
-      <div class="text-small text-medium-emphasis">{{ formatNumber(tooltip.sample.rssi) }} dBm · {{ ago(tooltip.sample.at, now) }}</div>
+    <div v-if="tooltip" class="chart-tooltip top-0 w-35" :style="{ left: `${tooltip.left}px` }">
+      <div class="font-mono font-medium">{{ formatNumber(tooltip.sample.snr, 2, 0) }} dB</div>
+      <div class="text-small text-medium">{{ formatNumber(tooltip.sample.rssi) }} dBm · {{ ago(tooltip.sample.at, now) }}</div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.chart {
-  position: relative;
-  touch-action: pan-y;
-
-  svg {
-    display: block;
-  }
-}
-
-.grid line {
-  stroke: rgba(var(--theme-on-surface), 0.1);
-}
-
-.axis,
-.axis text {
-  fill: rgba(var(--theme-on-surface), 0.6);
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-
-.floor-zone {
-  fill: rgba(var(--theme-error), 0.1);
-}
-
-.floor {
-  stroke: rgb(var(--theme-error));
-  stroke-opacity: 0.7;
-}
-
-.area {
-  fill: rgba(var(--theme-primary), 0.1);
-}
-
-.line {
-  fill: none;
-  stroke: rgb(var(--theme-primary));
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-
-.crosshair {
-  stroke: rgba(var(--theme-on-surface), 0.4);
-}
-
-.dot {
-  fill: rgb(var(--theme-primary));
-  stroke: rgb(var(--theme-surface));
-  stroke-width: 2;
-}
-
-.tooltip {
-  position: absolute;
-  top: 0;
-  width: 140px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  pointer-events: none;
-  background: rgb(var(--theme-surface));
-  border: 1px solid var(--glass-border);
-}
-</style>

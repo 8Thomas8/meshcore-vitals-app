@@ -25,7 +25,7 @@ const points = computed(() => POINTS.map(({ key, angle }, i) => {
 </script>
 
 <template>
-  <svg class="dial" viewBox="-24 -24 48 48" width="48" height="48" aria-hidden="true">
+  <svg viewBox="-24 -24 48 48" width="48" height="48" aria-hidden="true">
     <circle r="23" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.35" />
     <text
       v-for="point in points"
@@ -50,9 +50,3 @@ const points = computed(() => POINTS.map(({ key, angle }, i) => {
     <text v-else fill="currentColor" font-size="12" text-anchor="middle" dominant-baseline="central">?</text>
   </svg>
 </template>
-
-<style scoped lang="scss">
-.dial {
-  display: block;
-}
-</style>

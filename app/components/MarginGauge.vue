@@ -18,7 +18,7 @@ const label = computed(() => props.margin === null ? t('common.na') : `${props.m
 
 <template>
   <svg
-    class="gauge"
+    class="shrink-0"
     :class="tone && `text-${tone}`"
     width="120"
     height="120"
@@ -26,41 +26,11 @@ const label = computed(() => props.margin === null ? t('common.na') : `${props.m
     role="img"
     :aria-label="margin === null ? $t('gauge.unknown') : $t('gauge.label', { margin: label })"
   >
-    <circle class="track" cx="60" cy="60" :r="RADIUS" :stroke-dasharray="`${ARC} ${CIRCUMFERENCE}`" transform="rotate(135 60 60)" />
-    <circle v-if="filled" class="fill" cx="60" cy="60" :r="RADIUS" :stroke-dasharray="`${filled} ${CIRCUMFERENCE}`" transform="rotate(135 60 60)" />
-    <text class="value" x="60" y="62" text-anchor="middle">{{ label }}</text>
-    <text class="unit" x="60" y="80" text-anchor="middle">{{ $t('gauge.unit') }}</text>
+    <g fill="none" stroke-width="10" stroke-linecap="round">
+      <circle class="stroke-on-surface/14" cx="60" cy="60" :r="RADIUS" :stroke-dasharray="`${ARC} ${CIRCUMFERENCE}`" transform="rotate(135 60 60)" />
+      <circle v-if="filled" stroke="currentColor" cx="60" cy="60" :r="RADIUS" :stroke-dasharray="`${filled} ${CIRCUMFERENCE}`" transform="rotate(135 60 60)" />
+    </g>
+    <text class="fill-on-surface text-[24px] font-bold" x="60" y="62" text-anchor="middle">{{ label }}</text>
+    <text class="fill-medium text-[11px]" x="60" y="80" text-anchor="middle">{{ $t('gauge.unit') }}</text>
   </svg>
 </template>
-
-<style scoped lang="scss">
-.gauge {
-  display: block;
-  flex-shrink: 0;
-}
-
-circle {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-
-.track {
-  stroke: rgba(var(--theme-on-surface), 0.14);
-}
-
-.fill {
-  stroke: currentColor;
-}
-
-.value {
-  fill: rgb(var(--theme-on-surface));
-  font-size: 24px;
-  font-weight: 700;
-}
-
-.unit {
-  fill: rgba(var(--theme-on-surface), 0.7);
-  font-size: 11px;
-}
-</style>

@@ -1,8 +1,8 @@
 <template>
-  <div class="logo" aria-hidden="true">
-    <span class="ping" />
-    <span class="ping late" />
-    <div class="glass tile d-flex align-center justify-center">
+  <div class="relative size-21" aria-hidden="true">
+    <span class="absolute inset-0 animate-radar rounded-full border border-primary/50 motion-reduce:hidden" />
+    <span class="absolute inset-0 animate-radar rounded-full border border-primary/50 [animation-delay:1.5s] motion-reduce:hidden" />
+    <div class="glass relative flex size-full items-center justify-center rounded-3xl bg-radial-[circle_at_30%_20%] from-primary/28 to-transparent to-70%">
       <svg width="62" height="62" viewBox="0 0 64 64" fill="none">
         <defs>
           <linearGradient id="logo-pulse" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">
@@ -34,50 +34,3 @@
   </div>
 </template>
 
-<style scoped lang="scss">
-.logo {
-  position: relative;
-  width: 84px;
-  height: 84px;
-}
-
-.tile {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(var(--theme-primary), 0.28), transparent 70%),
-    var(--glass-fill);
-}
-
-.ping {
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(var(--theme-primary), 0.5);
-  border-radius: 50%;
-  animation: ping 3s ease-out infinite;
-
-  &.late {
-    animation-delay: 1.5s;
-  }
-}
-
-@keyframes ping {
-  from {
-    opacity: 1;
-    transform: scale(0.9);
-  }
-
-  to {
-    opacity: 0;
-    transform: scale(2.2);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ping {
-    display: none;
-  }
-}
-</style>

@@ -1,398 +1,467 @@
-@use 'variables' as *;
+// Left to Tailwind: Sass keeps a .css import as it is.
+@import 'tailwindcss/index.css';
 
-:root {
-  color-scheme: dark;
+// Tones picked at runtime, out of the scanner's sight.
+@source inline('text-{primary,success,warning,error}');
+@source not '../../../.github';
+@source not '../../../i18n';
 
+@theme static {
+  #{'--color-*'}: initial;
+  --color-black: #000;
+  --color-white: #fff;
+
+  // In px like the text sizes, so a larger browser font does not skew the layout.
+  --spacing: 4px;
+  #{'--radius-*'}: initial;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+
+  #{'--breakpoint-*'}: initial;
+  --breakpoint-sm: 600px;
+  --container-page: 1040px;
+  --spacing-app-bar: 65px;
+  --spacing-bottom-nav: 68px;
+
+  --z-bar: 10;
+  --z-overlay: 30;
+  --z-toast: 40;
+
+  --font-sans: Roboto, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, monospace;
+  --font-mono--font-feature-settings: 'tnum';
 
+  #{'--text-*'}: initial;
   --text-display: 32px;
   --text-title: 20px;
+  --text-title--font-weight: 500;
+  --text-title--letter-spacing: 0.0125em;
   --text-subtitle: 18px;
+  --text-label: 14px;
   --text-body: 15px;
   --text-hint: 13px;
-  --text-caption: 12px;
+  --text-small: 12px;
+  --text-small--line-height: 1.35;
 
-  --glass-fill: rgba(var(--theme-on-surface), 0.08);
-  --glass-border: rgba(var(--theme-on-surface), 0.16);
-  --glass-highlight: rgba(var(--theme-on-surface), 0.18);
-  --glass-shadow: rgb(0 0 0 / 35%);
+  --default-transition-timing-function: ease;
 
-  --backdrop-halo: rgba(var(--theme-halo), 0.85);
-  --backdrop-dot: rgba(var(--theme-on-surface), 0.22);
-}
+  --animate-blink: blink 1s ease-in-out infinite alternate;
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-fade-out: fade-out 0.15s ease-in;
+  --animate-slide-in: slide-in 0.25s ease-out;
+  --animate-slide-out: slide-out 0.2s ease-in;
+  --animate-indeterminate: indeterminate 1.4s ease-in-out infinite;
+  --animate-radar: radar 3s ease-out infinite;
 
-*,
-::before,
-::after {
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  margin: 0;
-  min-height: 100dvh;
-  background: rgb(var(--theme-background));
-  color: rgb(var(--theme-on-background));
-  font-family: Roboto, sans-serif;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-button,
-input {
-  font: inherit;
-  color: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-[disabled],
-[aria-disabled='true'] {
-  cursor: default;
-}
-
-:focus-visible {
-  outline: 2px solid rgb(var(--theme-primary));
-  outline-offset: 2px;
-}
-
-.glass {
-  background: var(--glass-fill);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 12px 32px var(--glass-shadow);
-  backdrop-filter: blur(22px) saturate(160%);
-  // Own compositing layer, or Chrome drops the blur until a nearby hover repaints it.
-  transform: translateZ(0);
-}
-
-// Glass like the cards, tinted darker so text stays readable over what it covers.
-.glass-dense {
-  background: rgba(var(--theme-surface), 0.72);
-  color: rgb(var(--theme-on-surface));
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 12px 32px var(--glass-shadow);
-  backdrop-filter: blur(22px) saturate(160%);
-}
-
-.card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 24px;
-}
-
-.popover {
-  z-index: $z-overlay;
-  max-width: 300px;
-  padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 14px;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: $z-overlay;
-  background: rgb(0 0 0 / 20%);
-}
-
-.overlay,
-.popover,
-.toast {
-  &[data-state='open'] {
-    animation: fade-in 0.2s ease-out;
+  @keyframes blink {
+    to {
+      opacity: 0.3;
+    }
   }
 
-  &[data-state='closed'] {
-    animation: fade-out 0.15s ease-in;
-  }
-}
-
-.toasts {
-  position: fixed;
-  left: 50%;
-  z-index: $z-toast;
-  width: min(100% - 16px, 600px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  pointer-events: auto;
-  transform: translateX(-50%);
-}
-
-.toasts-top {
-  top: calc($app-bar-height + 12px + env(safe-area-inset-top));
-}
-
-.toasts-bottom {
-  bottom: calc($bottom-nav-space + 12px + env(safe-area-inset-bottom));
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  padding: 8px 8px 8px 16px;
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  background: rgb(var(--theme-surface));
-  box-shadow: 0 12px 32px var(--glass-shadow);
-  font-size: 14px;
-}
-
-.btn {
-  position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-  text-decoration: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: currentColor;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-  }
-
-  &:hover::after {
-    opacity: 0.08;
-  }
-
-  &:active::after {
-    opacity: 0.16;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-
-    &::after {
+  @keyframes fade-in {
+    from {
       opacity: 0;
+    }
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: var(--slide-from);
+    }
+  }
+
+  @keyframes slide-out {
+    to {
+      transform: var(--slide-from);
+    }
+  }
+
+  @keyframes indeterminate {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(250%);
+    }
+  }
+
+  @keyframes radar {
+    from {
+      opacity: 1;
+      transform: scale(0.9);
+    }
+
+    to {
+      opacity: 0;
+      transform: scale(2.2);
     }
   }
 }
 
-.btn-filled {
-  background: rgb(var(--theme-primary));
-  color: rgb(var(--theme-on-primary));
-  box-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
+// The app sets the --theme-* channels on <html> from THEME_COLORS. Static so the
+// component styles can use these variables too.
+@theme inline static {
+  --color-background: rgb(var(--theme-background));
+  --color-surface: rgb(var(--theme-surface));
+  --color-on-background: rgb(var(--theme-on-background));
+  --color-on-surface: rgb(var(--theme-on-surface));
+  --color-primary: rgb(var(--theme-primary));
+  --color-on-primary: rgb(var(--theme-on-primary));
+  --color-success: rgb(var(--theme-success));
+  --color-warning: rgb(var(--theme-warning));
+  --color-error: rgb(var(--theme-error));
+  --color-medium: rgba(var(--theme-on-surface), 0.7);
+  --color-disabled: rgba(var(--theme-on-surface), 0.5);
+
+  --color-glass-fill: rgba(var(--theme-on-surface), 0.08);
+  --color-glass-border: rgba(var(--theme-on-surface), 0.16);
+  --color-glass-highlight: rgba(var(--theme-on-surface), 0.18);
+  --color-glass-shadow: rgb(0 0 0 / 35%);
+  --color-backdrop-halo: rgba(var(--theme-halo), 0.85);
+  --color-backdrop-dot: rgba(var(--theme-on-surface), 0.22);
 }
 
-.btn-tonal::before,
-.chip::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: currentColor;
-  opacity: 0.12;
-  pointer-events: none;
-}
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
 
-.btn-icon {
-  width: 44px;
-  height: 44px;
-  padding: 0;
-}
+  body {
+    min-height: 100dvh;
+    background: var(--color-background);
+    color: var(--color-on-background);
+    -webkit-font-smoothing: antialiased;
+  }
 
-.chip {
-  position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  font-size: 13px;
-  white-space: nowrap;
+  button {
+    cursor: pointer;
+  }
 
-  &:is(button):hover::before {
-    opacity: 0.2;
+  [disabled],
+  [aria-disabled='true'] {
+    cursor: default;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 }
 
-.chip-small {
-  height: 26px;
-  padding: 0 10px;
-  font-size: var(--text-caption);
-}
-
-.dot {
-  flex-shrink: 0;
-  width: 9px;
-  height: 9px;
-  margin-inline: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.font-mono {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.text-title {
-  font-size: var(--text-title);
-  font-weight: 500;
-  letter-spacing: 0.0125em;
-}
-
-.text-small {
-  font-size: var(--text-caption);
-  line-height: 1.35;
-}
-
-.text-hint {
-  margin: 4px 0 0;
-  font-size: var(--text-hint);
-}
-
-.page-width {
-  width: 100%;
-  max-width: $page-max-width;
-  margin-inline: auto;
-}
-
-// Status line under a screen's first card, as tall as the chip it may hold so
-// the card keeps one height while loading.
-.status-row {
-  min-height: 32px;
-}
-
-.pulse {
-  animation: pulse 1s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  to {
-    opacity: 0.3;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slide-in {
-  from {
-    transform: var(--slide-from);
-  }
-}
-
-@keyframes slide-out {
-  to {
-    transform: var(--slide-from);
-  }
-}
-
-.slide {
-  &[data-state='open'] {
-    animation: slide-in 0.25s ease-out;
+@layer components {
+  .glass {
+    background-color: var(--color-glass-fill);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: inset 0 1px 0 var(--color-glass-highlight), 0 12px 32px var(--color-glass-shadow);
+    backdrop-filter: blur(22px) saturate(160%);
+    // Own compositing layer, or Chrome drops the blur until a nearby hover repaints it.
+    transform: translateZ(0);
   }
 
-  &[data-state='closed'] {
-    animation: slide-out 0.2s ease-in;
+  // Glass like the cards, tinted darker so text stays readable over what it covers.
+  .glass-dense {
+    background-color: rgba(var(--theme-surface), 0.72);
+    color: var(--color-on-surface);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: inset 0 1px 0 var(--color-glass-highlight), 0 12px 32px var(--color-glass-shadow);
+    backdrop-filter: blur(22px) saturate(160%);
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+  .toast {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 8px 8px 8px 16px;
+    border: 1px solid var(--color-glass-border);
+    border-radius: 24px;
+    background: var(--color-surface);
+    box-shadow: 0 12px 32px var(--color-glass-shadow);
+    font-size: var(--text-label);
+
+    &[data-state='open'] {
+      animation: var(--animate-fade-in);
+    }
+
+    &[data-state='closed'] {
+      animation: var(--animate-fade-out);
+    }
   }
-}
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
-}
+  .btn {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
 
-.d-flex { display: flex; }
-.d-block { display: block; }
-.flex-column { flex-direction: column; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-grow-1 { flex-grow: 1; }
-.flex-shrink-0 { flex-shrink: 0; }
-.align-center { align-items: center; }
-.align-start { align-items: flex-start; }
-.align-baseline { align-items: baseline; }
-.justify-center { justify-content: center; }
-.justify-space-between { justify-content: space-between; }
-.ga-1 { gap: 4px; }
-.ga-2 { gap: 8px; }
-.ga-3 { gap: 12px; }
-.ga-4 { gap: 16px; }
-.ms-auto { margin-inline-start: auto; }
-.mt-1 { margin-top: 4px; }
-.mt-2 { margin-top: 8px; }
-.mb-2 { margin-bottom: 8px; }
-.ma-0 { margin: 0; }
-.py-1 { padding-block: 4px; }
-.w-100 { width: 100%; }
-.min-w-0 { min-width: 0; }
-.overflow-hidden { overflow: hidden; }
-.text-center { text-align: center; }
-.text-no-wrap { white-space: nowrap; }
-.text-truncate { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.font-weight-medium { font-weight: 500; }
-.text-decoration-none { text-decoration: none; }
-.text-medium-emphasis { color: rgba(var(--theme-on-surface), 0.7); }
-.text-disabled { color: rgba(var(--theme-on-surface), 0.5); }
-.text-primary { color: rgb(var(--theme-primary)); }
-.text-success { color: rgb(var(--theme-success)); }
-.text-warning { color: rgb(var(--theme-warning)); }
-.text-error { color: rgb(var(--theme-error)); }
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
 
-.d-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+    &:hover::after {
+      opacity: 0.08;
+    }
+
+    &:active::after {
+      opacity: 0.16;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+
+      &::after {
+        opacity: 0;
+      }
+    }
+  }
+
+  .btn-filled {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
+  }
+
+  .btn-tonal {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+  }
+
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+
+  .chip {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: var(--text-hint);
+    white-space: nowrap;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    &:is(button):hover::before {
+      opacity: 0.2;
+    }
+  }
+
+  .chip-small {
+    height: 26px;
+    padding: 0 10px;
+    font-size: var(--text-small);
+  }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+  }
+
+  // Status line under a screen's first card, as tall as the chip it may hold so
+  // the card keeps one height while loading.
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+    color: var(--color-medium);
+  }
+
+  .dot {
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    margin-inline: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-glass-border);
+  }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: 500;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: rgb(0 0 0 / 20%);
+
+    &[data-state='open'] {
+      animation: var(--animate-fade-in);
+    }
+
+    &[data-state='closed'] {
+      animation: var(--animate-fade-out);
+    }
+  }
+
+  .toasts {
+    position: fixed;
+    left: 50%;
+    z-index: var(--z-toast);
+    width: min(100% - 16px, 600px);
+    pointer-events: auto;
+    transform: translateX(-50%);
+  }
+
+  .toasts-top {
+    top: calc(var(--spacing-app-bar) + 12px + env(safe-area-inset-top));
+  }
+
+  .toasts-bottom {
+    bottom: calc(var(--spacing-bottom-nav) + 12px + env(safe-area-inset-bottom));
+  }
+
+  // A full-width button in a list, its focus ring drawn inside.
+  .list-button {
+    width: 100%;
+    text-align: left;
+
+    &:hover,
+    &:focus-visible {
+      background: rgba(var(--theme-on-surface), 0.06);
+    }
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+  }
+
+  .switch {
+    position: relative;
+    width: 30px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(var(--theme-on-surface), 0.3);
+    transition: background-color 0.2s;
+
+    &[data-state='checked'] {
+      background: var(--color-primary);
+    }
+  }
+
+  .switch-thumb {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+    transform: translateX(2px);
+    transition: transform 0.2s;
+
+    &[data-state='checked'] {
+      transform: translateX(14px);
+    }
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid rgba(var(--theme-on-surface), 0.38);
+    border-radius: 12px;
+
+    &:focus-within {
+      border-color: var(--color-primary);
+      box-shadow: inset 0 0 0 1px var(--color-primary);
+    }
+
+    &.invalid {
+      border-color: var(--color-error);
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      outline: none;
+    }
+  }
+
+  .chart-tooltip {
+    position: absolute;
+    padding: 6px 10px;
+    border-radius: 10px;
+    pointer-events: none;
+    background: var(--color-surface);
+    border: 1px solid var(--color-glass-border);
+  }
 }

@@ -189,27 +189,27 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
 </script>
 
 <template>
-  <div class="page-width cards">
-    <section class="glass card companion full-row">
+  <div class="mx-auto grid w-full max-w-page grid-cols-1 gap-3 px-4 py-3.5 sm:grid-cols-2">
+    <section class="glass card col-span-full flex flex-col gap-2.5 px-4 py-3.5">
       <AppProgress v-if="refreshing" class="progress-top text-primary" />
-      <div class="d-flex align-center ga-2">
-        <div class="flex-grow-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <div class="min-w-0 grow">
           <div class="text-title">{{ selfInfo?.name ?? $t('nav.companion') }}</div>
           <!-- Kept while loading so the card does not grow once the node answers. -->
-          <div class="font-mono text-small text-medium-emphasis">
+          <div class="font-mono text-small text-medium">
             <template v-if="selfInfo">{{ formatNumber(selfInfo.radioFreq / 1000, 3) }} MHz · {{ formatNumber(selfInfo.radioBw / 1000, 1, 0) }} kHz</template>
             <template v-else>&nbsp;</template>
           </div>
         </div>
         <button type="button" class="btn btn-icon btn-tonal text-primary" :aria-label="$t('companion.refresh')" :aria-busy="refreshing" @click="refresh">
-          <AppIcon :icon="mdiRefresh" :class="{ spin: refreshing }" />
+          <AppIcon :icon="mdiRefresh" :class="{ 'animate-spin': refreshing }" />
         </button>
         <button type="button" class="btn btn-icon btn-tonal text-error" :aria-label="$t('companion.disconnect')" @click="disconnect">
           <AppIcon :icon="mdiPower" />
         </button>
       </div>
-      <div class="status-row d-flex align-center ga-2 text-small text-medium-emphasis">
-        <span class="dot" :class="[refreshing ? 'text-primary' : failed ? 'text-error' : 'text-success', { pulse: refreshing }]" />
+      <div class="status-row">
+        <span class="dot" :class="[refreshing ? 'text-primary' : failed ? 'text-error' : 'text-success', { 'animate-blink': refreshing }]" />
         <span>{{ statusText }}</span>
         <DialogRoot v-if="health && issues.length" v-model:open="healthOpen">
           <DialogTrigger class="chip ms-auto" :class="`text-${health.tone}`">
@@ -218,23 +218,27 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
             <AppIcon :icon="mdiChevronRight" size="16" />
           </DialogTrigger>
           <DialogPortal>
-            <DialogOverlay class="overlay health-overlay" />
-            <DialogContent class="card health-dialog" :aria-describedby="undefined">
-              <DialogTitle class="health-title">{{ health.label }}</DialogTitle>
-              <div class="health-checks d-flex flex-column ga-4">
-                <div v-for="check in issues" :key="check.name" class="d-flex ga-3">
+            <DialogOverlay class="overlay bg-black/60" />
+            <!-- Opaque, the glass lets the cards behind show through the text. -->
+            <DialogContent
+              class="card fixed top-1/2 left-1/2 z-(--z-overlay) flex max-h-[calc(100dvh-48px)] w-[calc(100%-48px)] max-w-110 -translate-1/2 flex-col border border-glass-border bg-surface shadow-[0_12px_32px_var(--color-glass-shadow)]"
+              :aria-describedby="undefined"
+            >
+              <DialogTitle class="px-6 pt-4 pb-2.5 text-title tracking-normal">{{ health.label }}</DialogTitle>
+              <div class="flex flex-col gap-4 overflow-y-auto px-6">
+                <div v-for="check in issues" :key="check.name" class="flex gap-3">
                   <AppIcon :icon="TONE_ICONS[check.tone]" :class="`text-${check.tone}`" />
-                  <div class="flex-grow-1 min-w-0">
-                    <div class="d-flex justify-space-between ga-2">
-                      <span class="font-weight-medium">{{ check.name }}</span>
-                      <span class="font-mono text-no-wrap" :class="`text-${check.tone}`">{{ check.value }}</span>
+                  <div class="min-w-0 grow">
+                    <div class="flex justify-between gap-2">
+                      <span class="font-medium">{{ check.name }}</span>
+                      <span class="font-mono whitespace-nowrap" :class="`text-${check.tone}`">{{ check.value }}</span>
                     </div>
                     <div class="text-small" :class="`text-${check.tone}`">{{ check.status }}</div>
-                    <div class="text-small text-medium-emphasis mt-1">{{ check.detail }}</div>
+                    <div class="mt-1 text-small text-medium">{{ check.detail }}</div>
                   </div>
                 </div>
               </div>
-              <div class="d-flex health-actions">
+              <div class="flex p-2">
                 <DialogClose class="btn ms-auto">{{ $t('common.close') }}</DialogClose>
               </div>
             </DialogContent>
@@ -255,7 +259,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
     </VitalsCard>
 
     <VitalsCard v-if="device" :title="$t('device.title')" :chip="$t('device.protocol', { version: device.protocol })">
-      <VitalStat class="full-row" :label="$t('device.model')" :value="device.model ?? $t('common.unknown')" />
+      <VitalStat class="col-span-full" :label="$t('device.model')" :value="device.model ?? $t('common.unknown')" />
       <VitalStat :label="$t('device.firmware')" :value="device.version ?? $t('common.unknown')" :hint="device.buildDate ? $t('device.built', { date: device.buildDate }) : undefined" />
       <VitalStat v-if="clockOffset !== null" :label="$t('device.clockOffset')" :value="offset(clockOffset)" :tone="clockTone" :hint="$t('device.clockOffsetHint')" />
       <VitalStat
@@ -269,7 +273,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
     <VitalsCard v-if="core && battery" :title="$t('health.title')" :chip="battery.label" :chip-color="battery.tone">
       <VitalStat :label="$t('checks.battery')" :value="formatNumber(core.batteryMilliVolts / 1000, 2)" unit="V" :tone="battery.tone" :hint="$t('battery.charged', { percent: formatNumber(battery.level * 100) })" />
       <VitalStat :label="$t('health.uptime')" :value="duration(core.uptimeSecs)" />
-      <AppProgress class="full-row" :class="`text-${battery.tone}`" :value="battery.level * 100" />
+      <AppProgress class="col-span-full" :class="`text-${battery.tone}`" :value="battery.level * 100" />
       <VitalStat :label="$t('health.queue')" :value="formatNumber(core.queueLen)" :hint="core.queueLen ? $t('health.queueWaiting') : $t('health.queueEmpty')" />
     </VitalsCard>
 
@@ -289,66 +293,3 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
   </div>
 </template>
 
-<style scoped lang="scss">
-@use '~/assets/scss/variables' as *;
-
-.companion {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-// Opaque, the glass lets the cards behind show through the text.
-.health-dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: $z-overlay;
-  width: calc(100% - 48px);
-  max-width: 440px;
-  max-height: calc(100dvh - 48px);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--glass-border);
-  background: rgb(var(--theme-surface));
-  box-shadow: 0 12px 32px var(--glass-shadow);
-  transform: translate(-50%, -50%);
-}
-
-.health-overlay {
-  background: rgb(0 0 0 / 60%);
-}
-
-.health-title {
-  margin: 0;
-  padding: 16px 24px 10px;
-  font-size: var(--text-title);
-  font-weight: 500;
-}
-
-.health-checks {
-  overflow-y: auto;
-  padding: 0 24px;
-}
-
-.health-actions {
-  padding: 8px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
-  padding: 14px 16px;
-
-  @media (min-width: $breakpoint-sm) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.full-row {
-  grid-column: 1 / -1;
-  margin: 0;
-}
-</style>
