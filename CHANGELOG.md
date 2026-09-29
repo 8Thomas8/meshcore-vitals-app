@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.0...v1.2.1) (2026-09-29)
+
+
+### Refactor
+
+* replace Vuetify with Reka UI ([#21](https://github.com/8Thomas8/meshcore-vitals-app/issues/21)) ([a388904](https://github.com/8Thomas8/meshcore-vitals-app/commit/a3889049f3ca59c3205cc886d9bce220b9f94228))
+
 ## [1.2.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.1.0...v1.2.0) (2026-09-27)
 
 
