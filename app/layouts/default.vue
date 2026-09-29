@@ -90,7 +90,6 @@ watch(() => route.path, () => {
     padding-top: $app-bar-height;
   }
 
-  // Room for the floating menu's offset, which v-main does not count.
   &.above-nav {
     padding-bottom: calc($bottom-nav-space + env(safe-area-inset-bottom));
   }

@@ -76,7 +76,7 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
   }
 }
 
-.languages {
+:deep(.languages) {
   z-index: 30;
   min-width: 140px;
   padding: 4px 0;

@@ -1,9 +1,10 @@
 import { version } from './package.json'
 import { ELEVATION_API_URL, MAP_STYLE_URL } from './app/utils/constants'
 
-// Nuxt inlines its config and payload as scripts and Reka UI sets inline
-// styles, hence 'unsafe-inline'. The rest only allows what the app loads:
-// Google Fonts, OpenFreeMap for the map and Open-Meteo for the elevation.
+// The prerendered pages inline Nuxt's config as a script and the theme colors
+// as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
+// what the app loads: Google Fonts, OpenFreeMap for the map and Open-Meteo for
+// the elevation.
 const CONTENT_SECURITY_POLICY = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline'`,
