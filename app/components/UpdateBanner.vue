@@ -19,7 +19,7 @@ const open = computed({
   <ToastProvider :duration="0" disable-swipe>
     <ToastRoot v-model:open="open" type="background" class="toast" @escape-key-down.prevent>
       <AppIcon :icon="mdiUpdate" class="text-primary" />
-      <ToastDescription class="flex-grow-1">{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></ToastDescription>
+      <ToastDescription class="grow">{{ $t('update.available') }}<template v-if="connection"> {{ $t('update.disconnects') }}</template></ToastDescription>
       <ToastClose class="btn">{{ $t('update.later') }}</ToastClose>
       <ToastAction :alt-text="$t('update.reload')" as-child>
         <button type="button" class="btn btn-tonal text-primary" @click="apply">{{ $t('update.reload') }}</button>

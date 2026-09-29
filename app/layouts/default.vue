@@ -15,19 +15,27 @@ watch(() => route.path, () => {
 <template>
   <div>
     <template v-if="connection">
-      <header class="glass app-bar">
-        <div class="page-width app-bar-content d-flex align-center ga-3">
+      <!-- A bar along the top edge, only its bottom border shows. -->
+      <header class="glass fixed inset-x-0 top-0 z-(--z-bar) flex h-app-bar border-x-0 border-t-0">
+        <!-- Same width and gutter as the cards below. -->
+        <div class="mx-auto flex w-full max-w-page items-center gap-3 px-4">
           <DialogRoot v-if="!smAndDown" v-model:open="menuOpen">
-            <DialogTrigger class="btn btn-icon menu-button" :aria-label="$t('nav.openMenu')">
+            <DialogTrigger class="btn btn-icon -ms-2.5" :aria-label="$t('nav.openMenu')">
               <AppIcon :icon="mdiMenu" />
             </DialogTrigger>
             <DialogPortal>
               <DialogOverlay class="overlay" />
-              <DialogContent class="glass drawer slide" :aria-describedby="undefined">
-                <DialogTitle class="d-sr-only">{{ $t('nav.menu') }}</DialogTitle>
-                <nav class="d-flex flex-column ga-1">
+              <DialogContent
+                class="glass fixed top-app-bar bottom-0 left-0 z-(--z-overlay) w-65 border-y-0 border-l-0 p-2 [--slide-from:translateX(-100%)] data-[state=closed]:animate-slide-out data-[state=open]:animate-slide-in"
+                :aria-describedby="undefined"
+              >
+                <DialogTitle class="sr-only">{{ $t('nav.menu') }}</DialogTitle>
+                <nav class="flex flex-col gap-1">
                   <DialogClose v-for="item in NAV_ITEMS" :key="item.to" as-child>
-                    <NuxtLink :to="item.to" class="drawer-item">
+                    <NuxtLink
+                      :to="item.to"
+                      class="flex min-h-11 items-center gap-8 rounded-lg px-4 text-label font-medium hover:bg-on-surface/6 aria-[current=page]:bg-primary/14 aria-[current=page]:text-primary"
+                    >
                       <AppIcon :icon="item.icon" />
                       <span>{{ $t(item.title) }}</span>
                     </NuxtLink>
@@ -36,19 +44,28 @@ watch(() => route.path, () => {
               </DialogContent>
             </DialogPortal>
           </DialogRoot>
-          <img class="d-block" src="/favicon.svg" alt="" width="28" height="28">
+          <img src="/favicon.svg" alt="" width="28" height="28">
           <span class="text-title">MeshCore Vitals</span>
         </div>
       </header>
-      <nav v-if="smAndDown" class="glass bottom-nav">
-        <NuxtLink v-for="item in NAV_ITEMS" :key="item.to" :to="item.to" class="nav-item">
+      <!-- Floats above the page, clear of the screen edges and the home indicator. -->
+      <nav v-if="smAndDown" class="glass fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-(--z-bar) flex h-14 gap-1 rounded-full p-1.5">
+        <NuxtLink
+          v-for="item in NAV_ITEMS"
+          :key="item.to"
+          :to="item.to"
+          class="flex flex-1 flex-col items-center justify-center rounded-full text-[11px] font-medium hover:bg-on-surface/6 aria-[current=page]:bg-primary/14 aria-[current=page]:text-primary"
+        >
           <AppIcon :icon="item.icon" size="20" />
           <span>{{ $t(item.title) }}</span>
         </NuxtLink>
       </nav>
     </template>
     <div class="backdrop" aria-hidden="true" />
-    <main class="content" :class="{ 'below-bar': connection, 'above-nav': connection && smAndDown }">
+    <main
+      class="relative flex min-h-dvh flex-col"
+      :class="{ 'pt-app-bar': connection, 'pb-[calc(var(--spacing-bottom-nav)+env(safe-area-inset-bottom))]': connection && smAndDown }"
+    >
       <ConnectScreen v-if="!connection" />
       <!-- Every page needs a node, they only show once one is connected. -->
       <slot v-if="connection" />
@@ -60,125 +77,21 @@ watch(() => route.path, () => {
 </template>
 
 <style scoped lang="scss">
-@use '~/assets/scss/variables' as *;
-
 .backdrop {
   position: fixed;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(circle 260px at calc(100% - 90px) 120px, var(--backdrop-halo), transparent),
-    radial-gradient(circle 220px at 60px calc(100% - 124px), var(--backdrop-halo), transparent);
+    radial-gradient(circle 260px at calc(100% - 90px) 120px, var(--color-backdrop-halo), transparent),
+    radial-gradient(circle 220px at 60px calc(100% - 124px), var(--color-backdrop-halo), transparent);
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle, var(--backdrop-dot) 1px, transparent 1.5px) 0 0 / 18px 18px;
+    background: radial-gradient(circle, var(--color-backdrop-dot) 1px, transparent 1.5px) 0 0 / 18px 18px;
     mask-image: radial-gradient(ellipse at center, black, transparent 85%);
-  }
-}
-
-.content {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-
-  &.below-bar {
-    padding-top: $app-bar-height;
-  }
-
-  &.above-nav {
-    padding-bottom: calc($bottom-nav-space + env(safe-area-inset-bottom));
-  }
-}
-
-// A bar along the top edge, only its bottom border shows.
-.app-bar {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: $z-bar;
-  height: $app-bar-height;
-  display: flex;
-  border-width: 0 0 1px;
-}
-
-// Same width and gutter as the cards below.
-.app-bar-content {
-  padding-inline: 16px;
-}
-
-.menu-button {
-  margin-inline-start: -10px;
-}
-
-// Floats above the page, clear of the screen edges and the home indicator.
-.bottom-nav {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: $z-bar;
-  height: 56px;
-  display: flex;
-  gap: 4px;
-  padding: 6px;
-  border-radius: 999px;
-}
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  color: inherit;
-  font-size: 11px;
-  font-weight: 500;
-  text-decoration: none;
-
-  &:hover {
-    background: rgba(var(--theme-on-surface), 0.06);
-  }
-}
-
-.drawer {
-  position: fixed;
-  top: $app-bar-height;
-  bottom: 0;
-  left: 0;
-  z-index: $z-overlay;
-  width: 260px;
-  --slide-from: translateX(-100%);
-  padding: 8px;
-  border-width: 0 1px 0 0;
-}
-
-.drawer-item {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 8px;
-  color: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-
-  &:hover {
-    background: rgba(var(--theme-on-surface), 0.06);
-  }
-}
-
-.nav-item,
-.drawer-item {
-  &.router-link-exact-active {
-    background: rgba(var(--theme-primary), 0.14);
-    color: rgb(var(--theme-primary));
   }
 }
 </style>

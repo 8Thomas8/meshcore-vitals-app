@@ -180,18 +180,24 @@ watch(coverage, (value) => {
 </script>
 
 <template>
-  <div class="page-width screen">
+  <div class="pointer-events-none mx-auto flex w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto">
+    <!-- The coverage card on top, the list held at the bottom of the page just
+         above the menu, growing upwards. The map behind takes the gestures
+         outside the cards. -->
     <!-- Lazy: MapLibre, its styles and its worker only load once there is a map to show. -->
     <LazyMapBackdrop v-if="here" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
-    <section ref="summary" class="glass card summary">
+    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
-      <div class="d-flex align-center ga-2">
+      <div class="flex items-center gap-2">
         <PopoverRoot v-model:open="coverageOpen">
-          <PopoverTrigger class="coverage d-flex align-center ga-2 flex-grow-1 min-w-0" :disabled="!coverage">
-            <svg class="flex-shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
-              <circle class="ring-track" cx="20" cy="20" r="18" />
+          <PopoverTrigger class="flex min-w-0 grow items-center gap-2 text-left" :disabled="!coverage">
+            <svg class="shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+              <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="4" stroke-opacity="0.2" />
               <circle
-                class="ring-fill"
+                class="transition-[stroke-dasharray] duration-300"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="4"
                 cx="20"
                 cy="20"
                 r="18"
@@ -199,12 +205,13 @@ watch(coverage, (value) => {
                 :stroke-dasharray="`${coverage ? Math.min(coverage.usable, COVERAGE_GOOD_USABLE) / COVERAGE_GOOD_USABLE * 100 : 0} 100`"
                 transform="rotate(-90 20 20)"
               />
-              <text v-if="coverage" class="score font-mono" x="20" y="20" text-anchor="middle" dominant-baseline="central">{{ coverage.usable }}</text>
+              <text v-if="coverage" class="fill-on-surface font-mono text-hint font-medium" x="20" y="20" text-anchor="middle" dominant-baseline="central">{{ coverage.usable }}</text>
             </svg>
-              <span class="flex-grow-1 min-w-0">
-                <span class="text-title headline">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
-                <span class="d-flex align-center ga-1 text-small text-medium-emphasis min-w-0">
-                  <span class="text-truncate">
+              <span class="min-w-0 grow">
+                <!-- Two lines rather than cut, some languages need them on a phone. -->
+                <span class="line-clamp-2 text-title leading-[1.2]">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
+                <span class="flex min-w-0 items-center gap-1 text-small text-medium">
+                  <span class="truncate">
                     <template v-if="inRange.length">{{ $t('repeaters.counts', { direct: direct.length, relayed: $t('repeaters.relayed', inRange.length - direct.length) }) }}</template>
                     <template v-else>{{ scanning ? $t('scan.waiting') : rows.length ? $t('scan.nothingAnswered') : $t('scan.prompt') }}</template>
                   </span>
@@ -213,19 +220,21 @@ watch(coverage, (value) => {
               </span>
           </PopoverTrigger>
           <PopoverPortal>
-            <PopoverContent side="bottom" :side-offset="4" :collision-padding="8" class="popover glass-dense">
-              <div class="d-flex flex-column ga-2 py-1">
-                <span class="font-weight-medium">{{ coverage?.reason }}</span>
+            <PopoverContent side="bottom" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
+              <div class="flex flex-col gap-2 py-1">
+                <span class="font-medium">{{ coverage?.reason }}</span>
                 <span>{{ $t('coverage.help.usable', { minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB, comfortable: MARGIN_COMFORTABLE_DB }) }}</span>
                 <span>{{ $t('coverage.help.levels', { count: COVERAGE_GOOD_USABLE, fair: MARGIN_FAIR_DB }) }}</span>
               </div>
             </PopoverContent>
           </PopoverPortal>
         </PopoverRoot>
-        <!-- Inert while scanning or on auto, but not disabled: a disabled look is unreadable. -->
+        <!-- Inert while scanning or on auto, but not disabled: a disabled look is
+             unreadable. Keeps its width while the label turns into a countdown,
+             unless a translation needs more. -->
         <button
           type="button"
-          class="btn action"
+          class="btn h-11 min-w-26"
           :class="scanning || autoScan ? 'btn-tonal text-primary' : 'btn-filled'"
           :aria-disabled="scanning || autoScan"
           @click="autoScan || scan()"
@@ -236,15 +245,16 @@ watch(coverage, (value) => {
           <template v-else>{{ $t('scan.button') }}</template>
         </button>
       </div>
-      <div class="status-row d-flex align-center ga-2 text-small text-medium-emphasis">
-        <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { pulse: scanning }]" />
-        <span v-if="scanError" class="text-error text-truncate">{{ message(scanError) }}</span>
-        <span v-else-if="scanning" class="text-truncate">{{ $t('scan.inProgress') }}</span>
-        <span v-else class="text-truncate">
+      <div class="status-row">
+        <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { 'animate-blink': scanning }]" />
+        <span v-if="scanError" class="truncate text-error">{{ message(scanError) }}</span>
+        <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
+        <span v-else class="truncate">
           {{ scannedAt ? $t('scan.done', { ago: ago(scannedAt, now) }) : $t('scan.never') }}
           <template v-if="noLocation"> · {{ $t('scan.noLocation') }}</template>
         </span>
-        <label class="toggle ms-auto" :title="$t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 })">
+        <!-- As tall as the status line, the card keeps its height. -->
+        <label class="ms-auto flex h-8 flex-none cursor-pointer items-center gap-2" :title="$t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 })">
           <SwitchRoot v-model="autoScan" class="switch">
             <SwitchThumb class="switch-thumb" />
           </SwitchRoot>
@@ -253,7 +263,7 @@ watch(coverage, (value) => {
         <!-- For walking around with the phone in hand. On but refused turns amber. -->
         <label
           v-if="wakeLockSupported"
-          class="toggle"
+          class="flex h-8 flex-none cursor-pointer items-center gap-2"
           :class="{ 'text-warning': keepScreenOn && !screenKeptOn }"
           :title="keepScreenOn && !screenKeptOn ? $t('wakeLock.refused') : $t('wakeLock.hint')"
         >
@@ -265,52 +275,53 @@ watch(coverage, (value) => {
       </div>
     </section>
 
-    <section v-if="rows.length" ref="list" class="glass card bottom list" :style="{ maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` }">
+    <!-- Leaves the map room between the two cards, the rows scroll under the toggle. -->
+    <section v-if="rows.length" ref="list" class="glass card mt-auto flex shrink-0 flex-col" :style="{ maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` }">
       <button
         type="button"
-        class="list-toggle d-flex align-center ga-2 text-small"
+        class="list-button flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-small"
         :aria-expanded="!listHidden"
         :aria-controls="listHidden ? undefined : 'repeater-rows'"
         @click="listHidden = !listHidden"
       >
-        <span class="flex-grow-1 font-weight-medium">{{ $t('repeaters.count', shownRows.length) }}</span>
-        <span class="text-medium-emphasis">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
-        <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium-emphasis" />
+        <span class="grow font-medium">{{ $t('repeaters.count', shownRows.length) }}</span>
+        <span class="text-medium">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
+        <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium" />
       </button>
       <!-- Unmounted when folded, the rows would keep updating every second. -->
-      <div v-if="!listHidden" id="repeater-rows" class="rows">
+      <div v-if="!listHidden" id="repeater-rows" class="min-h-0 divide-y divide-glass-border overflow-y-auto border-t border-glass-border">
         <button
           v-for="row in shownRows"
           :key="row.repeater.id"
           type="button"
-          class="row"
-          :class="{ 'out-of-range': row.outOfRange }"
+          class="row list-button"
+          :class="{ 'opacity-70': row.outOfRange }"
           @click="selectedId = row.repeater.id"
         >
           <CompassDial
             class="icon"
-            :class="row.repeater.hops || row.outOfRange ? 'text-medium-emphasis' : `text-${row.link?.tone ?? 'primary'}`"
+            :class="row.repeater.hops || row.outOfRange ? 'text-medium' : `text-${row.link?.tone ?? 'primary'}`"
             :bearing="row.bearing"
             :heading="heading"
           />
-          <span class="name font-weight-medium text-truncate">{{ row.name }}</span>
-          <span class="details text-small text-medium-emphasis">{{ row.details }}</span>
+          <span class="name truncate font-medium">{{ row.name }}</span>
+          <span class="details text-small text-medium">{{ row.details }}</span>
           <span v-if="!row.repeater.hops" class="links font-mono text-small">
             <span>
-              <span class="text-medium-emphasis">RX </span>
+              <span class="text-medium">RX </span>
               <span :class="row.rx && `text-${row.rx.tone}`">{{ row.repeater.rx ? `${formatNumber(row.repeater.rx.snr, 2, 0)} dB` : $t('common.na') }}</span>
             </span>
             <span>
-              <span class="text-medium-emphasis">TX </span>
+              <span class="text-medium">TX </span>
               <span :class="row.tx ? `text-${row.tx.tone}` : 'text-disabled'">{{ row.repeater.tx ? `${formatNumber(row.repeater.tx.snr, 2, 0)} dB` : $t('repeaters.txUnknown') }}</span>
             </span>
           </span>
-          <AppIcon class="chevron text-medium-emphasis" :icon="mdiChevronRight" />
+          <AppIcon class="chevron text-medium" :icon="mdiChevronRight" />
         </button>
         <button
           v-if="outOfRangeCount"
           type="button"
-          class="out-of-range-toggle d-flex align-center ga-2 text-small text-medium-emphasis"
+          class="list-button flex min-h-11 items-center gap-2 px-4 py-2 text-small text-medium"
           :title="$t('repeaters.outOfRangeHint')"
           @click="showOutOfRange = !showOutOfRange"
         >
@@ -323,7 +334,13 @@ watch(coverage, (value) => {
     <DialogRoot v-model:open="detailOpen">
       <DialogPortal>
         <DialogOverlay class="overlay" />
-        <DialogContent class="glass-dense panel slide" :class="smAndDown ? 'sheet' : 'side'" :aria-describedby="undefined">
+        <DialogContent
+          class="glass-dense fixed z-(--z-overlay) overflow-y-auto data-[state=closed]:animate-slide-out data-[state=open]:animate-slide-in"
+          :class="smAndDown
+            ? 'inset-x-0 bottom-0 max-h-[85dvh] rounded-t-3xl border-x-0 border-b-0 [--slide-from:translateY(100%)]'
+            : 'top-app-bar right-0 bottom-0 w-100 border-y-0 border-r-0 [--slide-from:translateX(100%)]'"
+          :aria-describedby="undefined"
+        >
           <RepeaterDetail
             v-if="selected"
             :row="selected"
@@ -336,227 +353,15 @@ watch(coverage, (value) => {
       </DialogPortal>
     </DialogRoot>
 
-    <section v-if="!rows.length" class="glass card bottom empty text-medium-emphasis">
+    <section v-if="!rows.length" class="glass card mt-auto p-4 text-hint text-medium">
       {{ $t('repeaters.empty') }}
     </section>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use '~/assets/scss/variables' as *;
-
-// The coverage card on top, the list held at the bottom of the page just above
-// the menu, growing upwards.
-.screen {
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
-  // Lets the map behind take the gestures outside the cards.
-  pointer-events: none;
-
-  > * {
-    pointer-events: auto;
-  }
-}
-
-.bottom {
-  margin-top: auto;
-}
-
-// Leaves the map room between the two cards, the rows scroll under the
-// toggle.
-.list {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.rows {
-  min-height: 0;
-  overflow-y: auto;
-  border-top: 1px solid var(--glass-border);
-}
-
-.list-toggle {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 12px 8px 16px;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  &:hover,
-  &:focus-visible {
-    background: rgba(var(--theme-on-surface), 0.06);
-  }
-}
-
-.out-of-range-toggle {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 0;
-  background: none;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  .row + & {
-    border-top: 1px solid var(--glass-border);
-  }
-
-  &:hover,
-  &:focus-visible {
-    background: rgba(var(--theme-on-surface), 0.06);
-  }
-}
-
-// Keeps its width while the label turns into a countdown, unless a translation
-// needs more.
-.action {
-  min-width: 104px;
-  height: 44px;
-}
-
-// As tall as the status line, the card keeps its height.
-.toggle {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  cursor: pointer;
-}
-
-.switch {
-  position: relative;
-  width: 30px;
-  height: 18px;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(var(--theme-on-surface), 0.3);
-  transition: background-color 0.2s;
-
-  &[data-state='checked'] {
-    background: rgb(var(--theme-primary));
-  }
-}
-
-.switch-thumb {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 30%);
-  transform: translateX(2px);
-  transition: transform 0.2s;
-
-  &[data-state='checked'] {
-    transform: translateX(14px);
-  }
-}
-
-.ring-track,
-.ring-fill {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 4;
-}
-
-.ring-track {
-  stroke-opacity: 0.2;
-}
-
-.ring-fill {
-  transition: stroke-dasharray 0.3s;
-}
-
-.summary {
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-// Two lines rather than cut, some languages need them on a phone.
-.headline {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  line-height: 1.2;
-}
-
-.score {
-  fill: rgb(var(--theme-on-surface));
-  font-size: var(--text-hint);
-  font-weight: 500;
-}
-
-.coverage {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.panel {
-  position: fixed;
-  z-index: $z-overlay;
-  overflow-y: auto;
-}
-
-.sheet {
-  --slide-from: translateY(100%);
-  inset: auto 0 0;
-  max-height: 85dvh;
-  border-width: 1px 0 0;
-  border-radius: 24px 24px 0 0;
-}
-
-.side {
-  --slide-from: translateX(100%);
-  top: $app-bar-height;
-  right: 0;
-  bottom: 0;
-  width: 400px;
-  border-width: 0 0 0 1px;
-}
-
-.row,
-.list-toggle,
-.out-of-range-toggle {
-  &:focus-visible {
-    outline-offset: -2px;
-  }
-}
-
-.empty {
-  padding: 16px;
-  font-size: var(--text-hint);
-}
-
 // Stacked on phones, the SNR moves to its own column on wider screens.
 .row {
-  width: 100%;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) auto;
   grid-template-areas: 'icon name chevron' 'icon details chevron' 'icon links chevron';
@@ -564,20 +369,7 @@ watch(coverage, (value) => {
   gap: 2px 12px;
   padding: 12px 16px;
 
-  & + & {
-    border-top: 1px solid var(--glass-border);
-  }
-
-  &.out-of-range {
-    opacity: 0.7;
-  }
-
-  &:hover,
-  &:focus-visible {
-    background: rgba(var(--theme-on-surface), 0.06);
-  }
-
-  @media (min-width: $breakpoint-sm) {
+  @media (width >= 600px) {
     grid-template-columns: 48px minmax(0, 1fr) auto auto;
     grid-template-areas: 'icon name links chevron' 'icon details links chevron';
   }
@@ -607,7 +399,7 @@ watch(coverage, (value) => {
   gap: 2px 16px;
   margin-top: 2px;
 
-  @media (min-width: $breakpoint-sm) {
+  @media (width >= 600px) {
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;

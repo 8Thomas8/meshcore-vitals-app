@@ -63,6 +63,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/scss/main.scss'],
 
+  postcss: {
+    plugins: { '@tailwindcss/postcss': {} }
+  },
+
   // Sent by Vercel. A route rule would become a Vercel route that ends the
   // routing, so the assets would miss the headers. This route lets the
   // routing go on.

@@ -490,8 +490,8 @@ onBeforeUnmount(() => {
     padding: 4px 10px;
     border-radius: 12px;
     background: rgba(var(--theme-surface), 0.6);
-    border: 1px solid var(--glass-border);
-    box-shadow: inset 0 1px 0 var(--glass-highlight), 0 6px 16px var(--glass-shadow);
+    border: 1px solid var(--color-glass-border);
+    box-shadow: inset 0 1px 0 var(--color-glass-highlight), 0 6px 16px var(--color-glass-shadow);
     backdrop-filter: blur(12px);
     color: rgb(var(--theme-on-surface));
     white-space: nowrap;
@@ -511,7 +511,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: var(--text-caption);
+    font-size: var(--text-small);
     font-weight: 600;
   }
 

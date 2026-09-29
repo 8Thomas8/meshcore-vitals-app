@@ -105,7 +105,7 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
 </script>
 
 <template>
-  <div ref="root" class="chart">
+  <div ref="root" class="relative touch-pan-y">
     <svg
       :width="width"
       :height="HEIGHT"
@@ -115,10 +115,10 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
       @pointerdown="onPointer"
       @pointerleave="event => event.pointerType === 'mouse' && (hover = null)"
     >
-      <g class="grid">
+      <g class="stroke-on-surface/10">
         <line v-for="tick in chart.ticks" :key="tick.value" :x1="PAD.left" :x2="chart.right" :y1="tick.y" :y2="tick.y" />
       </g>
-      <g class="axis">
+      <g class="fill-on-surface/60 font-mono text-[10px]">
         <text v-for="tick in chart.ticks" :key="tick.value" :x="PAD.left - 6" :y="tick.y" text-anchor="end" dominant-baseline="central">
           {{ formatNumber(tick.value) }}
         </text>
@@ -127,137 +127,33 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
         <text v-for="tick in chart.distances" :key="tick.value" :x="tick.x" :y="HEIGHT - 4" text-anchor="middle">{{ formatNumber(tick.value / 1000) }}</text>
         <text :x="chart.right" :y="HEIGHT - 4" text-anchor="end">{{ formatDistance(terrain.length) }}</text>
       </g>
-      <path class="fresnel" :d="chart.fresnel" />
-      <path class="terrain" :d="chart.terrain" />
-      <path v-if="chart.intrusion" class="intrusion" :class="`text-${TERRAIN_TONES[terrain.verdict]}`" :d="chart.intrusion" />
-      <path class="edge" :d="chart.edge" />
-      <line class="mast" :x1="chart.from.x" :x2="chart.from.x" :y1="chart.from.ground" :y2="chart.from.y" />
-      <line class="mast" :x1="chart.to.x" :x2="chart.to.x" :y1="chart.to.ground" :y2="chart.to.y" />
-      <line class="sight" :x1="chart.from.x" :y1="chart.from.y" :x2="chart.to.x" :y2="chart.to.y" />
-      <circle class="end" :cx="chart.from.x" :cy="chart.from.y" r="4" />
-      <circle class="end" :cx="chart.to.x" :cy="chart.to.y" r="4" />
-      <text class="end-label" :x="chart.from.x + 6" :y="PAD.top - 8">{{ $t('terrain.you') }}</text>
-      <text class="end-label" :x="chart.to.x" :y="PAD.top - 8" text-anchor="end">{{ name }}</text>
+      <path class="fill-primary/10 stroke-primary/35" stroke-dasharray="3 3" :d="chart.fresnel" />
+      <path class="fill-on-surface/12" :d="chart.terrain" />
+      <path v-if="chart.intrusion" fill="currentColor" fill-opacity="0.45" :class="`text-${TERRAIN_TONES[terrain.verdict]}`" :d="chart.intrusion" />
+      <path class="stroke-on-surface/55" fill="none" stroke-width="1.5" stroke-linejoin="round" :d="chart.edge" />
+      <line class="stroke-on-surface/80" stroke-width="1.5" :x1="chart.from.x" :x2="chart.from.x" :y1="chart.from.ground" :y2="chart.from.y" />
+      <line class="stroke-on-surface/80" stroke-width="1.5" :x1="chart.to.x" :x2="chart.to.x" :y1="chart.to.ground" :y2="chart.to.y" />
+      <line class="stroke-primary" stroke-width="2" stroke-linecap="round" :x1="chart.from.x" :y1="chart.from.y" :x2="chart.to.x" :y2="chart.to.y" />
+      <circle class="fill-primary stroke-surface" stroke-width="2" :cx="chart.from.x" :cy="chart.from.y" r="4" />
+      <circle class="fill-primary stroke-surface" stroke-width="2" :cx="chart.to.x" :cy="chart.to.y" r="4" />
+      <text class="fill-on-surface text-[11px] font-medium" :x="chart.from.x + 6" :y="PAD.top - 8">{{ $t('terrain.you') }}</text>
+      <text class="fill-on-surface text-[11px] font-medium" :x="chart.to.x" :y="PAD.top - 8" text-anchor="end">{{ name }}</text>
       <g v-if="terrain.tightest.shortfall > 0" :class="`text-${TERRAIN_TONES[terrain.verdict]}`">
-        <circle class="tightest" :cx="chart.tightest.x" :cy="chart.tightest.y" r="4" />
-        <text class="tightest-label" :x="chart.tightest.labelX" :y="chart.tightest.labelY" text-anchor="middle">
+        <circle class="stroke-surface" fill="currentColor" stroke-width="2" :cx="chart.tightest.x" :cy="chart.tightest.y" r="4" />
+        <text class="stroke-surface font-mono text-[10px] font-medium" fill="currentColor" paint-order="stroke" stroke-width="4" stroke-linejoin="round" :x="chart.tightest.labelX" :y="chart.tightest.labelY" text-anchor="middle">
           {{ $t('terrain.shortfallShort', { height: formatNumber(terrain.tightest.shortfall) }) }}
         </text>
       </g>
       <template v-if="tooltip">
-        <line class="crosshair" :x1="tooltip.x" :x2="tooltip.x" :y1="PAD.top" :y2="chart.bottom" />
-        <circle class="dot" :cx="tooltip.x" :cy="tooltip.y" r="3.5" />
+        <line class="stroke-on-surface/40" :x1="tooltip.x" :x2="tooltip.x" :y1="PAD.top" :y2="chart.bottom" />
+        <circle class="fill-on-surface stroke-surface" stroke-width="2" :cx="tooltip.x" :cy="tooltip.y" r="3.5" />
       </template>
     </svg>
-    <div v-if="tooltip" class="tooltip" :style="{ left: `${tooltip.left}px`, top: `${tooltip.top}px` }">
-      <div class="font-mono font-weight-medium">{{ formatDistance(tooltip.point.distance) }} · {{ formatNumber(tooltip.point.ground) }} m</div>
-      <div class="text-small text-medium-emphasis">
+    <div v-if="tooltip" class="chart-tooltip w-37.5" :style="{ left: `${tooltip.left}px`, top: `${tooltip.top}px` }">
+      <div class="font-mono font-medium">{{ formatDistance(tooltip.point.distance) }} · {{ formatNumber(tooltip.point.ground) }} m</div>
+      <div class="text-small text-medium">
         {{ $t(tooltip.point.clearance >= 0 ? 'terrain.belowSight' : 'terrain.aboveSight', { height: formatNumber(Math.abs(tooltip.point.clearance)) }) }}
       </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-.chart {
-  position: relative;
-  touch-action: pan-y;
-
-  svg {
-    display: block;
-  }
-}
-
-.grid line {
-  stroke: rgba(var(--theme-on-surface), 0.1);
-}
-
-.axis,
-.axis text {
-  fill: rgba(var(--theme-on-surface), 0.6);
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-
-.fresnel {
-  fill: rgba(var(--theme-primary), 0.1);
-  stroke: rgba(var(--theme-primary), 0.35);
-  stroke-dasharray: 3 3;
-}
-
-.terrain {
-  fill: rgba(var(--theme-on-surface), 0.12);
-}
-
-.intrusion {
-  fill: currentColor;
-  fill-opacity: 0.45;
-}
-
-.edge {
-  fill: none;
-  stroke: rgba(var(--theme-on-surface), 0.55);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
-.mast {
-  stroke: rgba(var(--theme-on-surface), 0.8);
-  stroke-width: 1.5;
-}
-
-.sight {
-  stroke: rgb(var(--theme-primary));
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.end {
-  fill: rgb(var(--theme-primary));
-  stroke: rgb(var(--theme-surface));
-  stroke-width: 2;
-}
-
-.end-label {
-  fill: rgb(var(--theme-on-surface));
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.tightest {
-  fill: currentColor;
-  stroke: rgb(var(--theme-surface));
-  stroke-width: 2;
-}
-
-.tightest-label {
-  fill: currentColor;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  paint-order: stroke;
-  stroke: rgb(var(--theme-surface));
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
-
-.crosshair {
-  stroke: rgba(var(--theme-on-surface), 0.4);
-}
-
-.dot {
-  fill: rgb(var(--theme-on-surface));
-  stroke: rgb(var(--theme-surface));
-  stroke-width: 2;
-}
-
-.tooltip {
-  position: absolute;
-  width: 150px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  pointer-events: none;
-  background: rgb(var(--theme-surface));
-  border: 1px solid var(--glass-border);
-}
-</style>
