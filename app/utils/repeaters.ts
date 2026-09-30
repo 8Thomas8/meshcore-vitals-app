@@ -204,13 +204,12 @@ export function assessCoverage(links: DirectLink[]): Coverage {
   return { level: 'weak', reason: 'weak', ...counts }
 }
 
-// Only a repeater in direct range answers a scan. One that answered before,
-// and was not heard directly since the last full scan started, is out of range
-// for now. Being named further along a relayed path proves nothing, and a
-// firmware that never answers scans is left alone.
+// Only a repeater in direct range answers a scan. One that was not heard
+// directly since the last full scan started is out of range for now. Being
+// named further along a relayed path proves nothing.
 export function isOutOfRange(repeater: DeepReadonly<HeardRepeater>, lastScanStartedAt: number | null): boolean {
-  if (repeater.hops || !repeater.tx || lastScanStartedAt === null) return false
-  return Math.max(repeater.rx?.at ?? 0, repeater.tx.at) < lastScanStartedAt
+  if (repeater.hops || lastScanStartedAt === null) return false
+  return Math.max(repeater.rx?.at ?? 0, repeater.tx?.at ?? 0) < lastScanStartedAt
 }
 
 export function recordRx(repeater: HeardRepeater, sample: RxSample) {
