@@ -210,8 +210,9 @@ describe('isOutOfRange', () => {
     expect(isOutOfRange(heard({ tx: 1000, lastHeard: 2500 }), 2000)).toBe(true)
   })
 
-  it('leaves alone repeaters that never answered a scan', () => {
-    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), 2000)).toBe(false)
+  it('drops a repeater that never answered a scan once no longer heard directly', () => {
+    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), 2000)).toBe(true)
+    expect(isOutOfRange(heard({ tx: null, rx: 2500 }), 2000)).toBe(false)
   })
 
   it('leaves relayed repeaters alone, they never answer a scan', () => {
