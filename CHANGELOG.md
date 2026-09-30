@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.1...v1.2.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* mark repeaters no longer heard directly as out of range ([#25](https://github.com/8Thomas8/meshcore-vitals-app/issues/25)) ([a92daa0](https://github.com/8Thomas8/meshcore-vitals-app/commit/a92daa0e7e3c7e0d16c7c7260dce317db7415a1f))
+
 ## [1.2.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.0...v1.2.1) (2026-09-29)
 
 
