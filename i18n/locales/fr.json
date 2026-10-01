@@ -57,7 +57,7 @@
     "done": "Scanné {ago}",
     "never": "Pas encore scanné",
     "noLocation": "pas de position pour les directions",
-    "autoHint": "Rescanner toutes les {minutes} minutes tant que cette page est ouverte",
+    "autoHint": "Rescanner toutes les minutes tant que cette page est ouverte | Rescanner toutes les {minutes} minutes tant que cette page est ouverte",
     "nothingAnswered": "Rien n'a répondu au dernier scan",
     "auto": "Auto"
   },
@@ -101,7 +101,7 @@
     "hideList": "Masquer la liste",
     "showOutOfRange": "Afficher {n} répéteur hors de portée | Afficher {n} répéteurs hors de portée",
     "hideOutOfRange": "Masquer {n} répéteur hors de portée | Masquer {n} répéteurs hors de portée",
-    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu au dernier scan"
+    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu à plusieurs scans d'affilée"
   },
   "detail": {
     "marginTitle": "Marge de liaison, dans le sens le plus faible",
@@ -127,7 +127,7 @@
     "keyPrefix": "Préfixe de clé",
     "publicKey": "Clé publique",
     "unknown": "inconnue",
-    "outOfRange": "Il n'a pas répondu au dernier scan, les valeurs ci-dessous sont les dernières connues."
+    "outOfRange": "Il n'a pas répondu à plusieurs scans d'affilée, les valeurs ci-dessous sont les dernières connues."
   },
   "gauge": {
     "unit": "dB de marge",

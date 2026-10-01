@@ -118,10 +118,11 @@ export const CTL_NODE_DISCOVER_RESP = 0x90
 // Repeaters delay their answer by up to a few seconds so they do not collide,
 // and each answers at most 4 requests every 2 minutes.
 export const DISCOVER_WINDOW_MS = 30_000
+export const DISCOVER_QUOTA_MS = 2 * 60_000
 
-// Well under the 4 requests every 2 minutes each repeater answers, shared with
-// everyone else scanning around.
-export const AUTO_SCAN_INTERVAL_MS = 3 * 60_000
+// Half the 4 requests every 2 minutes each repeater answers, leaving the rest
+// to everyone else scanning around.
+export const AUTO_SCAN_INTERVAL_MS = 60_000
 
 // Enough for an hour at one packet every 30 s.
 export const MAX_RX_HISTORY = 120

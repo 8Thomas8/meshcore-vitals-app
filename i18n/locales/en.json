@@ -57,7 +57,7 @@
     "done": "Scanned {ago}",
     "never": "Not scanned yet",
     "noLocation": "no location for directions",
-    "autoHint": "Scan again every {minutes} minutes while this page is open",
+    "autoHint": "Scan again every minute while this page is open | Scan again every {minutes} minutes while this page is open",
     "nothingAnswered": "Nothing answered the last scan",
     "auto": "Auto"
   },
@@ -101,7 +101,7 @@
     "hideList": "Hide list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
-    "outOfRangeHint": "Repeaters heard directly before that did not answer the last scan"
+    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row"
   },
   "detail": {
     "marginTitle": "Link margin, the weaker way",
@@ -127,7 +127,7 @@
     "keyPrefix": "Key prefix",
     "publicKey": "Public key",
     "unknown": "unknown",
-    "outOfRange": "It did not answer the last scan, the values below are the last ones."
+    "outOfRange": "It did not answer several scans in a row, the values below are the last ones."
   },
   "gauge": {
     "unit": "dB of margin",
