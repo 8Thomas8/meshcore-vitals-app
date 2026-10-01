@@ -170,8 +170,6 @@ onBeforeRouteLeave(() => {
   return false
 })
 
-const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
-
 const coverage = computed(() => {
   if (!inRange.value.length) return null
   const links = direct.value.flatMap(({ repeater, rx, tx }) =>
@@ -186,6 +184,11 @@ const coverage = computed(() => {
       ? `${t('coverage.reason.confirmed', { confirmed, solid }, solid)} ${t('coverage.reason.unscanned', unconfirmed)}`
       : t(`coverage.reason.${reason}`, { usable, confirmed, solid, minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB }, solid)
   }
+})
+
+const { addScan } = useHistory()
+watch(() => fullScans.value.at(-1), (at) => {
+  if (at) addScan(here.value, coverage.value?.level ?? 'none', coverage.value?.usable ?? 0)
 })
 
 const coverageOpen = ref(false)

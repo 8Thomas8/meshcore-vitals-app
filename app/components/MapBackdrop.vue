@@ -16,18 +16,6 @@ const props = defineProps<{
   companionName: string | null
 }>()
 
-const PAINT: [RegExp, Parameters<MapLibreMap['setPaintProperty']>[1], string][] = [
-  [/^background$/, 'background-color', THEME_COLORS.background],
-  [/^water$/, 'fill-color', '#0f2b47'],
-  [/^waterway$/, 'line-color', '#0f2b47'],
-  [/^(landuse_park|landcover_wood)$/, 'fill-color', '#10241f'],
-  [/^landuse_residential$/, 'fill-color', '#101826'],
-  [/^building$/, 'fill-color', '#141c2a'],
-  [/^highway_(minor|path)$/, 'line-color', '#1d2a40'],
-  [/^highway_(major|motorway)_(inner|subtle)$/, 'line-color', '#2f4262'],
-  [/^highway_(major|motorway)_casing$/, 'line-color', '#243249']
-]
-
 const { t } = useI18n()
 const { hops, formatNumber, formatDistance } = useFormat()
 
@@ -43,9 +31,6 @@ const markers = new Map<string, Marker>()
 // The repeater whose label you tapped, shown in full whatever it covers.
 const pinned = ref<string | null>(null)
 
-// Relayed and out-of-range repeaters, whose signal is not current.
-const MUTED_COLOR = '#8a94a6'
-
 // GPS fixes drift every second, the map only follows a real move, or the fix
 // taken at a scan.
 const stableHere = shallowRef(props.here)
@@ -57,7 +42,7 @@ watch(() => props.locatedAt, () => {
 })
 
 function colorOf(row: RepeaterRow): string {
-  if (row.repeater.hops || row.outOfRange) return MUTED_COLOR
+  if (row.repeater.hops || row.outOfRange) return MAP_MUTED_COLOR
   return row.link ? THEME_COLORS[row.link.tone] : THEME_COLORS.primary
 }
 
@@ -327,11 +312,7 @@ onMounted(async () => {
     foldAttribution()
   })
   map.on('load', () => {
-    for (const layer of map!.getStyle().layers) {
-      const paint = PAINT.find(([id]) => id.test(layer.id))
-      if (paint) map!.setPaintProperty(layer.id, paint[1], paint[2])
-      if (layer.type === 'symbol') map!.setPaintProperty(layer.id, 'text-color', 'rgba(255, 255, 255, 0.4)')
-    }
+    paintDark(map!)
     map!.addSource('mesh', { type: 'geojson', data: features.value })
     // Apart: line metrics, which the flow needs, shrink the dashes of the
     // relayed links.

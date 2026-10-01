@@ -1,4 +1,5 @@
-import type { ExpressionSpecification } from 'maplibre-gl'
+import type { ExpressionSpecification, Map as MapLibreMap } from 'maplibre-gl'
+import { THEME_COLORS } from './constants'
 
 export type ScreenPoint = [number, number]
 
@@ -98,4 +99,24 @@ export function flowGradient(at: number, width: number, opacity: number, steps =
     return [x, `rgba(255, 255, 255, ${Math.round(glow * opacity * 1000) / 1000})`]
   })
   return ['interpolate', ['linear'], ['line-progress'], ...stops.flat()] as ExpressionSpecification
+}
+
+const PAINT: [RegExp, Parameters<MapLibreMap['setPaintProperty']>[1], string][] = [
+  [/^background$/, 'background-color', THEME_COLORS.background],
+  [/^water$/, 'fill-color', '#0f2b47'],
+  [/^waterway$/, 'line-color', '#0f2b47'],
+  [/^(landuse_park|landcover_wood)$/, 'fill-color', '#10241f'],
+  [/^landuse_residential$/, 'fill-color', '#101826'],
+  [/^building$/, 'fill-color', '#141c2a'],
+  [/^highway_(minor|path)$/, 'line-color', '#1d2a40'],
+  [/^highway_(major|motorway)_(inner|subtle)$/, 'line-color', '#2f4262'],
+  [/^highway_(major|motorway)_casing$/, 'line-color', '#243249']
+]
+
+export function paintDark(map: MapLibreMap) {
+  for (const layer of map.getStyle().layers) {
+    const paint = PAINT.find(([id]) => id.test(layer.id))
+    if (paint) map.setPaintProperty(layer.id, paint[1], paint[2])
+    if (layer.type === 'symbol') map.setPaintProperty(layer.id, 'text-color', 'rgba(255, 255, 255, 0.4)')
+  }
 }
