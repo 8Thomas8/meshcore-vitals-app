@@ -103,7 +103,7 @@ const labels = computed(() => props.rows.filter(row => row.position).map((row) =
     lngLat: [row.position!.lon, row.position!.lat] as [number, number],
     name: row.name,
     meta: [row.distance !== null && formatDistance(row.distance), typeof row.altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(row.altitude) })].filter(Boolean).join(' · '),
-    hops: repeater.hops ? hops(repeater.hops) : row.outOfRange ? t('repeaters.outOfRange') : null,
+    hops: row.outOfRange ? t('repeaters.outOfRange') : repeater.hops ? hops(repeater.hops) : null,
     rx: way(repeater.rx?.snr, row.rx),
     tx: way(repeater.tx?.snr, row.tx),
     color: colorOf(row)

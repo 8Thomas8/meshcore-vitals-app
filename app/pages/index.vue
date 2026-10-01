@@ -96,10 +96,10 @@ const rows = computed(() => repeaters.value
     const viaName = repeater.via && nameOf(repeater.via)
     const rx = margin(repeater.rx)
     const tx = margin(repeater.tx)
-    const outOfRange = isOutOfRange(repeater, fullScans.value)
-    const route = repeater.hops
-      ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') })
-      : outOfRange ? t('repeaters.outOfRange') : t('repeaters.direct')
+    const outOfRange = isOutOfRange(repeater, repeaters.value, fullScans.value)
+    const route = outOfRange
+      ? t('repeaters.outOfRange')
+      : repeater.hops ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') }) : t('repeaters.direct')
     const details = [
       distance !== null && formatDistance(distance),
       typeof altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(altitude) }),

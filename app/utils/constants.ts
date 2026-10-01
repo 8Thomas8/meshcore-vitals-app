@@ -53,6 +53,8 @@ export interface HeardRepeater {
   hops: number
   /** Id of the repeater in direct range it was reached through. */
   via: string | null
+  /** Id of the repeater in direct range it was last reached through. */
+  lastVia: string | null
   /** How we hear it, RSSI in dBm, only in direct range. */
   rx: RxSample | null
   /** Every rx sample this session, oldest first. */
