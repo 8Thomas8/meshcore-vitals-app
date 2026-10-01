@@ -207,11 +207,13 @@ export function assessCoverage(links: DirectLink[]): Coverage {
 
 // Only a repeater in direct range answers a scan. One that was not heard
 // directly since a full scan started at least a quota period before the last
-// one is out of range for now, a lost packet or a quota used up by others can
+// one is out of range for now. A lost packet or a quota used up by others can
 // miss the scans in between. So are the ones last relayed through it and not
 // heard since. Being named further along a relayed path proves nothing.
 export function isOutOfRange(repeater: DeepReadonly<HeardRepeater>, list: DeepReadonly<HeardRepeater[]>, fullScans: readonly number[]): boolean {
-  const since = fullScans.findLast(at => at <= fullScans.at(-1)! - DISCOVER_QUOTA_MS)
+  const latest = fullScans.at(-1)
+  if (latest === undefined) return false
+  const since = fullScans.findLast(at => at <= latest - DISCOVER_QUOTA_MS)
   if (since === undefined) return false
   if (repeater.hops) {
     const { lastVia } = repeater
@@ -219,6 +221,12 @@ export function isOutOfRange(repeater: DeepReadonly<HeardRepeater>, list: DeepRe
     return matches.length === 1 && !matches[0]!.hops && repeater.lastHeard < since && isOutOfRange(matches[0]!, list, fullScans)
   }
   return Math.max(repeater.rx?.at ?? 0, repeater.tx?.at ?? 0) < since
+}
+
+// Keeps the scans back to the one isOutOfRange measures from.
+export function recordFullScan(fullScans: readonly number[], startedAt: number): number[] {
+  const starts = [...fullScans, startedAt]
+  return starts.slice(Math.max(0, starts.findLastIndex(at => at <= startedAt - DISCOVER_QUOTA_MS)))
 }
 
 export function recordRx(repeater: HeardRepeater, sample: RxSample) {

@@ -6,8 +6,7 @@ const scanUntil = ref<number | null>(null)
 const scannedAt = ref<number | null>(null)
 // Failed scans count too, so auto scan does not retry every second.
 const lastScanAttempt = ref<number | null>(null)
-// Start times of the scans whose window ran to its end, back to the last one a
-// quota period before the latest, latest last.
+// Start times of the scans whose window ran to its end, oldest first.
 const fullScans = ref<number[]>([])
 const autoScan = ref(false)
 const scanError = ref<string | null>(null)
@@ -72,8 +71,7 @@ async function scan() {
     scannedAt.value = Date.now()
     scanTimer = setTimeout(() => {
       scanUntil.value = null
-      const starts = [...fullScans.value, startedAt]
-      fullScans.value = starts.slice(Math.max(0, starts.findLastIndex(at => at <= startedAt - DISCOVER_QUOTA_MS)))
+      fullScans.value = recordFullScan(fullScans.value, startedAt)
     }, DISCOVER_WINDOW_MS)
   }
   catch (e) {
