@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.2...v1.3.0) (2026-10-01)
+
+
+### Features
+
+* mark repeaters relayed through an out of range one as out of range ([#30](https://github.com/8Thomas8/meshcore-vitals-app/issues/30)) ([434a8d5](https://github.com/8Thomas8/meshcore-vitals-app/commit/434a8d5fd3405c6fba63f534d8465791d377e42f))
+* scan again every minute in auto mode ([#29](https://github.com/8Thomas8/meshcore-vitals-app/issues/29)) ([e214370](https://github.com/8Thomas8/meshcore-vitals-app/commit/e21437062b792a24d96fd16c9fd6211f277a8dca))
+
+
+### Refactor
+
+* extract full scan pruning and tighten out of range tests ([#32](https://github.com/8Thomas8/meshcore-vitals-app/issues/32)) ([dcb234a](https://github.com/8Thomas8/meshcore-vitals-app/commit/dcb234a59b460c1f31ffd9172d84169df88c8f46))
+
 ## [1.2.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.1...v1.2.2) (2026-09-30)
 
 
