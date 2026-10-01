@@ -1,4 +1,4 @@
-import { mdiAccessPoint, mdiRadioTower } from '@mdi/js'
+import { mdiAccessPoint, mdiHistory, mdiRadioTower } from '@mdi/js'
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected'
 
@@ -85,6 +85,7 @@ export const SM_AND_DOWN_QUERY = '(max-width: 959.98px)'
 
 export const NAV_ITEMS = [
   { title: 'nav.repeaters', to: '/', icon: mdiRadioTower },
+  { title: 'nav.history', to: '/history', icon: mdiHistory },
   { title: 'nav.companion', to: '/companion', icon: mdiAccessPoint }
 ]
 
@@ -139,6 +140,12 @@ export const LIST_HIDDEN_STORAGE_KEY = 'repeaters-list-hidden'
 
 export const LIST_FULL_STORAGE_KEY = 'repeaters-list-full'
 
+export const HISTORY_DB_NAME = 'history'
+export const HISTORY_STORE = 'sessions'
+export const HISTORY_MAX_SESSIONS = 20
+export const HISTORY_SAVE_MS = 10_000
+export const SESSION_GAP_MS = 30 * 60_000
+
 // Where the coverage card ends before it is measured, app bar included.
 export const MAP_TOP_FALLBACK = 200
 
@@ -149,6 +156,9 @@ export const MAP_EDGE_MARGIN = 40
 export const MAP_SIDE_MARGIN = 60
 
 export const MAP_TAP_RADIUS = 20
+
+// Relayed and out-of-range repeaters, whose signal is not current.
+export const MAP_MUTED_COLOR = '#8a94a6'
 
 // How long the map attribution shows in full before it folds to its button.
 // OpenStreetMap's guidelines allow folding it after five seconds.
@@ -210,6 +220,8 @@ export const MARGIN_GAUGE_FULL_DB = 20
 export const COVERAGE_RECENT_MS = 10 * 60_000
 
 export const COVERAGE_GOOD_USABLE = 2
+
+export const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
 
 export const MARGIN_COMFORTABLE_DB = 10
 export const MARGIN_FAIR_DB = 5

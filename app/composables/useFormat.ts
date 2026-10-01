@@ -18,6 +18,15 @@ export function useFormat() {
     offset: (secs: number) => formatOffset(secs, units.value),
     ago: (at: number, now: number) => t('time.ago', { time: formatElapsed(at, now, units.value) }),
     hops: (hops: number) => t('repeaters.hops', hops),
+    time: (at: number) => new Intl.DateTimeFormat(language.value, { hour: 'numeric', minute: '2-digit' }).format(at),
+    day: (at: number) => {
+      const day = new Date(at).toDateString()
+      const today = new Date()
+      if (day === today.toDateString()) return t('history.today')
+      today.setDate(today.getDate() - 1)
+      if (day === today.toDateString()) return t('history.yesterday')
+      return new Intl.DateTimeFormat(language.value, { weekday: 'long', day: 'numeric', month: 'long' }).format(at)
+    },
     // Errors thrown by the app carry a message key, the browser's own come as
     // they are.
     message: (text: string) => te(text) ? t(text) : text

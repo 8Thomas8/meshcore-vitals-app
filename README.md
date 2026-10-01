@@ -21,6 +21,8 @@ The app connects to a MeshCore companion over Bluetooth from the browser. Press 
 
 The Companion page shows the radio settings, battery, noise floor, traffic and a few health checks.
 
+The History page (beta) keeps your last 20 sessions: the route you walked colored by coverage, and the best signal of each repeater heard.
+
 Works on a phone and can be installed as an app. English and French.
 
 ## Requirements
@@ -48,7 +50,7 @@ Open http://localhost:3000 (Node 24, see `.nvmrc`). Before opening a pull reques
 
 ## Privacy
 
-The app has no backend. It counts visits with Vercel Web Analytics, which sets no cookie and only sees the page, the referrer, the country and the browser, never your radio or your location. Otherwise it only loads map tiles from OpenFreeMap, fonts from Google Fonts, and ground elevation from Open-Meteo (repeater positions, yours when the GPS gives no altitude, and the path to a repeater whose terrain profile you open).
+The app has no backend. It counts visits with Vercel Web Analytics, which sets no cookie and only sees the page, the referrer, the country and the browser, never your radio or your location. Otherwise it only loads map tiles from OpenFreeMap, fonts from Google Fonts, and ground elevation from Open-Meteo (repeater positions, yours when the GPS gives no altitude, and the path to a repeater whose terrain profile you open). The session history, with your positions at each scan, stays in your browser and is never sent anywhere.
 
 ## License
 

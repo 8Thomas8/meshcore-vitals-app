@@ -15,6 +15,7 @@
   },
   "nav": {
     "repeaters": "Répéteurs",
+    "history": "Historique",
     "companion": "Companion",
     "openMenu": "Ouvrir le menu",
     "menu": "Menu"
@@ -292,5 +293,22 @@
     "label": "Anti-veille",
     "hint": "Garder l'écran allumé tant que l'app est affichée",
     "refused": "Le navigateur a refusé de garder l'écran allumé"
+  },
+  "history": {
+    "title": "{count} dernières sessions",
+    "hint": "Gardées sur cet appareil. Chaque connexion au Companion fait une session, la plus ancienne s'efface au-delà.",
+    "beta": "Bêta",
+    "betaHint": "Fonction en test : les sessions enregistrées pourraient changer ou être effacées dans une prochaine version.",
+    "empty": "Aucune session pour l'instant. Chaque connexion au Companion est enregistrée ici, avec les répéteurs entendus et la couverture à chaque scan.",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "duration": "Durée",
+    "distance": "Distance",
+    "scans": "Scans",
+    "coverage": "Couverture dans le temps",
+    "noScan": "Aucun scan pendant cette session.",
+    "bestSnr": "Meilleur SNR",
+    "remove": "Supprimer cette session",
+    "confirmRemove": "Toucher encore pour supprimer"
   }
 }

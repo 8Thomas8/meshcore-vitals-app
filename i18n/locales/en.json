@@ -15,6 +15,7 @@
   },
   "nav": {
     "repeaters": "Repeaters",
+    "history": "History",
     "companion": "Companion",
     "openMenu": "Open menu",
     "menu": "Menu"
@@ -292,5 +293,22 @@
     "label": "Stay awake",
     "hint": "Keep the screen on while the app is shown",
     "refused": "The browser refused to keep the screen on"
+  },
+  "history": {
+    "title": "Last {count} sessions",
+    "hint": "Kept on this device. Each connection to the companion makes a session, the oldest is removed once there are more.",
+    "beta": "Beta",
+    "betaHint": "This feature is still being tested: recorded sessions may change or be cleared in a future version.",
+    "empty": "No session yet. Each connection to the companion is recorded here with the repeaters heard and the coverage at each scan.",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "duration": "Duration",
+    "distance": "Distance",
+    "scans": "Scans",
+    "coverage": "Coverage over time",
+    "noScan": "No scan during this session.",
+    "bestSnr": "Best SNR",
+    "remove": "Delete this session",
+    "confirmRemove": "Tap again to delete"
   }
 }
