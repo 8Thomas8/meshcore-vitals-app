@@ -127,7 +127,8 @@
     "keyPrefix": "Key prefix",
     "publicKey": "Public key",
     "unknown": "unknown",
-    "outOfRange": "It did not answer several scans in a row, the values below are the last ones."
+    "outOfRange": "It did not answer several scans in a row, the values below are the last ones.",
+    "relayedOutOfRange": "The repeater it was last heard through is out of range, and it was not heard since."
   },
   "gauge": {
     "unit": "dB of margin",

@@ -127,7 +127,8 @@
     "keyPrefix": "Préfixe de clé",
     "publicKey": "Clé publique",
     "unknown": "inconnue",
-    "outOfRange": "Il n'a pas répondu à plusieurs scans d'affilée, les valeurs ci-dessous sont les dernières connues."
+    "outOfRange": "Il n'a pas répondu à plusieurs scans d'affilée, les valeurs ci-dessous sont les dernières connues.",
+    "relayedOutOfRange": "Le répéteur par lequel il a été entendu en dernier est hors de portée, et il n'a pas été entendu depuis."
   },
   "gauge": {
     "unit": "dB de marge",

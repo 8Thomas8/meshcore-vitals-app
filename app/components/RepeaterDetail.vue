@@ -106,6 +106,10 @@ const shortKey = computed(() => {
 
     <section v-else class="section">
       <div class="section-title">{{ $t('detail.route') }}</div>
+      <template v-if="row.outOfRange">
+        <span class="chip chip-small self-start">{{ $t('repeaters.outOfRange') }}</span>
+        <p class="text-small text-medium">{{ $t('detail.relayedOutOfRange') }}</p>
+      </template>
       <p class="text-small text-medium">
         <i18n-t keypath="detail.heardThrough" scope="global">
           <template #hops>{{ hops(row.repeater.hops) }}</template>
