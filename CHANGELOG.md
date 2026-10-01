@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.3.0...v1.4.0) (2026-10-01)
+
+
+### Features
+
+* add a full screen repeater list ([#33](https://github.com/8Thomas8/meshcore-vitals-app/issues/33)) ([3c6366f](https://github.com/8Thomas8/meshcore-vitals-app/commit/3c6366f8006efefde79cc56567f270f38129a77f))
+* add a history of the last sessions ([#35](https://github.com/8Thomas8/meshcore-vitals-app/issues/35)) ([21bc5c5](https://github.com/8Thomas8/meshcore-vitals-app/commit/21bc5c5807df17d6fdf67df93209cfb78f206f31))
+
 ## [1.3.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.2.2...v1.3.0) (2026-10-01)
 
 
