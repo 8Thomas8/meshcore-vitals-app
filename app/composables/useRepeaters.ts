@@ -6,8 +6,9 @@ const scanUntil = ref<number | null>(null)
 const scannedAt = ref<number | null>(null)
 // Failed scans count too, so auto scan does not retry every second.
 const lastScanAttempt = ref<number | null>(null)
-// When the last scan whose window ran to its end started.
-const lastFullScanAt = ref<number | null>(null)
+// Start times of the scans whose window ran to its end, back to the last one a
+// quota period before the latest, latest last.
+const fullScans = ref<number[]>([])
 const autoScan = ref(false)
 const scanError = ref<string | null>(null)
 let listening: MeshCoreConnection | null = null
@@ -71,7 +72,8 @@ async function scan() {
     scannedAt.value = Date.now()
     scanTimer = setTimeout(() => {
       scanUntil.value = null
-      lastFullScanAt.value = startedAt
+      const starts = [...fullScans.value, startedAt]
+      fullScans.value = starts.slice(Math.max(0, starts.findLastIndex(at => at <= startedAt - DISCOVER_QUOTA_MS)))
     }, DISCOVER_WINDOW_MS)
   }
   catch (e) {
@@ -94,7 +96,7 @@ async function start(conn: MeshCoreConnection) {
   scanUntil.value = null
   scannedAt.value = null
   lastScanAttempt.value = null
-  lastFullScanAt.value = null
+  fullScans.value = []
   autoScan.value = false
   scanError.value = null
   scanTag = null
@@ -120,7 +122,7 @@ export function useRepeaters() {
     scanUntil: readonly(scanUntil),
     scannedAt: readonly(scannedAt),
     lastScanAttempt: readonly(lastScanAttempt),
-    lastFullScanAt: readonly(lastFullScanAt),
+    fullScans: readonly(fullScans),
     autoScan,
     scanError: readonly(scanError),
     start,

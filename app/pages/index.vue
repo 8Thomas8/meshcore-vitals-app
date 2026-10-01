@@ -4,7 +4,7 @@ import { useMediaQuery } from '@vueuse/core'
 
 // The layout only shows the pages while a node is connected.
 const { connection } = useMeshCore()
-const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, lastFullScanAt, autoScan, scanError, start, scan } = useRepeaters()
+const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fullScans, autoScan, scanError, start, scan } = useRepeaters()
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
@@ -96,7 +96,7 @@ const rows = computed(() => repeaters.value
     const viaName = repeater.via && nameOf(repeater.via)
     const rx = margin(repeater.rx)
     const tx = margin(repeater.tx)
-    const outOfRange = isOutOfRange(repeater, lastFullScanAt.value)
+    const outOfRange = isOutOfRange(repeater, fullScans.value)
     const route = repeater.hops
       ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') })
       : outOfRange ? t('repeaters.outOfRange') : t('repeaters.direct')

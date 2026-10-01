@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
 import { bearingDegrees, assessCoverage, discoverRequest, distanceMeters, formatDistance, isOutOfRange, parseDiscoverResponse, recordRx, recordSighting, sightings, toHex, toPosition } from '~/utils/repeaters'
-import { MAX_RX_HISTORY } from '~/utils/constants'
+import { DISCOVER_QUOTA_MS, MAX_RX_HISTORY } from '~/utils/constants'
 
 const KEY = Uint8Array.from({ length: 32 }, (_, i) => 0xa0 + i)
 
@@ -195,27 +195,36 @@ describe('isOutOfRange', () => {
     tx: tx === null ? null : { snr: 5, at: tx },
     lastHeard
   })
+  const scans = [2000, 2000 + DISCOVER_QUOTA_MS]
 
-  it('keeps everything before a full scan', () => {
-    expect(isOutOfRange(heard(), null)).toBe(false)
+  it('keeps everything before full scans over a quota period', () => {
+    expect(isOutOfRange(heard(), [])).toBe(false)
+    expect(isOutOfRange(heard(), [2000])).toBe(false)
+    expect(isOutOfRange(heard(), [2000, 3000])).toBe(false)
   })
 
-  it('drops a direct repeater not heard directly since the last scan started', () => {
-    expect(isOutOfRange(heard({ tx: 1000 }), 2000)).toBe(true)
-    expect(isOutOfRange(heard({ tx: 2500 }), 2000)).toBe(false)
-    expect(isOutOfRange(heard({ tx: 1000, rx: 2500 }), 2000)).toBe(false)
+  it('drops a direct repeater not heard directly over a quota period of scans', () => {
+    expect(isOutOfRange(heard({ tx: 1000 }), scans)).toBe(true)
+    expect(isOutOfRange(heard({ tx: 2500 }), scans)).toBe(false)
+    expect(isOutOfRange(heard({ tx: 1000, rx: 2500 }), scans)).toBe(false)
+  })
+
+  it('keeps a direct repeater that missed only the scans of the last quota period', () => {
+    expect(isOutOfRange(heard({ tx: 1000 }), [0, 2000, 2000 + DISCOVER_QUOTA_MS])).toBe(true)
+    expect(isOutOfRange(heard({ tx: 2500 }), [2000, 3000, 2000 + DISCOVER_QUOTA_MS])).toBe(false)
+    expect(isOutOfRange(heard({ tx: 1000 }), [2000, 3000, 2000 + DISCOVER_QUOTA_MS])).toBe(true)
   })
 
   it('does not count being named in a relayed path', () => {
-    expect(isOutOfRange(heard({ tx: 1000, lastHeard: 2500 }), 2000)).toBe(true)
+    expect(isOutOfRange(heard({ tx: 1000, lastHeard: 2500 }), scans)).toBe(true)
   })
 
   it('drops a repeater that never answered a scan once no longer heard directly', () => {
-    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), 2000)).toBe(true)
-    expect(isOutOfRange(heard({ tx: null, rx: 2500 }), 2000)).toBe(false)
+    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), scans)).toBe(true)
+    expect(isOutOfRange(heard({ tx: null, rx: 2500 }), scans)).toBe(false)
   })
 
   it('leaves relayed repeaters alone, they never answer a scan', () => {
-    expect(isOutOfRange(heard({ hops: 2 }), 2000)).toBe(false)
+    expect(isOutOfRange(heard({ hops: 2 }), scans)).toBe(false)
   })
 })
