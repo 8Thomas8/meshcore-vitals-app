@@ -254,7 +254,7 @@ watch(coverage, (value) => {
           <template v-if="noLocation"> · {{ $t('scan.noLocation') }}</template>
         </span>
         <!-- As tall as the status line, the card keeps its height. -->
-        <label class="ms-auto flex h-8 flex-none cursor-pointer items-center gap-2" :title="$t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 })">
+        <label class="ms-auto flex h-8 flex-none cursor-pointer items-center gap-2" :title="$t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000)">
           <SwitchRoot v-model="autoScan" class="switch">
             <SwitchThumb class="switch-thumb" />
           </SwitchRoot>

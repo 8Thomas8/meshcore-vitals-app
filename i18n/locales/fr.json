@@ -57,7 +57,7 @@
     "done": "Scanné {ago}",
     "never": "Pas encore scanné",
     "noLocation": "pas de position pour les directions",
-    "autoHint": "Rescanner toutes les {minutes} minutes tant que cette page est ouverte",
+    "autoHint": "Rescanner toutes les minutes tant que cette page est ouverte | Rescanner toutes les {minutes} minutes tant que cette page est ouverte",
     "nothingAnswered": "Rien n'a répondu au dernier scan",
     "auto": "Auto"
   },
