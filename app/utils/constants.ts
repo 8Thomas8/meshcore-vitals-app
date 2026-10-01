@@ -137,6 +137,8 @@ export const LIST_MAX_HEIGHT_SHARE = 0.45
 
 export const LIST_HIDDEN_STORAGE_KEY = 'repeaters-list-hidden'
 
+export const LIST_FULL_STORAGE_KEY = 'repeaters-list-full'
+
 // Where the coverage card ends before it is measured, app bar included.
 export const MAP_TOP_FALLBACK = 200
 

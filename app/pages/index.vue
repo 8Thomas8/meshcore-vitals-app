@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiEye, mdiEyeOff, mdiInformationOutline, mdiRadar } from '@mdi/js'
+import { mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline, mdiRadar } from '@mdi/js'
 import { useMediaQuery } from '@vueuse/core'
 
 // The layout only shows the pages while a node is connected.
@@ -18,11 +18,30 @@ let clock: ReturnType<typeof setInterval> | undefined
 
 // Folded down to its header to give the map the room. Remembered on this
 // device only, storage may be blocked.
-const listHidden = ref(false)
+function stored(key: string) {
+  try {
+    return localStorage.getItem(key) === 'true'
+  }
+  catch {
+    return false
+  }
+}
+
+const listHidden = ref(stored(LIST_HIDDEN_STORAGE_KEY))
 const list = ref<HTMLElement | null>(null)
 watch(listHidden, (hidden) => {
   try {
     localStorage.setItem(LIST_HIDDEN_STORAGE_KEY, String(hidden))
+  }
+  catch {
+    // Stays for this visit only.
+  }
+})
+
+const listFull = ref(stored(LIST_FULL_STORAGE_KEY))
+watch(listFull, (full) => {
+  try {
+    localStorage.setItem(LIST_FULL_STORAGE_KEY, String(full))
   }
   catch {
     // Stays for this visit only.
@@ -42,12 +61,6 @@ onMounted(() => {
     if (autoScan.value && !document.hidden && nextScanAt.value !== null && now.value >= nextScanAt.value) scan()
   }, 1000)
   window.addEventListener('deviceorientationabsolute', onOrientation)
-  try {
-    listHidden.value = localStorage.getItem(LIST_HIDDEN_STORAGE_KEY) === 'true'
-  }
-  catch {
-    // Shown by default.
-  }
 })
 
 onBeforeUnmount(() => {
@@ -134,6 +147,8 @@ const inRange = computed(() => rows.value.filter(row => !row.outOfRange))
 const outOfRangeCount = computed(() => rows.value.length - inRange.value.length)
 const shownRows = computed(() => showOutOfRange.value ? rows.value : inRange.value)
 
+const mapShown = computed(() => here.value !== null && (listHidden.value || !listFull.value || !rows.value.length))
+
 const direct = computed(() => inRange.value.filter(row => !row.repeater.hops))
 
 // By id prefix, the id grows from a path hash to the full key while it is open.
@@ -185,8 +200,8 @@ watch(coverage, (value) => {
          above the menu, growing upwards. The map behind takes the gestures
          outside the cards. -->
     <!-- Lazy: MapLibre, its styles and its worker only load once there is a map to show. -->
-    <LazyMapBackdrop v-if="here" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
-    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5">
+    <LazyMapBackdrop v-if="here && mapShown" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
+    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown }">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
       <div class="flex items-center gap-2">
         <PopoverRoot v-model:open="coverageOpen">
@@ -276,20 +291,38 @@ watch(coverage, (value) => {
     </section>
 
     <!-- Leaves the map room between the two cards, the rows scroll under the toggle. -->
-    <section v-if="rows.length" ref="list" class="glass card mt-auto flex shrink-0 flex-col" :style="{ maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` }">
-      <button
-        type="button"
-        class="list-button flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-small"
-        :aria-expanded="!listHidden"
-        :aria-controls="listHidden ? undefined : 'repeater-rows'"
-        @click="listHidden = !listHidden"
-      >
-        <span class="grow font-medium">{{ $t('repeaters.count', shownRows.length) }}</span>
-        <span class="text-medium">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
-        <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium" />
-      </button>
+    <section
+      v-if="rows.length"
+      ref="list"
+      class="glass card flex shrink-0 flex-col"
+      :class="mapShown ? 'mt-auto' : 'bg-surface/85 backdrop-blur-none'"
+      :style="mapShown ? { maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` } : undefined"
+    >
+      <div class="flex">
+        <button
+          type="button"
+          class="list-button flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-small"
+          :aria-expanded="!listHidden"
+          :aria-controls="listHidden ? undefined : 'repeater-rows'"
+          @click="listHidden = !listHidden"
+        >
+          <span class="grow font-medium">{{ $t('repeaters.count', shownRows.length) }}</span>
+          <span class="text-medium">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
+          <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium" />
+        </button>
+        <button
+          v-if="here && !listHidden"
+          type="button"
+          class="list-button flex w-12 shrink-0 items-center justify-center border-l border-glass-border text-medium"
+          :aria-label="$t('repeaters.fullScreen')"
+          :aria-pressed="listFull"
+          @click="listFull = !listFull"
+        >
+          <AppIcon :icon="listFull ? mdiMapOutline : mdiFormatListBulleted" size="20" />
+        </button>
+      </div>
       <!-- Unmounted when folded, the rows would keep updating every second. -->
-      <div v-if="!listHidden" id="repeater-rows" class="min-h-0 divide-y divide-glass-border overflow-y-auto border-t border-glass-border">
+      <div v-if="!listHidden" id="repeater-rows" class="min-h-0 divide-y divide-glass-border border-t border-glass-border" :class="{ 'overflow-y-auto': mapShown }">
         <button
           v-for="row in shownRows"
           :key="row.repeater.id"

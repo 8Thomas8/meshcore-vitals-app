@@ -99,6 +99,7 @@
     "count": "{n} repeater | {n} repeaters",
     "showList": "Show list",
     "hideList": "Hide list",
+    "fullScreen": "Full screen list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
     "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row, and the ones only heard through them"
