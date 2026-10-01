@@ -101,7 +101,7 @@
     "hideList": "Masquer la liste",
     "showOutOfRange": "Afficher {n} répéteur hors de portée | Afficher {n} répéteurs hors de portée",
     "hideOutOfRange": "Masquer {n} répéteur hors de portée | Masquer {n} répéteurs hors de portée",
-    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu à plusieurs scans d'affilée"
+    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu à plusieurs scans d'affilée, et ceux entendus seulement à travers eux"
   },
   "detail": {
     "marginTitle": "Marge de liaison, dans le sens le plus faible",

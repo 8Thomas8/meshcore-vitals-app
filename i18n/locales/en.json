@@ -101,7 +101,7 @@
     "hideList": "Hide list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
-    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row"
+    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row, and the ones only heard through them"
   },
   "detail": {
     "marginTitle": "Link margin, the weaker way",

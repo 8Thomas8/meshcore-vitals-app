@@ -96,7 +96,7 @@ const rows = computed(() => repeaters.value
     const viaName = repeater.via && nameOf(repeater.via)
     const rx = margin(repeater.rx)
     const tx = margin(repeater.tx)
-    const outOfRange = isOutOfRange(repeater, fullScans.value)
+    const outOfRange = isOutOfRange(repeater, repeaters.value, fullScans.value)
     const route = repeater.hops
       ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') })
       : outOfRange ? t('repeaters.outOfRange') : t('repeaters.direct')
