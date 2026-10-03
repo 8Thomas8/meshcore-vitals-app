@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="container" class="session-map overflow-hidden rounded-2xl border border-glass-border" aria-hidden="true" />
+  <div ref="container" class="session-map isolate overflow-hidden rounded-2xl border border-glass-border" />
 </template>
 
 <style scoped lang="scss">
