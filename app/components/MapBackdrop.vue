@@ -451,7 +451,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="container" class="map" :style="{ '--map-top': `${top}px` }" aria-hidden="true" />
+  <div ref="container" class="map" :style="{ '--map-top': `${top}px` }" />
 </template>
 
 <style scoped lang="scss">
