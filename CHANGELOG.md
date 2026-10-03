@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.4.0...v1.4.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* keep the footer on two lines on phones and show it on history and the full screen list ([#37](https://github.com/8Thomas8/meshcore-vitals-app/issues/37)) ([981655d](https://github.com/8Thomas8/meshcore-vitals-app/commit/981655d7b82ef55dad5088c98d423825dd87816c))
+* keep the session map attribution under the detail drawer header ([#39](https://github.com/8Thomas8/meshcore-vitals-app/issues/39)) ([567161e](https://github.com/8Thomas8/meshcore-vitals-app/commit/567161e99e967685e06d457cb6c349ae631e8fe1))
+
 ## [1.4.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.3.0...v1.4.0) (2026-10-01)
 
 
