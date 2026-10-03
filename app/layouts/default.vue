@@ -6,6 +6,7 @@ const { connection } = useMeshCore()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const route = useRoute()
 const menuOpen = ref(false)
+const { shown: footerShown } = useFooter()
 
 watch(() => route.path, () => {
   menuOpen.value = false
@@ -69,7 +70,7 @@ watch(() => route.path, () => {
       <ConnectScreen v-if="!connection" />
       <!-- Every page needs a node, they only show once one is connected. -->
       <slot v-if="connection" />
-      <AppFooter v-if="!connection || route.path === '/companion'" />
+      <AppFooter v-if="!connection || route.path !== '/' || footerShown" />
     </main>
     <UpdateBanner />
     <QuotaToast />
