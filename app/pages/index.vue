@@ -148,6 +148,10 @@ const outOfRangeCount = computed(() => rows.value.length - inRange.value.length)
 const shownRows = computed(() => showOutOfRange.value ? rows.value : inRange.value)
 
 const mapShown = computed(() => here.value !== null && (listHidden.value || !listFull.value || !rows.value.length))
+const { shown: footerShown } = useFooter()
+watch(() => here.value !== null && !mapShown.value, (shown) => {
+  footerShown.value = shown
+}, { immediate: true })
 
 const direct = computed(() => inRange.value.filter(row => !row.repeater.hops))
 

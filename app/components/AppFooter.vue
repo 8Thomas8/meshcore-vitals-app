@@ -9,9 +9,9 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
   <footer class="mt-auto flex flex-wrap items-center justify-center gap-x-2 border-t border-glass-border px-4 pt-1.5 pb-[max(6px,env(safe-area-inset-bottom))] text-small whitespace-nowrap text-medium">
     <span>MeshCore Vitals v{{ version }}</span>
     <span aria-hidden="true">·</span>
-    <a :href="REPOSITORY_URL" target="_blank" rel="noopener" class="link">
+    <a :href="REPOSITORY_URL" target="_blank" rel="noopener" class="link max-sm:min-w-6 max-sm:justify-center">
       <AppIcon :icon="mdiGithub" size="14" />
-      {{ $t('footer.source') }}
+      <span class="max-sm:sr-only">{{ $t('footer.source') }}</span>
     </a>
     <span aria-hidden="true">·</span>
     <DropdownMenuRoot>
@@ -35,7 +35,7 @@ const { locale, locales, localeProperties, setLocale } = useI18n()
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenuRoot>
-    <i18n-t keypath="footer.elevation" tag="span" class="basis-full text-center" scope="global">
+    <i18n-t keypath="footer.elevation" tag="span" class="basis-full text-center whitespace-normal" scope="global">
       <template #dem><a href="https://doi.org/10.5270/ESA-c5d3d65" target="_blank" rel="noopener" class="link">Copernicus DEM GLO-90</a></template>
       <template #api><a href="https://open-meteo.com/" target="_blank" rel="noopener" class="link">Open-Meteo</a></template>
     </i18n-t>
