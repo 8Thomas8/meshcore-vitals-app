@@ -6,6 +6,8 @@ const queue: string[] = []
 let flushTimer: ReturnType<typeof setTimeout> | undefined
 export const elevationThrottled = ref(false)
 
+watch(elevationThrottled, () => showToast('quota.reached', 'warning'), { once: true })
+
 // The API takes up to 100 points per call.
 const BATCH_SIZE = 100
 

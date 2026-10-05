@@ -74,7 +74,7 @@ watch(() => route.path, () => {
     </main>
     <UpdateBanner />
     <ReconnectBanner />
-    <QuotaToast />
+    <AppToasts />
   </div>
 </template>
 

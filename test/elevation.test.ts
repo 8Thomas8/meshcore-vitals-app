@@ -15,7 +15,7 @@ function answer(status: number) {
 
 async function load() {
   vi.resetModules()
-  Object.entries({ ...constants, computed, reactive, ref, watch, pathPositions }).forEach(([name, value]) => vi.stubGlobal(name, value))
+  Object.entries({ ...constants, computed, reactive, ref, watch, pathPositions, showToast: vi.fn() }).forEach(([name, value]) => vi.stubGlobal(name, value))
   const elevation = await import('~/composables/useElevation')
   vi.stubGlobal('elevationAt', elevation.elevationAt)
   return { ...elevation, ...await import('~/composables/useTerrain') }
