@@ -159,6 +159,7 @@ const outOfRangeCount = computed(() => rows.value.length - inRange.value.length)
 const shownRows = computed(() => showOutOfRange.value ? rows.value : inRange.value)
 
 const mapShown = computed(() => here.value !== null && (listHidden.value || !listFull.value || !rows.value.length))
+const column = computed(() => mapShown.value && !smAndDown.value)
 const { shown: footerShown } = useFooter()
 watch(() => here.value !== null && !mapShown.value, (shown) => {
   footerShown.value = shown
@@ -213,13 +214,14 @@ watch(coverage, (value) => {
 </script>
 
 <template>
-  <div class="pointer-events-none mx-auto flex w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto">
+  <div class="pointer-events-none mx-auto flex w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto" :class="{ 'h-[calc(100dvh-var(--spacing-app-bar))]': column }">
+    <h1 class="sr-only">{{ $t('nav.repeaters') }}</h1>
     <!-- The coverage card on top, the list held at the bottom of the page just
          above the menu, growing upwards. The map behind takes the gestures
          outside the cards. -->
     <!-- Lazy: MapLibre, its styles and its worker only load once there is a map to show. -->
     <LazyMapBackdrop v-if="here && mapShown" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
-    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown }">
+    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown, 'w-100': column }">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
       <div class="flex items-center gap-2">
         <PopoverRoot v-model:open="coverageOpen">
@@ -329,9 +331,9 @@ watch(coverage, (value) => {
     <section
       v-if="rows.length"
       ref="list"
-      class="glass card flex shrink-0 flex-col"
-      :class="mapShown ? 'mt-auto' : 'bg-surface/85 backdrop-blur-none'"
-      :style="mapShown ? { maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` } : undefined"
+      class="glass card flex flex-col"
+      :class="column ? 'min-h-0 w-100' : mapShown ? 'mt-auto shrink-0' : 'shrink-0 bg-surface/85 backdrop-blur-none'"
+      :style="mapShown && !column ? { maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` } : undefined"
     >
       <div class="flex">
         <button
@@ -374,16 +376,14 @@ watch(coverage, (value) => {
           />
           <span class="name truncate font-medium">{{ row.name }}</span>
           <span class="details text-small text-medium">{{ row.details }}</span>
-          <span v-if="!row.repeater.hops" class="links font-mono text-small">
-            <span>
-              <span class="text-medium">RX </span>
-              <span :class="row.rx && `text-${row.rx.tone}`">{{ row.repeater.rx ? `${formatNumber(row.repeater.rx.snr, 2, 0)} dB` : $t('common.na') }}</span>
-            </span>
-            <span>
-              <span class="text-medium">TX </span>
-              <span :class="row.tx ? `text-${row.tx.tone}` : 'text-disabled'">{{ row.repeater.tx ? `${formatNumber(row.repeater.tx.snr, 2, 0)} dB` : $t('repeaters.txUnknown') }}</span>
-            </span>
-          </span>
+          <LinkReadout
+            v-if="!row.repeater.hops"
+            class="links"
+            :rx="row.repeater.rx?.snr ?? null"
+            :tx="row.repeater.tx?.snr ?? null"
+            :rx-margin="row.rx"
+            :tx-margin="row.tx"
+          />
           <AppIcon class="chevron text-medium" :icon="mdiChevronRight" />
         </button>
         <button
@@ -405,13 +405,7 @@ watch(coverage, (value) => {
     <DialogRoot v-model:open="detailOpen">
       <DialogPortal>
         <DialogOverlay class="overlay" />
-        <DialogContent
-          class="glass-dense fixed z-(--z-overlay) overflow-y-auto data-[state=closed]:animate-slide-out data-[state=open]:animate-slide-in"
-          :class="smAndDown
-            ? 'inset-x-0 bottom-0 max-h-[85dvh] rounded-t-3xl border-x-0 border-b-0 [--slide-from:translateY(100%)]'
-            : 'top-app-bar right-0 bottom-0 w-100 border-y-0 border-r-0 [--slide-from:translateX(100%)]'"
-          :aria-describedby="undefined"
-        >
+        <DialogContent class="glass-dense sheet" :aria-describedby="undefined">
           <RepeaterDetail
             v-if="selected"
             :row="selected"
@@ -424,7 +418,7 @@ watch(coverage, (value) => {
       </DialogPortal>
     </DialogRoot>
 
-    <section v-if="!rows.length" class="glass card mt-auto p-4 text-hint text-medium">
+    <section v-if="!rows.length" class="glass card mt-auto p-4 text-hint text-medium" :class="{ 'w-100': column }">
       {{ $t('repeaters.empty') }}
     </section>
   </div>

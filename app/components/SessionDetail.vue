@@ -77,10 +77,14 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
             <span class="truncate font-medium">{{ row.name }}</span>
             <span class="truncate text-small text-medium">{{ row.route }}</span>
           </span>
-          <span v-if="!row.repeater.hops" class="flex shrink-0 flex-col items-end font-mono text-small">
-            <span><span class="text-medium">RX </span><span :class="row.rx && `text-${row.rx.tone}`">{{ row.repeater.rx === null ? $t('common.na') : `${formatNumber(row.repeater.rx, 2, 0)} dB` }}</span></span>
-            <span><span class="text-medium">TX </span><span :class="row.tx ? `text-${row.tx.tone}` : 'text-disabled'">{{ row.repeater.tx === null ? $t('common.na') : `${formatNumber(row.repeater.tx, 2, 0)} dB` }}</span></span>
-          </span>
+          <LinkReadout
+            v-if="!row.repeater.hops"
+            class="flex shrink-0 flex-col items-end"
+            :rx="row.repeater.rx"
+            :tx="row.repeater.tx"
+            :rx-margin="row.rx"
+            :tx-margin="row.tx"
+          />
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@
 import type { GeoJSONSource, Map as MapLibreMap, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
+import { useMediaQuery } from '@vueuse/core'
 
 const props = defineProps<{
   here: Position
@@ -20,7 +21,9 @@ const { t } = useI18n()
 const { hops, formatNumber, formatDistance } = useFormat()
 
 const container = ref<HTMLElement | null>(null)
+const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const top = ref(MAP_TOP_FALLBACK)
+const left = ref(0)
 let map: MapLibreMap | undefined
 let MarkerClass: typeof Marker | undefined
 // Once you move the map yourself, it stops reframing on every update.
@@ -192,7 +195,7 @@ function declutter() {
   const controls: Box[] = [...container.value!.querySelectorAll('.maplibregl-ctrl')].map(control => control.getBoundingClientRect())
   const taken = [...dots, ...controls]
   const { clientWidth, clientHeight } = map.getContainer()
-  const view: Box = { left: 0, top: top.value, right: clientWidth, bottom: bottomEdge(clientHeight) }
+  const view: Box = { left: left.value, top: top.value, right: clientWidth, bottom: bottomEdge(clientHeight) }
   if (companionMarker) {
     const element = companionMarker.getElement()
     const placements = labelPlacements(project([stableHere.value.lon, stableHere.value.lat]), element.offsetWidth, element.offsetHeight, MAP_LABEL_GAP, view)
@@ -223,12 +226,16 @@ function declutter() {
 }
 
 function measure() {
-  if (props.below) top.value = Math.round(props.below.getBoundingClientRect().bottom)
+  if (!props.below) return
+  const card = props.below.getBoundingClientRect()
+  top.value = Math.round(smAndDown.value ? card.bottom : card.top)
+  left.value = smAndDown.value ? 0 : Math.round(card.right)
 }
 
 // Where the list starts, measured since it folds down and the menu under it
 // takes room too.
 function bottomEdge(height: number): number {
+  if (!smAndDown.value) return height
   return Math.round(props.list ? props.list.getBoundingClientRect().top : height * (1 - LIST_MAX_HEIGHT_SHARE))
 }
 
@@ -247,7 +254,7 @@ function frame() {
   const bottom = height - bottomEdge(height) + MAP_EDGE_MARGIN
   const fit = Math.min(1, (height - MAP_MIN_FRAME_HEIGHT) / (above + bottom))
   map.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], {
-    padding: { top: above * fit, bottom: bottom * fit, left: MAP_SIDE_MARGIN, right: MAP_SIDE_MARGIN },
+    padding: { top: above * fit, bottom: bottom * fit, left: left.value + MAP_SIDE_MARGIN, right: MAP_SIDE_MARGIN },
     maxZoom: 14,
     duration: 0
   })

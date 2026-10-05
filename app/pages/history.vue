@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { mdiChevronRight } from '@mdi/js'
-import { useMediaQuery } from '@vueuse/core'
 
 const { sessions } = useHistory()
 const { duration, time, day: dayOf } = useFormat()
-const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 
 const days = computed(() => {
   const groups: { day: string, items: { session: Session, level: CoverageLevel | null, direct: number }[] }[] = []
@@ -48,7 +46,7 @@ function onCloseAutoFocus(event: Event) {
         <span class="chip chip-small text-warning">{{ $t('history.beta') }}</span>
       </div>
       <p class="text-small text-medium">{{ $t('history.hint') }}</p>
-      <p class="text-small text-warning">{{ $t('history.betaHint') }}</p>
+      <p class="text-small text-medium">{{ $t('history.betaHint') }}</p>
     </section>
 
     <section v-if="!sessions.length" class="glass card p-4 text-hint text-medium">
@@ -81,14 +79,7 @@ function onCloseAutoFocus(event: Event) {
     <DialogRoot v-model:open="detailOpen">
       <DialogPortal>
         <DialogOverlay class="overlay" />
-        <DialogContent
-          class="glass-dense fixed z-(--z-overlay) overflow-y-auto data-[state=closed]:animate-slide-out data-[state=open]:animate-slide-in"
-          :class="smAndDown
-            ? 'inset-x-0 bottom-0 max-h-[85dvh] rounded-t-3xl border-x-0 border-b-0 [--slide-from:translateY(100%)]'
-            : 'top-app-bar right-0 bottom-0 w-100 border-y-0 border-r-0 [--slide-from:translateX(100%)]'"
-          :aria-describedby="undefined"
-          @close-auto-focus="onCloseAutoFocus"
-        >
+        <DialogContent class="glass-dense sheet" :aria-describedby="undefined" @close-auto-focus="onCloseAutoFocus">
           <SessionDetail
             v-if="selected"
             :session="selected"
