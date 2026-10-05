@@ -1,6 +1,6 @@
 import { mdiAccessPoint, mdiHistory, mdiRadioTower } from '@mdi/js'
 
-export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected'
+export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'lost'
 
 export type Tone = 'success' | 'warning' | 'error'
 
@@ -199,6 +199,9 @@ export const UPDATE_CHECK_INTERVAL_MS = 30 * 60_000
 export const RELOADED_FOR_STORAGE_KEY = 'app-update-reloaded-for'
 
 export const CONNECT_TIMEOUT_MS = 20_000
+
+export const RECONNECT_DELAY_MS = 2_000
+export const RECONNECT_ATTEMPTS = 5
 
 // A request normally gets its answer within a second over Bluetooth.
 export const REQUEST_TIMEOUT_MS = 5_000

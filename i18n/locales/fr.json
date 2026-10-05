@@ -35,6 +35,7 @@
     "connectTimeout": "Le nœud n'a pas répondu à temps pendant la connexion.",
     "disconnectedWhileConnecting": "Le nœud s'est déconnecté pendant la connexion.",
     "noAnswer": "Le nœud n'a pas répondu.",
+    "unreachable": "Nœud injoignable, vérifiez qu'il est allumé et à portée.",
     "scanUnsupported": "Scan refusé, mettez à jour le firmware du Companion.",
     "scanFailed": "Le Companion n'a pas pu envoyer le scan, réessayez."
   },
@@ -284,6 +285,11 @@
     "disconnects": "Recharger déconnecte le nœud.",
     "later": "Plus tard",
     "reload": "Recharger"
+  },
+  "reconnect": {
+    "lost": "Connexion perdue.",
+    "retrying": "Nouvelle tentative…",
+    "button": "Reconnecter"
   },
   "map": {
     "title": "Carte",

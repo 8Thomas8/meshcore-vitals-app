@@ -35,6 +35,7 @@
     "connectTimeout": "Timed out connecting to the node.",
     "disconnectedWhileConnecting": "The node disconnected while connecting.",
     "noAnswer": "The node did not answer.",
+    "unreachable": "Node unreachable, check that it is on and in range.",
     "scanUnsupported": "Scan refused, update the Companion firmware.",
     "scanFailed": "The Companion could not send the scan, try again."
   },
@@ -284,6 +285,11 @@
     "disconnects": "Reloading disconnects the node.",
     "later": "Later",
     "reload": "Reload"
+  },
+  "reconnect": {
+    "lost": "Connection lost.",
+    "retrying": "Retrying…",
+    "button": "Reconnect"
   },
   "map": {
     "title": "Map",

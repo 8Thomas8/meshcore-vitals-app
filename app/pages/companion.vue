@@ -2,7 +2,7 @@
 import { mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiChevronRight, mdiPower, mdiRefresh } from '@mdi/js'
 
 // The layout only shows the pages while a node is connected.
-const { connection, disconnect } = useMeshCore()
+const { connection, status, disconnect } = useMeshCore()
 const { t } = useI18n()
 const { ago, duration, offset, formatNumber } = useFormat()
 
@@ -27,7 +27,7 @@ let clock: ReturnType<typeof setInterval> | undefined
 // Sequential on purpose: meshcore.js drops a stats response of the wrong type,
 // so two getStats calls in flight can leave one waiting forever.
 async function refresh() {
-  if (refreshing.value) return
+  if (refreshing.value || status.value !== 'connected') return
   refreshing.value = true
   const conn = connection.value!
   try {
@@ -59,6 +59,7 @@ async function refresh() {
     failed.value = true
   }
   refreshing.value = false
+  if (connection.value !== conn) refresh()
 }
 
 onMounted(() => {
@@ -69,6 +70,10 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => clearInterval(clock))
+
+watch(connection, (conn) => {
+  if (conn) refresh()
+})
 
 onBeforeRouteLeave(() => {
   if (!healthOpen.value) return

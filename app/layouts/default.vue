@@ -73,6 +73,7 @@ watch(() => route.path, () => {
       <AppFooter v-if="!connection || route.path !== '/' || footerShown" />
     </main>
     <UpdateBanner />
+    <ReconnectBanner />
     <QuotaToast />
   </div>
 </template>

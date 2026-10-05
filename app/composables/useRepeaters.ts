@@ -58,7 +58,7 @@ function sendCommand(conn: MeshCoreConnection, frame: Uint8Array) {
 
 async function scan() {
   const conn = listening
-  if (!conn || scanUntil.value) return
+  if (!conn || scanUntil.value || useMeshCore().status.value !== 'connected') return
   scanError.value = null
   scanTag = crypto.getRandomValues(new Uint32Array(1))[0]!
   const startedAt = Date.now()
@@ -75,7 +75,7 @@ async function scan() {
     }, DISCOVER_WINDOW_MS)
   }
   catch (e) {
-    if (listening !== conn) return
+    if (listening !== conn || useMeshCore().status.value !== 'connected') return
     scanUntil.value = null
     scanError.value = e instanceof Error ? e.message : String(e)
     // Would fail again on every retry.
@@ -83,23 +83,31 @@ async function scan() {
   }
 }
 
-// Every connection starts a fresh list.
-async function start(conn: MeshCoreConnection) {
+// Every connection starts a fresh list, a reconnection to the same node keeps it.
+async function start(conn: MeshCoreConnection, reconnected: boolean) {
   if (listening === conn) return
   listening = conn
   clearTimeout(scanTimer)
-  repeaters.value = []
-  selfInfo.value = null
-  contacts.value = []
+  if (!reconnected) {
+    repeaters.value = []
+    selfInfo.value = null
+    contacts.value = []
+    scannedAt.value = null
+    lastScanAttempt.value = null
+    fullScans.value = []
+    autoScan.value = false
+  }
   scanUntil.value = null
-  scannedAt.value = null
-  lastScanAttempt.value = null
-  fullScans.value = []
-  autoScan.value = false
   scanError.value = null
   scanTag = null
   conn.on(PUSH_LOG_RX_DATA, onLogRx)
   conn.on('rx', onFrame)
+  conn.on('disconnected', () => {
+    if (listening !== conn) return
+    clearTimeout(scanTimer)
+    scanUntil.value = null
+  })
+  if (reconnected && selfInfo.value && contacts.value.length) return
   try {
     const info = await withTimeout(conn.getSelfInfo())
     if (listening !== conn) return

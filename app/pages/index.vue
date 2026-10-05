@@ -2,9 +2,8 @@
 import { mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline, mdiRadar } from '@mdi/js'
 import { useMediaQuery } from '@vueuse/core'
 
-// The layout only shows the pages while a node is connected.
-const { connection } = useMeshCore()
-const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fullScans, autoScan, scanError, start, scan } = useRepeaters()
+const { status } = useMeshCore()
+const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fullScans, autoScan, scanError, scan } = useRepeaters()
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
@@ -54,7 +53,6 @@ function onOrientation(event: DeviceOrientationEvent) {
 }
 
 onMounted(() => {
-  start(connection.value!)
   clock = setInterval(() => {
     now.value = Date.now()
     // Auto scans only run while this page is shown and the tab is visible.
@@ -257,8 +255,8 @@ watch(coverage, (value) => {
         <button
           type="button"
           class="btn h-11 min-w-26"
-          :class="scanning || autoScan ? 'btn-tonal text-primary' : 'btn-filled'"
-          :aria-disabled="scanning || autoScan"
+          :class="scanning || autoScan || status !== 'connected' ? 'btn-tonal text-primary' : 'btn-filled'"
+          :aria-disabled="scanning || autoScan || status !== 'connected'"
           @click="autoScan || scan()"
         >
           <AppIcon :icon="mdiRadar" size="18" />
