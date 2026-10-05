@@ -28,6 +28,7 @@
   "connect": {
     "tagline": "Check the MeshCore network where you stand: coverage, link quality with nearby repeaters and overall health.",
     "button": "Connect over Bluetooth",
+    "reconnect": "Reconnect to {name}",
     "noBluetooth": "This browser has no Web Bluetooth. Use Chrome or Edge on desktop or Android.",
     "hint": "Turn the Companion on and keep it nearby before pairing."
   },
@@ -35,6 +36,7 @@
     "connectTimeout": "Timed out connecting to the node.",
     "disconnectedWhileConnecting": "The node disconnected while connecting.",
     "noAnswer": "The node did not answer.",
+    "unreachable": "Node unreachable, check that it is on and in range.",
     "scanUnsupported": "Scan refused, update the Companion firmware.",
     "scanFailed": "The Companion could not send the scan, try again."
   },
@@ -284,6 +286,11 @@
     "disconnects": "Reloading disconnects the node.",
     "later": "Later",
     "reload": "Reload"
+  },
+  "reconnect": {
+    "lost": "Connection lost.",
+    "retrying": "Retrying…",
+    "button": "Reconnect"
   },
   "map": {
     "title": "Map",

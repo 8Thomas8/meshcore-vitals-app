@@ -15,6 +15,7 @@ describe('shouldAutoReload', () => {
   it('never drops a node link', () => {
     expect(shouldAutoReload({ ...idle, status: 'connected' })).toBe(false)
     expect(shouldAutoReload({ ...idle, status: 'connecting' })).toBe(false)
+    expect(shouldAutoReload({ ...idle, status: 'lost' })).toBe(false)
   })
 
   it('keeps the last connection error on screen', () => {

@@ -108,7 +108,7 @@ function start() {
   load().catch(() => {})
   const { connection } = useMeshCore()
   const { repeaters } = useRepeaters()
-  watch(connection, (_, previous) => {
+  watch(() => connection.value?.bleDevice.id, (_, previous) => {
     if (previous) record()
     current = null
     connectedAt = Date.now()
