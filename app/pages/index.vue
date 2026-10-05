@@ -283,8 +283,7 @@ watch(coverage, (value) => {
         <PopoverRoot>
           <PopoverTrigger class="flex h-8 max-w-full min-w-0 items-center gap-2 text-left">
             <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { 'animate-blink': scanning }]" />
-            <span v-if="scanError" class="truncate text-error">{{ message(scanError) }}</span>
-            <span v-else-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
+            <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
             <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
             <span v-else class="truncate">
               {{ scannedAt ? $t('scan.done', { ago: ago(scannedAt, now) }) : $t('scan.never') }}
@@ -295,6 +294,7 @@ watch(coverage, (value) => {
           <PopoverPortal>
             <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
               <div class="flex flex-col gap-2 py-1">
+                <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
                 <span>{{ $t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000) }}</span>
                 <span v-if="wakeLockSupported">{{ $t('wakeLock.hint') }}</span>
               </div>

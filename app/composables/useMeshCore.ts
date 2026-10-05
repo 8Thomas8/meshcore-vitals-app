@@ -67,6 +67,7 @@ async function connect(device = connection.value?.bleDevice) {
     // Dismissing the device picker rejects with NotFoundError.
     if (!(e instanceof DOMException && e.name === 'NotFoundError')) {
       error.value = e instanceof DOMException ? 'errors.unreachable' : e instanceof Error ? e.message : String(e)
+      if (!lost) showToast(error.value)
     }
   }
 }
