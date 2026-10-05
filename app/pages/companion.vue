@@ -200,7 +200,7 @@ const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlert
       <AppProgress v-if="refreshing" class="progress-top text-primary" />
       <div class="flex items-center gap-2">
         <div class="min-w-0 grow">
-          <div class="text-title">{{ selfInfo?.name ?? $t('nav.companion') }}</div>
+          <h1 class="text-title">{{ selfInfo?.name ?? $t('nav.companion') }}</h1>
           <!-- Kept while loading so the card does not grow once the node answers. -->
           <div class="font-mono text-small text-medium">
             <template v-if="selfInfo">{{ formatNumber(selfInfo.radioFreq / 1000, 3) }} MHz · {{ formatNumber(selfInfo.radioBw / 1000, 1, 0) }} kHz</template>

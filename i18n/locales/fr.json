@@ -16,9 +16,7 @@
   "nav": {
     "repeaters": "Répéteurs",
     "history": "Historique",
-    "companion": "Companion",
-    "openMenu": "Ouvrir le menu",
-    "menu": "Menu"
+    "companion": "Companion"
   },
   "footer": {
     "source": "Code source sur GitHub",
@@ -96,7 +94,6 @@
     "altitude": "alt. {altitude} m",
     "noneYet": "Aucun répéteur",
     "counts": "{direct} en direct · {relayed}",
-    "txUnknown": "scan",
     "empty": "Un scan demande aux répéteurs à portée de répondre en indiquant comment ils vous entendent. Les répéteurs qui relaient du trafic s'ajoutent au fil des paquets reçus.",
     "relayed": "{n} relayé | {n} relayés",
     "outOfRange": "Hors de portée",

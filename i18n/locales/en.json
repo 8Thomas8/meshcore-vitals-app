@@ -16,9 +16,7 @@
   "nav": {
     "repeaters": "Repeaters",
     "history": "History",
-    "companion": "Companion",
-    "openMenu": "Open menu",
-    "menu": "Menu"
+    "companion": "Companion"
   },
   "footer": {
     "source": "Source on GitHub",
@@ -96,7 +94,6 @@
     "altitude": "alt. {altitude} m",
     "noneYet": "No repeater yet",
     "counts": "{direct} direct · {relayed}",
-    "txUnknown": "scan",
     "empty": "A scan asks the repeaters in range to answer with how well they hear you. Repeaters that relay traffic are added as their packets come in.",
     "relayed": "{n} relayed | {n} relayed",
     "outOfRange": "Out of range",
