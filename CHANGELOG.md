@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.4.1...v1.5.0) (2026-10-05)
+
+
+### Features
+
+* add a generic toast for errors and warnings ([#44](https://github.com/8Thomas8/meshcore-vitals-app/issues/44)) ([9781a5e](https://github.com/8Thomas8/meshcore-vitals-app/commit/9781a5e2c954ba2d827fb9cf5c1d6c76859d8104))
+* desktop layout, shared link readout and sheet, visual cleanups ([#46](https://github.com/8Thomas8/meshcore-vitals-app/issues/46)) ([74a54f7](https://github.com/8Thomas8/meshcore-vitals-app/commit/74a54f76ca67f3b828490e88c4ca0ff2b4bab16d))
+* keep the page and reconnect when the Bluetooth link drops ([#40](https://github.com/8Thomas8/meshcore-vitals-app/issues/40)) ([4ee6387](https://github.com/8Thomas8/meshcore-vitals-app/commit/4ee63873d5dc90c50cfe563f242880c95fd0d0c1))
+
+
+### Bug Fixes
+
+* keep the screen on with auto scan and tell how long it was paused ([#41](https://github.com/8Thomas8/meshcore-vitals-app/issues/41)) ([801db14](https://github.com/8Thomas8/meshcore-vitals-app/commit/801db145597077a864559242dbe49e486ab3eb40))
+* release the screen lock on disconnect and auto reload once the toasts are gone ([#47](https://github.com/8Thomas8/meshcore-vitals-app/issues/47)) ([d1887d9](https://github.com/8Thomas8/meshcore-vitals-app/commit/d1887d9da243dbd913b54d93a11737934c7c05c1))
+* show errors as toasts ([#45](https://github.com/8Thomas8/meshcore-vitals-app/issues/45)) ([7553f60](https://github.com/8Thomas8/meshcore-vitals-app/commit/7553f600c0b49775074da7aef86c4dd760737ccd))
+* show the switch and out of range explanations on touch screens ([#42](https://github.com/8Thomas8/meshcore-vitals-app/issues/42)) ([5e070c1](https://github.com/8Thomas8/meshcore-vitals-app/commit/5e070c1f718cb65c0366971a863f8cd1df0e45df))
+
 ## [1.4.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.4.0...v1.4.1) (2026-10-03)
 
 
