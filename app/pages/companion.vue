@@ -57,6 +57,7 @@ async function refresh() {
   }
   catch {
     failed.value = true
+    if (connection.value === conn && status.value === 'connected') showToast('companion.readFailed')
   }
   refreshing.value = false
   if (connection.value !== conn) refresh()
@@ -83,7 +84,7 @@ onBeforeRouteLeave(() => {
 
 const statusText = computed(() => {
   if (refreshing.value) return t('companion.reading')
-  if (failed.value) return t('companion.readFailed')
+  if (failed.value && !lastSample.value) return t('companion.readFailed')
   if (!lastSample.value) return t('companion.reading')
   return t('companion.updated', { ago: ago(lastSample.value.at, now.value) })
 })

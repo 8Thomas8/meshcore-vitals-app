@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { mdiBluetooth, mdiLoading } from '@mdi/js'
 
-const { status, error, connect } = useMeshCore()
-const { message } = useFormat()
+const { status, connect } = useMeshCore()
 
 const bluetoothSupported = ref(true)
 const knownDevices = shallowRef<MeshCoreBleDevice[]>([])
@@ -34,7 +33,6 @@ function connectTo(device?: MeshCoreBleDevice) {
         <span class="min-w-0 truncate">{{ $t('connect.reconnect', { name: device.name }) }}</span>
       </button>
       <p v-if="!bluetoothSupported" class="mt-1 text-hint text-error">{{ $t('connect.noBluetooth') }}</p>
-      <p v-else-if="error" class="mt-1 text-hint text-error">{{ message(error) }}</p>
       <p v-else class="mt-1 text-hint text-disabled">{{ $t('connect.hint') }}</p>
     </div>
   </div>

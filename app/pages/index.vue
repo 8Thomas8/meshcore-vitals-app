@@ -7,7 +7,7 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
-const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
+const { ago, hops, duration, formatNumber, formatDistance } = useFormat()
 const { supported: wakeLockSupported, enabled: keepScreenOn, forced: screenOnForAuto, active: screenKeptOn } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
@@ -283,8 +283,7 @@ watch(coverage, (value) => {
         <PopoverRoot>
           <PopoverTrigger class="flex h-8 max-w-full min-w-0 items-center gap-2 text-left">
             <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { 'animate-blink': scanning }]" />
-            <span v-if="scanError" class="truncate text-error">{{ message(scanError) }}</span>
-            <span v-else-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
+            <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
             <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
             <span v-else class="truncate">
               {{ scannedAt ? $t('scan.done', { ago: ago(scannedAt, now) }) : $t('scan.never') }}

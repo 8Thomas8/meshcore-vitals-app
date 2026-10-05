@@ -59,6 +59,7 @@ function sendCommand(conn: MeshCoreConnection, frame: Uint8Array) {
 async function scan() {
   const conn = listening
   if (!conn || scanUntil.value || useMeshCore().status.value !== 'connected') return
+  const previous = scanError.value
   scanError.value = null
   scanTag = crypto.getRandomValues(new Uint32Array(1))[0]!
   const startedAt = Date.now()
@@ -78,6 +79,7 @@ async function scan() {
     if (listening !== conn || useMeshCore().status.value !== 'connected') return
     scanUntil.value = null
     scanError.value = e instanceof Error ? e.message : String(e)
+    if (scanError.value !== previous) showToast(scanError.value)
     // Would fail again on every retry.
     if (e instanceof CommandRefused && e.unsupported) autoScan.value = false
   }
