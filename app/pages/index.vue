@@ -9,7 +9,7 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
 const { ago, hops, message, formatNumber, formatDistance } = useFormat()
-const { supported: wakeLockSupported, enabled: keepScreenOn, active: screenKeptOn } = useWakeLock()
+const { supported: wakeLockSupported, enabled: keepScreenOn, forced: screenOnForAuto, active: screenKeptOn } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
 const now = ref(Date.now())
@@ -70,6 +70,10 @@ onBeforeUnmount(() => {
 
 watch(lastScanAttempt, (at) => {
   if (at) locate()
+})
+
+watch(autoScan, (on) => {
+  screenOnForAuto.value = on
 })
 
 const scanning = computed(() => scanUntil.value !== null)
@@ -286,10 +290,10 @@ watch(coverage, (value) => {
         <label
           v-if="wakeLockSupported"
           class="flex h-8 flex-none cursor-pointer items-center gap-2"
-          :class="{ 'text-warning': keepScreenOn && !screenKeptOn }"
-          :title="keepScreenOn && !screenKeptOn ? $t('wakeLock.refused') : $t('wakeLock.hint')"
+          :class="{ 'text-warning': (keepScreenOn || autoScan) && !screenKeptOn }"
+          :title="(keepScreenOn || autoScan) && !screenKeptOn ? $t('wakeLock.refused') : $t('wakeLock.hint')"
         >
-          <SwitchRoot v-model="keepScreenOn" class="switch">
+          <SwitchRoot :model-value="keepScreenOn || autoScan" :disabled="autoScan" class="switch" @update:model-value="keepScreenOn = $event">
             <SwitchThumb class="switch-thumb" />
           </SwitchRoot>
           {{ $t('wakeLock.label') }}
