@@ -15,7 +15,9 @@ export default defineNuxtPlugin(() => {
   if (import.meta.dev) return
   const { app } = useRuntimeConfig()
   const { available, apply, setApply, reload } = useAppUpdate()
-  const { status, error } = useMeshCore()
+  const { status } = useMeshCore()
+  const toasts = useToasts()
+  const toastShown = computed(() => toasts.value.some(toast => toast.open))
   const latestUrl = `${app.baseURL}/${app.buildAssetsDir}/builds/latest.json`.replace(/\/{2,}/g, '/')
   let checking = false
   let latestId: string | null = null
@@ -40,7 +42,7 @@ export default defineNuxtPlugin(() => {
     // would reload every tab, including one connected to a node.
     onNeedReload: () => {
       waiting = false
-      if (switching || (status.value === 'disconnected' && !error.value)) window.location.reload()
+      if (switching || (status.value === 'disconnected' && !toastShown.value)) window.location.reload()
       else available.value = true
     }
   })
@@ -85,7 +87,7 @@ export default defineNuxtPlugin(() => {
     document.addEventListener('visibilitychange', check)
   })
 
-  watch([available, status, error], () => {
+  watch([available, status, toastShown], () => {
     const isControlled = controlled()
     let reloadedFor: string | null = null
     try {
@@ -95,7 +97,7 @@ export default defineNuxtPlugin(() => {
       // Without storage nothing guards against a loop, the banner offers.
       if (!isControlled) return
     }
-    if (!shouldAutoReload({ available: available.value, status: status.value, error: !!error.value, controlled: isControlled, reloadedFor, latestId })) return
+    if (!shouldAutoReload({ available: available.value, status: status.value, toast: toastShown.value, controlled: isControlled, reloadedFor, latestId })) return
     if (!isControlled) {
       try {
         sessionStorage.setItem(RELOADED_FOR_STORAGE_KEY, latestId ?? '')
