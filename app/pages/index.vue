@@ -8,7 +8,7 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
 const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
-const { supported: wakeLockSupported, enabled: keepScreenOn, forced: screenOnForAuto, active: screenKeptOn } = useWakeLock()
+const { supported: wakeLockSupported, enabled: keepScreenOn, wanted: screenWanted, active: screenKeptOn } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
 const now = ref(Date.now())
@@ -77,8 +77,7 @@ watch(lastScanAttempt, (at) => {
 let autoOnAt = 0
 const pause = ref<{ secs: number, until: number } | null>(null)
 const pausedSecs = computed(() => pause.value && (lastScanAttempt.value ?? 0) < pause.value.until ? pause.value.secs : null)
-watch(autoScan, (on) => {
-  screenOnForAuto.value = on
+watch(autoScan, () => {
   autoOnAt = Date.now()
   pause.value = null
 })
@@ -315,16 +314,16 @@ watch(coverage, (value) => {
           <label
             v-if="wakeLockSupported"
             class="flex h-8 flex-none cursor-pointer items-center gap-2"
-            :class="{ 'text-warning': (keepScreenOn || autoScan) && !screenKeptOn }"
+            :class="{ 'text-warning': screenWanted && !screenKeptOn }"
           >
-            <SwitchRoot :model-value="keepScreenOn || autoScan" :disabled="autoScan" class="switch" @update:model-value="keepScreenOn = $event">
+            <SwitchRoot :model-value="screenWanted" :disabled="autoScan" class="switch" @update:model-value="keepScreenOn = $event">
               <SwitchThumb class="switch-thumb" />
             </SwitchRoot>
             {{ $t('wakeLock.label') }}
           </label>
         </div>
       </div>
-      <p v-if="(keepScreenOn || autoScan) && !screenKeptOn" class="text-small text-warning">{{ $t('wakeLock.refused') }}</p>
+      <p v-if="screenWanted && !screenKeptOn" class="text-small text-warning">{{ $t('wakeLock.refused') }}</p>
     </section>
 
     <!-- Leaves the map room between the two cards, the rows scroll under the toggle. -->

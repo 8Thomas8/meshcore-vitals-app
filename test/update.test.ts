@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { shouldAutoReload } from '~/utils/update'
 
-const idle = { available: true, status: 'disconnected' as const, error: false, controlled: false, reloadedFor: null, latestId: 'b2' }
+const idle = { available: true, status: 'disconnected' as const, toast: false, controlled: false, reloadedFor: null, latestId: 'b2' }
 
 describe('shouldAutoReload', () => {
   it('reloads an idle page onto a new deployment', () => {
@@ -18,8 +18,8 @@ describe('shouldAutoReload', () => {
     expect(shouldAutoReload({ ...idle, status: 'lost' })).toBe(false)
   })
 
-  it('keeps the last connection error on screen', () => {
-    expect(shouldAutoReload({ ...idle, error: true })).toBe(false)
+  it('keeps a toast on screen', () => {
+    expect(shouldAutoReload({ ...idle, toast: true })).toBe(false)
   })
 
   it('reloads once per deployment without a service worker', () => {

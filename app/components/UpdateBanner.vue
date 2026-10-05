@@ -6,7 +6,8 @@ const { connection } = useMeshCore()
 const dismissed = ref(false)
 
 // Without a node connected the plugin reloads by itself before this shows,
-// unless that reload already failed to bring the new version.
+// or once the toasts are gone, unless that reload already failed to bring the
+// new version.
 const open = computed({
   get: () => available.value && !dismissed.value,
   set: (value) => {
