@@ -38,7 +38,8 @@
     "noAnswer": "Le nœud n'a pas répondu.",
     "unreachable": "Nœud injoignable, vérifiez qu'il est allumé et à portée.",
     "scanUnsupported": "Scan refusé, mettez à jour le firmware du Companion.",
-    "scanFailed": "Le Companion n'a pas pu envoyer le scan, réessayez."
+    "scanFailed": "Le Companion n'a pas pu envoyer le scan, réessayez.",
+    "scanNoAnswer": "Le nœud n'a pas répondu au scan."
   },
   "compass": {
     "n": "N",

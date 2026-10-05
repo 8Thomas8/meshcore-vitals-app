@@ -53,7 +53,7 @@ function sendCommand(conn: MeshCoreConnection, frame: Uint8Array) {
   })
   conn.on('rx', onAnswer)
   conn.sendToRadioFrame(frame)
-  return withTimeout(answered).finally(() => conn.off('rx', onAnswer))
+  return withTimeout(answered, undefined, 'errors.scanNoAnswer').finally(() => conn.off('rx', onAnswer))
 }
 
 async function scan() {

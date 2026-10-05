@@ -38,7 +38,8 @@
     "noAnswer": "The node did not answer.",
     "unreachable": "Node unreachable, check that it is on and in range.",
     "scanUnsupported": "Scan refused, update the Companion firmware.",
-    "scanFailed": "The Companion could not send the scan, try again."
+    "scanFailed": "The Companion could not send the scan, try again.",
+    "scanNoAnswer": "The node did not answer the scan."
   },
   "compass": {
     "n": "N",
