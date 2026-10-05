@@ -60,7 +60,7 @@
     "done": "Scanné {ago}",
     "never": "Pas encore scanné",
     "noLocation": "pas de position pour les directions",
-    "autoHint": "Rescanner toutes les minutes tant que cette page est ouverte | Rescanner toutes les {minutes} minutes tant que cette page est ouverte",
+    "autoHint": "Rescanner toutes les minutes tant que cette page est ouverte. | Rescanner toutes les {minutes} minutes tant que cette page est ouverte.",
     "nothingAnswered": "Rien n'a répondu au dernier scan",
     "auto": "Auto",
     "paused": "Interrompu {duration}"
@@ -106,7 +106,7 @@
     "fullScreen": "Liste en plein écran",
     "showOutOfRange": "Afficher {n} répéteur hors de portée | Afficher {n} répéteurs hors de portée",
     "hideOutOfRange": "Masquer {n} répéteur hors de portée | Masquer {n} répéteurs hors de portée",
-    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu à plusieurs scans d'affilée, et ceux entendus seulement à travers eux"
+    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu à plusieurs scans d'affilée, et ceux entendus seulement à travers eux."
   },
   "detail": {
     "marginTitle": "Marge de liaison, dans le sens le plus faible",
@@ -299,8 +299,8 @@
   },
   "wakeLock": {
     "label": "Anti-veille",
-    "hint": "Garder l'écran allumé tant que l'app est affichée",
-    "refused": "Le navigateur a refusé de garder l'écran allumé"
+    "hint": "Garder l'écran allumé tant que l'app est affichée.",
+    "refused": "Le navigateur a refusé de garder l'écran allumé."
   },
   "history": {
     "title": "{count} dernières sessions",

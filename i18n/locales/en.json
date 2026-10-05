@@ -60,7 +60,7 @@
     "done": "Scanned {ago}",
     "never": "Not scanned yet",
     "noLocation": "no location for directions",
-    "autoHint": "Scan again every minute while this page is open | Scan again every {minutes} minutes while this page is open",
+    "autoHint": "Scan again every minute while this page is open. | Scan again every {minutes} minutes while this page is open.",
     "nothingAnswered": "Nothing answered the last scan",
     "auto": "Auto",
     "paused": "Paused for {duration}"
@@ -106,7 +106,7 @@
     "fullScreen": "Full screen list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
-    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row, and the ones only heard through them"
+    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row, and the ones only heard through them."
   },
   "detail": {
     "marginTitle": "Link margin, the weaker way",
@@ -299,8 +299,8 @@
   },
   "wakeLock": {
     "label": "Stay awake",
-    "hint": "Keep the screen on while the app is shown",
-    "refused": "The browser refused to keep the screen on"
+    "hint": "Keep the screen on while the app is shown.",
+    "refused": "The browser refused to keep the screen on."
   },
   "history": {
     "title": "Last {count} sessions",
