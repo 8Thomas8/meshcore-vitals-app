@@ -62,7 +62,8 @@
     "noLocation": "no location for directions",
     "autoHint": "Scan again every minute while this page is open | Scan again every {minutes} minutes while this page is open",
     "nothingAnswered": "Nothing answered the last scan",
-    "auto": "Auto"
+    "auto": "Auto",
+    "paused": "Paused for {duration}"
   },
   "coverage": {
     "level": {

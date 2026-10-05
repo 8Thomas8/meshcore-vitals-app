@@ -7,8 +7,8 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
-const { ago, hops, message, formatNumber, formatDistance } = useFormat()
-const { supported: wakeLockSupported, enabled: keepScreenOn, active: screenKeptOn } = useWakeLock()
+const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
+const { supported: wakeLockSupported, enabled: keepScreenOn, forced: screenOnForAuto, active: screenKeptOn } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
 const now = ref(Date.now())
@@ -56,7 +56,11 @@ onMounted(() => {
   clock = setInterval(() => {
     now.value = Date.now()
     // Auto scans only run while this page is shown and the tab is visible.
-    if (autoScan.value && !document.hidden && nextScanAt.value !== null && now.value >= nextScanAt.value) scan()
+    if (autoScan.value && !document.hidden && nextScanAt.value !== null && now.value >= nextScanAt.value) {
+      const late = now.value - Math.max(nextScanAt.value, autoOnAt)
+      if (late >= AUTO_SCAN_INTERVAL_MS) pause.value = { secs: Math.round(late / 1000), until: now.value + AUTO_SCAN_INTERVAL_MS }
+      scan()
+    }
   }, 1000)
   window.addEventListener('deviceorientationabsolute', onOrientation)
 })
@@ -68,6 +72,15 @@ onBeforeUnmount(() => {
 
 watch(lastScanAttempt, (at) => {
   if (at) locate()
+})
+
+let autoOnAt = 0
+const pause = ref<{ secs: number, until: number } | null>(null)
+const pausedSecs = computed(() => pause.value && (lastScanAttempt.value ?? 0) < pause.value.until ? pause.value.secs : null)
+watch(autoScan, (on) => {
+  screenOnForAuto.value = on
+  autoOnAt = Date.now()
+  pause.value = null
 })
 
 const scanning = computed(() => scanUntil.value !== null)
@@ -267,7 +280,9 @@ watch(coverage, (value) => {
       </div>
       <div class="status-row">
         <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { 'animate-blink': scanning }]" />
+        <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : '' }}</span>
         <span v-if="scanError" class="truncate text-error">{{ message(scanError) }}</span>
+        <span v-else-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
         <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
         <span v-else class="truncate">
           {{ scannedAt ? $t('scan.done', { ago: ago(scannedAt, now) }) : $t('scan.never') }}
@@ -284,10 +299,10 @@ watch(coverage, (value) => {
         <label
           v-if="wakeLockSupported"
           class="flex h-8 flex-none cursor-pointer items-center gap-2"
-          :class="{ 'text-warning': keepScreenOn && !screenKeptOn }"
-          :title="keepScreenOn && !screenKeptOn ? $t('wakeLock.refused') : $t('wakeLock.hint')"
+          :class="{ 'text-warning': (keepScreenOn || autoScan) && !screenKeptOn }"
+          :title="(keepScreenOn || autoScan) && !screenKeptOn ? $t('wakeLock.refused') : $t('wakeLock.hint')"
         >
-          <SwitchRoot v-model="keepScreenOn" class="switch">
+          <SwitchRoot :model-value="keepScreenOn || autoScan" :disabled="autoScan" class="switch" @update:model-value="keepScreenOn = $event">
             <SwitchThumb class="switch-thumb" />
           </SwitchRoot>
           {{ $t('wakeLock.label') }}
