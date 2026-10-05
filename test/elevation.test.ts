@@ -15,10 +15,11 @@ function answer(status: number) {
 
 async function load() {
   vi.resetModules()
-  Object.entries({ ...constants, computed, reactive, ref, watch, pathPositions }).forEach(([name, value]) => vi.stubGlobal(name, value))
+  const showToast = vi.fn()
+  Object.entries({ ...constants, computed, reactive, ref, watch, pathPositions, showToast }).forEach(([name, value]) => vi.stubGlobal(name, value))
   const elevation = await import('~/composables/useElevation')
   vi.stubGlobal('elevationAt', elevation.elevationAt)
-  return { ...elevation, ...await import('~/composables/useTerrain') }
+  return { ...elevation, ...await import('~/composables/useTerrain'), showToast }
 }
 
 describe('elevation lookups', () => {
@@ -27,17 +28,19 @@ describe('elevation lookups', () => {
   })
 
   it('flags the quota and asks again on retry', async () => {
-    const { elevationAt, elevationThrottled, retryElevations } = await load()
+    const { elevationAt, elevationThrottled, retryElevations, showToast } = await load()
     vi.stubGlobal('fetch', answer(429))
     expect(elevationAt(here)).toBeUndefined()
     await vi.waitFor(() => expect(elevationAt(here)).toBeNull())
     expect(elevationThrottled.value).toBe(true)
+    await vi.waitFor(() => expect(showToast).toHaveBeenCalledWith('quota.reached', 'warning'))
 
     vi.stubGlobal('fetch', answer(200))
     retryElevations()
     expect(elevationAt(here)).toBeUndefined()
     await vi.waitFor(() => expect(elevationAt(here)).toBe(200))
     expect(elevationThrottled.value).toBe(false)
+    expect(showToast).toHaveBeenCalledTimes(1)
   })
 
   it('does not blame the quota when offline', async () => {
