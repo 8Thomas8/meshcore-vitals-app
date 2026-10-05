@@ -193,7 +193,7 @@
   },
   "companion": {
     "reading": "Reading the node…",
-    "readFailed": "Could not read the node, try again",
+    "readFailed": "Could not read the node, try again.",
     "updated": "Updated {ago}",
     "refresh": "Refresh now",
     "disconnect": "Disconnect"

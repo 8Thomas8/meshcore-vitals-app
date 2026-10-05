@@ -193,7 +193,7 @@
   },
   "companion": {
     "reading": "Lecture du nœud…",
-    "readFailed": "Impossible de lire le nœud, réessayez",
+    "readFailed": "Impossible de lire le nœud, réessayez.",
     "updated": "Mis à jour {ago}",
     "refresh": "Actualiser",
     "disconnect": "Se déconnecter"
