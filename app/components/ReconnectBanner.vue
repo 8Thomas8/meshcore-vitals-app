@@ -11,7 +11,7 @@ const { message } = useFormat()
       <AppIcon :icon="mdiBluetoothOff" :class="retrying ? 'text-warning' : 'text-error'" />
       <ToastDescription class="min-w-0 flex-1">{{ $t('reconnect.lost') }} {{ retrying ? $t('reconnect.retrying') : error ? message(error) : '' }}</ToastDescription>
       <ToastAction :alt-text="$t('reconnect.button')" as-child>
-        <button type="button" class="btn btn-tonal text-primary" :disabled="status === 'connecting'" @click="connect">
+        <button type="button" class="btn btn-tonal text-primary" :disabled="status === 'connecting'" @click="connect()">
           <AppIcon v-if="status === 'connecting'" :icon="mdiLoading" class="animate-spin" size="18" />
           {{ $t('reconnect.button') }}
         </button>

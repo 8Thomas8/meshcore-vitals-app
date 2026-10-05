@@ -23,7 +23,17 @@ function waitUntilConnected(conn: MeshCoreConnection) {
   })
 }
 
-async function connect() {
+function advertised(device: MeshCoreBleDevice) {
+  const controller = new AbortController()
+  const watching = device.watchAdvertisements?.({ signal: controller.signal })
+  if (!watching) return
+  return withTimeout(new Promise<void>((resolve) => {
+    device.addEventListener('advertisementreceived', () => resolve(), { once: true })
+    watching.catch(() => resolve())
+  }), CONNECT_TIMEOUT_MS, 'errors.unreachable').finally(() => controller.abort())
+}
+
+async function connect(device = connection.value?.bleDevice) {
   if (status.value === 'connecting') return
   const lost = connection.value
   error.value = null
@@ -31,8 +41,9 @@ async function connect() {
   let conn: MeshCoreConnection | null | undefined
   try {
     const { default: WebBleConnection } = await import('@liamcottle/meshcore.js/src/connection/web_ble_connection.js')
-    if (lost) await withTimeout(lost.bleDevice.gatt.connect(), CONNECT_TIMEOUT_MS, 'errors.connectTimeout')
-    conn = lost ? new WebBleConnection(lost.bleDevice) : await WebBleConnection.open()
+    if (device && !lost) await advertised(device)
+    if (device) await withTimeout(device.gatt.connect(), CONNECT_TIMEOUT_MS, 'errors.connectTimeout')
+    conn = device ? new WebBleConnection(device) : await WebBleConnection.open()
     if (!conn) {
       status.value = 'disconnected'
       return
@@ -51,7 +62,7 @@ async function connect() {
   }
   catch (e) {
     if (connection.value !== lost) return
-    (conn ?? lost)?.bleDevice.gatt.disconnect()
+    (conn?.bleDevice ?? device)?.gatt.disconnect()
     status.value = connection.value ? 'lost' : 'disconnected'
     // Dismissing the device picker rejects with NotFoundError.
     if (!(e instanceof DOMException && e.name === 'NotFoundError')) {

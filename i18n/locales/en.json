@@ -28,6 +28,7 @@
   "connect": {
     "tagline": "Check the MeshCore network where you stand: coverage, link quality with nearby repeaters and overall health.",
     "button": "Connect over Bluetooth",
+    "reconnect": "Reconnect to {name}",
     "noBluetooth": "This browser has no Web Bluetooth. Use Chrome or Edge on desktop or Android.",
     "hint": "Turn the Companion on and keep it nearby before pairing."
   },

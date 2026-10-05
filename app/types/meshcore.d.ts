@@ -106,8 +106,19 @@ interface MeshCoreDeviceInfo {
   manufacturerModel: string
 }
 
+interface MeshCoreBleDevice extends EventTarget {
+  id: string
+  name?: string
+  gatt: { connect: () => Promise<unknown>, disconnect: () => void }
+  watchAdvertisements?: (options: { signal: AbortSignal }) => Promise<void>
+}
+
+interface Navigator {
+  bluetooth?: { getDevices?: () => Promise<MeshCoreBleDevice[]> }
+}
+
 interface MeshCoreConnection {
-  bleDevice: { id: string, gatt: { connect: () => Promise<unknown>, disconnect: () => void } }
+  bleDevice: MeshCoreBleDevice
   on: (event: number | string, handler: (payload: unknown) => void) => void
   off: (event: number | string, handler: (payload: unknown) => void) => void
   close: () => Promise<void>
@@ -125,7 +136,7 @@ interface MeshCoreConnection {
 
 declare module '@liamcottle/meshcore.js/src/connection/web_ble_connection.js' {
   const WebBleConnection: {
-    new (device: MeshCoreConnection['bleDevice']): MeshCoreConnection
+    new (device: MeshCoreBleDevice): MeshCoreConnection
     open: () => Promise<MeshCoreConnection | null | undefined>
   }
   export default WebBleConnection

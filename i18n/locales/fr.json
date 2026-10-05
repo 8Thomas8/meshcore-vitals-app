@@ -28,6 +28,7 @@
   "connect": {
     "tagline": "Vérifiez le réseau MeshCore là où vous êtes : couverture, qualité des liaisons avec les répéteurs proches et santé générale.",
     "button": "Se connecter en Bluetooth",
+    "reconnect": "Reconnecter à {name}",
     "noBluetooth": "Ce navigateur ne gère pas le Web Bluetooth. Utilisez Chrome ou Edge sur ordinateur ou sur Android.",
     "hint": "Allumez le Companion et gardez-le à proximité avant l'appairage."
   },

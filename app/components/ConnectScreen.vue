@@ -5,9 +5,17 @@ const { status, error, connect } = useMeshCore()
 const { message } = useFormat()
 
 const bluetoothSupported = ref(true)
-onMounted(() => {
+const knownDevices = shallowRef<MeshCoreBleDevice[]>([])
+const picked = shallowRef<MeshCoreBleDevice>()
+onMounted(async () => {
   bluetoothSupported.value = 'bluetooth' in navigator
+  knownDevices.value = (await navigator.bluetooth?.getDevices?.().catch(() => []) ?? []).filter(device => device.name)
 })
+
+function connectTo(device?: MeshCoreBleDevice) {
+  picked.value = device
+  connect(device)
+}
 </script>
 
 <template>
@@ -17,9 +25,13 @@ onMounted(() => {
     <p class="my-[1em] max-w-[30ch] text-body text-medium">{{ $t('connect.tagline') }}</p>
 
     <div class="mt-2 flex w-full flex-col gap-2">
-      <button type="button" class="btn btn-filled h-13 w-full text-subtitle" :disabled="!bluetoothSupported || status === 'connecting'" @click="connect">
-        <AppIcon :icon="status === 'connecting' ? mdiLoading : mdiBluetooth" :class="{ 'animate-spin': status === 'connecting' }" />
+      <button type="button" class="btn btn-filled h-13 w-full text-subtitle" :disabled="!bluetoothSupported || status === 'connecting'" @click="connectTo()">
+        <AppIcon :icon="status === 'connecting' && !picked ? mdiLoading : mdiBluetooth" :class="{ 'animate-spin': status === 'connecting' && !picked }" />
         {{ $t('connect.button') }}
+      </button>
+      <button v-for="device in knownDevices" :key="device.id" type="button" class="btn btn-tonal h-13 w-full text-subtitle text-primary" :disabled="status === 'connecting'" @click="connectTo(device)">
+        <AppIcon v-if="status === 'connecting' && picked === device" :icon="mdiLoading" class="animate-spin" />
+        <span class="min-w-0 truncate">{{ $t('connect.reconnect', { name: device.name }) }}</span>
       </button>
       <p v-if="!bluetoothSupported" class="mt-1 text-hint text-error">{{ $t('connect.noBluetooth') }}</p>
       <p v-else-if="error" class="mt-1 text-hint text-error">{{ message(error) }}</p>
