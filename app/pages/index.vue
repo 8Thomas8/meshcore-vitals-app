@@ -7,7 +7,7 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
-const { ago, hops, duration, formatNumber, formatDistance } = useFormat()
+const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
 const { supported: wakeLockSupported, enabled: keepScreenOn, forced: screenOnForAuto, active: screenKeptOn } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
@@ -294,6 +294,7 @@ watch(coverage, (value) => {
           <PopoverPortal>
             <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
               <div class="flex flex-col gap-2 py-1">
+                <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
                 <span>{{ $t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000) }}</span>
                 <span v-if="wakeLockSupported">{{ $t('wakeLock.hint') }}</span>
               </div>
