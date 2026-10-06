@@ -1,8 +1,10 @@
-import { mdiAccessPoint, mdiHistory, mdiRadioTower } from '@mdi/js'
+import { mdiAccessPoint, mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiHistory, mdiRadioTower } from '@mdi/js'
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'lost'
 
 export type Tone = 'success' | 'warning' | 'error'
+
+export const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlertCircle }
 
 export type CoverageLevel = 'good' | 'fair' | 'weak' | 'none'
 
@@ -225,6 +227,7 @@ export const COVERAGE_RECENT_MS = 10 * 60_000
 export const COVERAGE_GOOD_USABLE = 2
 
 export const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
+export const COVERAGE_HEIGHTS = { good: '100%', fair: '70%', weak: '45%', none: '20%' } as const
 
 export const MARGIN_COMFORTABLE_DB = 10
 export const MARGIN_FAIR_DB = 5

@@ -69,7 +69,7 @@ function onCloseAutoFocus(event: Event) {
               <span v-if="level" class="chip chip-small" :class="`text-${COVERAGE_TONES[level]}`">{{ $t(`coverage.level.${level}`) }}</span>
             </span>
             <span class="text-small text-medium">{{ $t('repeaters.counts', { direct, relayed: $t('repeaters.relayed', session.repeaters.length - direct) }) }}</span>
-            <CoverageTimeline v-if="session.scans.length" :session="session" />
+            <CoverageTimeline v-if="session.scans.length" :session="session" aria-hidden="true" />
           </span>
           <AppIcon class="shrink-0 text-medium" :icon="mdiChevronRight" />
         </button>

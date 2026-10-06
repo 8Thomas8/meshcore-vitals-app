@@ -71,6 +71,7 @@
       "weak": "Weak coverage",
       "none": "No coverage"
     },
+    "share": "{level}: {percent}%",
     "reason": {
       "nothing-heard": "No repeater heard directly in the last {minutes} minutes.",
       "confirmed": "{confirmed} usable repeaters confirmed both ways, {solid} solid. | {confirmed} usable repeaters confirmed both ways, {solid} solid.",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiClose, mdiDeleteOutline } from '@mdi/js'
+import { mdiCircleMedium, mdiClose, mdiDeleteOutline } from '@mdi/js'
 
 const props = defineProps<{ session: Session }>()
 
@@ -72,7 +72,11 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
       </div>
       <div class="-mx-4 divide-y divide-glass-border border-y border-glass-border">
         <div v-for="row in rows" :key="row.repeater.id" class="flex items-center gap-3 px-4 py-2.5">
-          <span class="size-2.5 shrink-0 rounded-full" :class="row.repeater.hops || !row.link ? 'bg-on-surface/40' : ['bg-current', `text-${row.link.tone}`]" />
+          <AppIcon
+            :icon="row.repeater.hops || !row.link ? mdiCircleMedium : TONE_ICONS[row.link.tone]"
+            size="18"
+            :class="row.repeater.hops || !row.link ? 'text-disabled' : `text-${row.link.tone}`"
+          />
           <span class="flex min-w-0 grow flex-col">
             <span class="truncate font-medium">{{ row.name }}</span>
             <span class="truncate text-small text-medium">{{ row.route }}</span>

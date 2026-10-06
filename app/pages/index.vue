@@ -460,7 +460,7 @@ watch(coverage, (value) => {
   grid-area: links;
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 16px;
+  gap: 2px 12px;
   margin-top: 2px;
 
   @media (width >= 600px) {

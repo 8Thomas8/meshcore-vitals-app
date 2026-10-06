@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiChevronRight, mdiPower, mdiRefresh } from '@mdi/js'
+import { mdiChevronRight, mdiPower, mdiRefresh } from '@mdi/js'
 
 // The layout only shows the pages while a node is connected.
 const { connection, status, disconnect } = useMeshCore()
@@ -190,8 +190,6 @@ const health = computed(() => {
   if (issues.value.length) return { tone: 'warning', label: t('health.attention') } as const
   return { tone: 'success', label: t('health.healthy') } as const
 })
-
-const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlertCircle }
 </script>
 
 <template>

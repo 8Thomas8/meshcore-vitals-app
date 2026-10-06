@@ -71,6 +71,7 @@
       "weak": "Couverture faible",
       "none": "Aucune couverture"
     },
+    "share": "{level} : {percent} %",
     "reason": {
       "nothing-heard": "Aucun répéteur entendu en direct ces {minutes} dernières minutes.",
       "confirmed": "{confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solide. | {confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solides.",
