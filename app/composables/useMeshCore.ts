@@ -48,6 +48,7 @@ async function connect(device = connection.value?.bleDevice) {
       status.value = 'disconnected'
       return
     }
+    conn.sendToRadioFrame = oneAtATime(conn.sendToRadioFrame.bind(conn))
     await waitUntilConnected(conn)
     if (connection.value !== lost) {
       await conn.close()
