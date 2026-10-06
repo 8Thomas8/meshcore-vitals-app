@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline, mdiRadar } from '@mdi/js'
+import { mdiAlert, mdiAutorenew, mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiCoffeeOutline, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline, mdiRadar } from '@mdi/js'
 import { useMediaQuery } from '@vueuse/core'
 
 const { status } = useMeshCore()
@@ -8,7 +8,7 @@ const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fu
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
 const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
-const { supported: wakeLockSupported, enabled: keepScreenOn, wanted: screenWanted, active: screenKeptOn } = useWakeLock()
+const { supported: wakeLockSupported, enabled: keepScreenOn, wanted: screenWanted, refused: screenRefused } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
 const now = ref(Date.now())
@@ -220,7 +220,7 @@ watch(coverage, (value) => {
          outside the cards. -->
     <!-- Lazy: MapLibre, its styles and its worker only load once there is a map to show. -->
     <LazyMapBackdrop v-if="here && mapShown" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
-    <section ref="summary" class="glass card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown, 'w-100': column }">
+    <section ref="summary" class="glass @container card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown, 'w-100': column }">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
       <div class="flex items-center gap-2">
         <PopoverRoot v-model:open="coverageOpen">
@@ -241,9 +241,8 @@ watch(coverage, (value) => {
               />
               <text v-if="coverage" class="fill-on-surface font-mono text-hint font-medium" x="20" y="20" text-anchor="middle" dominant-baseline="central">{{ coverage.usable }}</text>
             </svg>
-              <span class="min-w-0 grow">
-                <!-- Two lines rather than cut, some languages need them on a phone. -->
-                <span class="line-clamp-2 text-title leading-[1.2]">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
+              <span class="flex min-w-0 grow flex-col">
+                <span class="truncate text-subtitle leading-[1.2]">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
                 <span class="flex min-w-0 items-center gap-1 text-small text-medium">
                   <span class="truncate">
                     <template v-if="inRange.length">{{ $t('repeaters.counts', { direct: direct.length, relayed: $t('repeaters.relayed', inRange.length - direct.length) }) }}</template>
@@ -268,22 +267,22 @@ watch(coverage, (value) => {
              unless a translation needs more. -->
         <button
           type="button"
-          class="btn h-11 min-w-26"
+          class="btn h-11 min-w-26 @max-xs:min-w-21"
           :class="scanning || autoScan || status !== 'connected' ? 'btn-tonal text-primary' : 'btn-filled'"
           :aria-disabled="scanning || autoScan || status !== 'connected'"
           @click="autoScan || scan()"
         >
-          <AppIcon :icon="mdiRadar" size="18" />
+          <AppIcon class="@max-xs:hidden" :icon="mdiRadar" size="18" />
           <template v-if="scanning">{{ Math.ceil((scanLeftMs ?? 0) / 1000) }} s</template>
           <template v-else-if="nextScanAt !== null && lastScanAttempt">{{ formatCountdown(nextScanAt - now) }}</template>
           <template v-else>{{ $t('scan.button') }}</template>
         </button>
       </div>
-      <div class="status-row flex-wrap">
-        <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : '' }}</span>
+      <div class="status-row">
+        <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : screenRefused ? $t('wakeLock.refused') : '' }}</span>
         <PopoverRoot>
           <PopoverTrigger class="flex h-8 max-w-full min-w-0 items-center gap-2 text-left">
-            <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : 'text-success', { 'animate-blink': scanning }]" />
+            <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : screenRefused ? 'text-warning' : 'text-success', { 'animate-blink': scanning }]" />
             <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
             <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
             <span v-else class="truncate">
@@ -296,6 +295,7 @@ watch(coverage, (value) => {
             <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
               <div class="flex flex-col gap-2 py-1">
                 <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
+                <span v-if="screenRefused" class="text-warning">{{ $t('wakeLock.refused') }}</span>
                 <span>{{ $t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000) }}</span>
                 <span v-if="wakeLockSupported">{{ $t('wakeLock.hint') }}</span>
               </div>
@@ -303,27 +303,29 @@ watch(coverage, (value) => {
           </PopoverPortal>
         </PopoverRoot>
         <!-- As tall as the status line, the card keeps its height. -->
-        <div class="ms-auto flex gap-2">
-          <label class="flex h-8 flex-none cursor-pointer items-center gap-2">
+        <div class="ms-auto flex gap-3">
+          <label class="flex h-8 flex-none cursor-pointer items-center gap-1.5" :title="$t('scan.auto')">
+            <AppIcon :icon="mdiAutorenew" size="18" />
+            <span class="sr-only">{{ $t('scan.auto') }}</span>
             <SwitchRoot v-model="autoScan" class="switch">
               <SwitchThumb class="switch-thumb" />
             </SwitchRoot>
-            {{ $t('scan.auto') }}
           </label>
-          <!-- For walking around with the phone in hand. On but refused turns amber. -->
+          <!-- For walking around with the phone in hand. On but refused turns amber with a warning sign. -->
           <label
             v-if="wakeLockSupported"
-            class="flex h-8 flex-none cursor-pointer items-center gap-2"
-            :class="{ 'text-warning': screenWanted && !screenKeptOn }"
+            class="flex h-8 flex-none cursor-pointer items-center gap-1.5"
+            :class="{ 'text-warning': screenRefused }"
+            :title="$t('wakeLock.label')"
           >
+            <AppIcon :icon="screenRefused ? mdiAlert : mdiCoffeeOutline" size="18" />
+            <span class="sr-only">{{ $t('wakeLock.label') }}</span>
             <SwitchRoot :model-value="screenWanted" :disabled="autoScan" class="switch" @update:model-value="keepScreenOn = $event">
               <SwitchThumb class="switch-thumb" />
             </SwitchRoot>
-            {{ $t('wakeLock.label') }}
           </label>
         </div>
       </div>
-      <p v-if="screenWanted && !screenKeptOn" class="text-small text-warning">{{ $t('wakeLock.refused') }}</p>
     </section>
 
     <!-- Leaves the map room between the two cards, the rows scroll under the toggle. -->
@@ -458,15 +460,14 @@ watch(coverage, (value) => {
 
 .links {
   grid-area: links;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 16px;
-  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 6px;
 
   @media (width >= 600px) {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
+    grid-template-columns: 8.5rem;
+    gap: 6px;
     margin-top: 0;
   }
 }

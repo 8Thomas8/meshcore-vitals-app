@@ -4,13 +4,17 @@
 // included.
 export default defineNuxtPlugin((nuxtApp) => {
   const cookie = useCookie<string | null>(LOCALE_COOKIE, { maxAge: LOCALE_COOKIE_MAX_AGE_SECS, sameSite: 'lax' })
+  const i18n = nuxtApp.$i18n
+  const available: string[] = i18n.localeCodes.value
+  const browser = navigator.languages.map(tag => tag.split('-')[0]!).find(code => available.includes(code))
+  const wanted = (cookie.value && available.includes(cookie.value) ? cookie.value : browser) as typeof i18n.locale.value | undefined
+  const loading = wanted && wanted !== i18n.locale.value && i18n.loadLocaleMessages(wanted)
 
-  onNuxtReady(async () => {
-    const i18n = nuxtApp.$i18n
-    const available: string[] = i18n.localeCodes.value
-    const browser = navigator.languages.map(tag => tag.split('-')[0]!).find(code => available.includes(code))
-    const wanted = cookie.value && available.includes(cookie.value) ? cookie.value : browser
-    if (wanted && wanted !== i18n.locale.value) await i18n.setLocale(wanted as typeof i18n.locale.value)
+  nuxtApp.hooks.hookOnce('app:suspense:resolve', async () => {
+    if (loading) {
+      await loading
+      await i18n.setLocale(wanted!)
+    }
     // Only a choice made in the footer, after this, is remembered.
     watch(i18n.locale, (code) => {
       cookie.value = code

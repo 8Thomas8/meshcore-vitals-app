@@ -14,6 +14,7 @@ defineProps<{
     <span class="text-title leading-tight tracking-normal wrap-anywhere" :class="[tone && `text-${tone}`, { 'font-mono': /^[\d\s.,+−-]+$/.test(value) }]">
       {{ value }}<span v-if="unit" class="ml-0.75 text-small leading-[inherit] text-medium">{{ unit }}</span>
     </span>
+    <slot />
     <span v-if="hint" class="text-small text-disabled">{{ hint }}</span>
   </div>
 </template>

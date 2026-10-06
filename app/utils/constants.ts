@@ -1,8 +1,10 @@
-import { mdiAccessPoint, mdiHistory, mdiRadioTower } from '@mdi/js'
+import { mdiAccessPoint, mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiHistory, mdiRadioTower } from '@mdi/js'
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'lost'
 
 export type Tone = 'success' | 'warning' | 'error'
+
+export const TONE_ICONS = { success: mdiCheckCircle, warning: mdiAlert, error: mdiAlertCircle }
 
 export type CoverageLevel = 'good' | 'fair' | 'weak' | 'none'
 
@@ -145,6 +147,7 @@ export const HISTORY_STORE = 'sessions'
 export const HISTORY_MAX_SESSIONS = 20
 export const HISTORY_SAVE_MS = 10_000
 export const SESSION_GAP_MS = 30 * 60_000
+export const REMOVE_CONFIRM_MS = 4_000
 
 // Where the coverage card ends before it is measured, app bar included.
 export const MAP_TOP_FALLBACK = 200
@@ -225,6 +228,7 @@ export const COVERAGE_RECENT_MS = 10 * 60_000
 export const COVERAGE_GOOD_USABLE = 2
 
 export const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
+export const COVERAGE_HEIGHTS = { good: '100%', fair: '70%', weak: '45%', none: '20%' } as const
 
 export const MARGIN_COMFORTABLE_DB = 10
 export const MARGIN_FAIR_DB = 5

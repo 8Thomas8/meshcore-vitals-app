@@ -45,6 +45,10 @@
     "s": "S",
     "w": "O"
   },
+  "link": {
+    "received": "Reçu",
+    "sent": "Émis"
+  },
   "margin": {
     "comfortable": "Confortable",
     "fair": "Correcte",
@@ -71,6 +75,7 @@
       "weak": "Couverture faible",
       "none": "Aucune couverture"
     },
+    "share": "{level} : {percent} %",
     "reason": {
       "nothing-heard": "Aucun répéteur entendu en direct ces {minutes} dernières minutes.",
       "confirmed": "{confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solide. | {confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solides.",
@@ -315,6 +320,7 @@
     "noScan": "Aucun scan pendant cette session.",
     "bestSnr": "Meilleur SNR",
     "remove": "Supprimer cette session",
-    "confirmRemove": "Toucher encore pour supprimer"
+    "confirmRemove": "Toucher encore pour supprimer",
+    "removeCancelled": "Suppression annulée"
   }
 }

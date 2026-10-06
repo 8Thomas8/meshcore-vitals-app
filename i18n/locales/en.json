@@ -45,6 +45,10 @@
     "s": "S",
     "w": "W"
   },
+  "link": {
+    "received": "Received",
+    "sent": "Sent"
+  },
   "margin": {
     "comfortable": "Comfortable",
     "fair": "Fair",
@@ -71,6 +75,7 @@
       "weak": "Weak coverage",
       "none": "No coverage"
     },
+    "share": "{level}: {percent}%",
     "reason": {
       "nothing-heard": "No repeater heard directly in the last {minutes} minutes.",
       "confirmed": "{confirmed} usable repeaters confirmed both ways, {solid} solid. | {confirmed} usable repeaters confirmed both ways, {solid} solid.",
@@ -315,6 +320,7 @@
     "noScan": "No scan during this session.",
     "bestSnr": "Best SNR",
     "remove": "Delete this session",
-    "confirmRemove": "Tap again to delete"
+    "confirmRemove": "Tap again to delete",
+    "removeCancelled": "Deletion cancelled"
   }
 }

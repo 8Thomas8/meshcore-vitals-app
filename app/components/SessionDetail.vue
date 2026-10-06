@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { mdiClose, mdiDeleteOutline } from '@mdi/js'
+import { mdiCircleMedium, mdiClose, mdiDeleteOutline } from '@mdi/js'
+import { refAutoReset } from '@vueuse/core'
 
 const props = defineProps<{ session: Session }>()
 
 const { remove } = useHistory()
-const confirming = ref(false)
+const confirming = refAutoReset(false, REMOVE_CONFIRM_MS)
 
 const { t } = useI18n()
+const announcement = ref('')
+watch(confirming, (value) => {
+  announcement.value = t(value ? 'history.confirmRemove' : 'history.removeCancelled')
+})
 const { hops, duration, time, day, formatNumber, formatDistance } = useFormat()
 
 function margin(snr: number | null) {
@@ -72,14 +77,18 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
       </div>
       <div class="-mx-4 divide-y divide-glass-border border-y border-glass-border">
         <div v-for="row in rows" :key="row.repeater.id" class="flex items-center gap-3 px-4 py-2.5">
-          <span class="size-2.5 shrink-0 rounded-full" :class="row.repeater.hops || !row.link ? 'bg-on-surface/40' : ['bg-current', `text-${row.link.tone}`]" />
+          <AppIcon
+            :icon="row.repeater.hops || !row.link ? mdiCircleMedium : TONE_ICONS[row.link.tone]"
+            size="18"
+            :class="row.repeater.hops || !row.link ? 'text-disabled' : `text-${row.link.tone}`"
+          />
           <span class="flex min-w-0 grow flex-col">
             <span class="truncate font-medium">{{ row.name }}</span>
             <span class="truncate text-small text-medium">{{ row.route }}</span>
           </span>
           <LinkReadout
             v-if="!row.repeater.hops"
-            class="flex shrink-0 flex-col items-end"
+            class="grid w-36 shrink-0 gap-2"
             :rx="row.repeater.rx"
             :tx="row.repeater.tx"
             :rx-margin="row.rx"
@@ -99,5 +108,6 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
       <AppIcon :icon="mdiDeleteOutline" size="18" />
       {{ confirming ? $t('history.confirmRemove') : $t('history.remove') }}
     </button>
+    <span class="sr-only" aria-live="polite">{{ announcement }}</span>
   </div>
 </template>
