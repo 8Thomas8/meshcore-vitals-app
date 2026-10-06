@@ -316,6 +316,7 @@
     "noScan": "No scan during this session.",
     "bestSnr": "Best SNR",
     "remove": "Delete this session",
-    "confirmRemove": "Tap again to delete"
+    "confirmRemove": "Tap again to delete",
+    "removeCancelled": "Deletion cancelled"
   }
 }

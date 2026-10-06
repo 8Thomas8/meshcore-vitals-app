@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { mdiCircleMedium, mdiClose, mdiDeleteOutline } from '@mdi/js'
+import { refAutoReset } from '@vueuse/core'
 
 const props = defineProps<{ session: Session }>()
 
 const { remove } = useHistory()
-const confirming = ref(false)
+const confirming = refAutoReset(false, REMOVE_CONFIRM_MS)
 
 const { t } = useI18n()
+const announcement = ref('')
+watch(confirming, (value) => {
+  announcement.value = t(value ? 'history.confirmRemove' : 'history.removeCancelled')
+})
 const { hops, duration, time, day, formatNumber, formatDistance } = useFormat()
 
 function margin(snr: number | null) {
@@ -103,5 +108,6 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
       <AppIcon :icon="mdiDeleteOutline" size="18" />
       {{ confirming ? $t('history.confirmRemove') : $t('history.remove') }}
     </button>
+    <span class="sr-only" aria-live="polite">{{ announcement }}</span>
   </div>
 </template>

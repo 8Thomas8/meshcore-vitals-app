@@ -316,6 +316,7 @@
     "noScan": "Aucun scan pendant cette session.",
     "bestSnr": "Meilleur SNR",
     "remove": "Supprimer cette session",
-    "confirmRemove": "Toucher encore pour supprimer"
+    "confirmRemove": "Toucher encore pour supprimer",
+    "removeCancelled": "Suppression annulée"
   }
 }

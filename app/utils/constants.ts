@@ -147,6 +147,7 @@ export const HISTORY_STORE = 'sessions'
 export const HISTORY_MAX_SESSIONS = 20
 export const HISTORY_SAVE_MS = 10_000
 export const SESSION_GAP_MS = 30 * 60_000
+export const REMOVE_CONFIRM_MS = 4_000
 
 // Where the coverage card ends before it is measured, app bar included.
 export const MAP_TOP_FALLBACK = 200
