@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.5.0...v1.6.0) (2026-10-06)
+
+
+### Features
+
+* link margin bars, compact scan card and accessibility fixes ([#52](https://github.com/8Thomas8/meshcore-vitals-app/issues/52)) ([a85bdcc](https://github.com/8Thomas8/meshcore-vitals-app/commit/a85bdccf69898e0cca633457843089e99c4f529b))
+
+
+### Bug Fixes
+
+* send one frame at a time so the companion page loads on connect ([#50](https://github.com/8Thomas8/meshcore-vitals-app/issues/50)) ([bdba7bf](https://github.com/8Thomas8/meshcore-vitals-app/commit/bdba7bf416ffe1a2b979e5974b430fc76f07d9c2))
+
 ## [1.5.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.4.1...v1.5.0) (2026-10-05)
 
 
