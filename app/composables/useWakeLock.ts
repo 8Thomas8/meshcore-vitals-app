@@ -3,8 +3,8 @@
 // taken again each time it comes back. Module scope, one lock for the app.
 const supported = ref(false)
 const enabled = ref(false)
-/** The browser granted the lock, it may refuse it, e.g. to save battery. */
-const active = ref(false)
+/** The browser refused the lock, e.g. to save battery. */
+const refused = ref(false)
 let sentinel: WakeLockSentinel | null = null
 let requesting = false
 let started = false
@@ -22,7 +22,6 @@ async function acquire() {
     const lock = await navigator.wakeLock.request('screen')
     lock.addEventListener('release', () => {
       if (sentinel === lock) sentinel = null
-      active.value = false
     })
     // Switched off while the request was pending.
     if (!wanted.value) {
@@ -30,10 +29,10 @@ async function acquire() {
       return
     }
     sentinel = lock
-    active.value = true
+    refused.value = false
   }
   catch {
-    active.value = false
+    refused.value = true
   }
   finally {
     requesting = false
@@ -43,7 +42,7 @@ async function acquire() {
 async function release() {
   const lock = sentinel
   sentinel = null
-  active.value = false
+  refused.value = false
   await lock?.release()
 }
 
@@ -75,5 +74,5 @@ function start() {
 }
 
 export function useWakeLock() {
-  return { supported: readonly(supported), enabled, wanted, active: readonly(active), start }
+  return { supported: readonly(supported), enabled, wanted, refused: readonly(refused), start }
 }

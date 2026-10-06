@@ -22,8 +22,9 @@ async function load() {
     localStorage: { getItem: () => null, setItem: vi.fn() }
   }).forEach(([name, value]) => vi.stubGlobal(name, value))
   const { useWakeLock } = await import('~/composables/useWakeLock')
-  useWakeLock().start()
-  return { autoScan, connection, status, retrying, request, lock }
+  const { refused, start } = useWakeLock()
+  start()
+  return { autoScan, connection, status, retrying, request, lock, refused }
 }
 
 describe('wake lock', () => {
@@ -60,5 +61,17 @@ describe('wake lock', () => {
 
     retrying.value = false
     await vi.waitFor(() => expect(lock.release).toHaveBeenCalledTimes(1))
+  })
+
+  it('flags a refused lock until it is no longer wanted', async () => {
+    const { autoScan, connection, status, request, refused } = await load()
+    request.mockRejectedValueOnce(new Error('refused'))
+    autoScan.value = true
+    connection.value = {}
+    status.value = 'connected'
+    await vi.waitFor(() => expect(refused.value).toBe(true))
+
+    autoScan.value = false
+    await vi.waitFor(() => expect(refused.value).toBe(false))
   })
 })
