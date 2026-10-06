@@ -45,6 +45,10 @@
     "s": "S",
     "w": "O"
   },
+  "link": {
+    "received": "Reçu",
+    "sent": "Émis"
+  },
   "margin": {
     "comfortable": "Confortable",
     "fair": "Correcte",

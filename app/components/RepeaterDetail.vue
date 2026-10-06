@@ -79,14 +79,18 @@ const shortKey = computed(() => {
             :unit="row.repeater.rx ? 'dB SNR' : undefined"
             :tone="row.rx?.tone"
             :hint="row.repeater.rx ? `RX · ${formatNumber(row.repeater.rx.rssi)} dBm · ${ago(row.repeater.rx.at, now)}` : 'RX'"
-          />
+          >
+            <MarginBar class="my-1" :margin="row.rx" />
+          </VitalStat>
           <VitalStat
             :label="$t('detail.itHearsYou')"
             :value="row.repeater.tx ? formatNumber(row.repeater.tx.snr, 2, 0) : $t('common.na')"
             :unit="row.repeater.tx ? 'dB SNR' : undefined"
             :tone="row.tx?.tone"
             :hint="row.repeater.tx ? `TX · ${t('detail.scanned', { ago: ago(row.repeater.tx.at, now) })}` : `TX · ${t('detail.scanToMeasure')}`"
-          />
+          >
+            <MarginBar class="my-1" :margin="row.tx" />
+          </VitalStat>
         </div>
       </section>
 

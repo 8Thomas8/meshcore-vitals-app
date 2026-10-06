@@ -45,6 +45,10 @@
     "s": "S",
     "w": "W"
   },
+  "link": {
+    "received": "Received",
+    "sent": "Sent"
+  },
   "margin": {
     "comfortable": "Comfortable",
     "fair": "Fair",

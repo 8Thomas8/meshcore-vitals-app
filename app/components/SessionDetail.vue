@@ -88,7 +88,7 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
           </span>
           <LinkReadout
             v-if="!row.repeater.hops"
-            class="flex shrink-0 flex-col items-end"
+            class="grid w-36 shrink-0 gap-2"
             :rx="row.repeater.rx"
             :tx="row.repeater.tx"
             :rx-margin="row.rx"

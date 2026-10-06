@@ -458,15 +458,14 @@ watch(coverage, (value) => {
 
 .links {
   grid-area: links;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 12px;
-  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 6px;
 
   @media (width >= 600px) {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
+    grid-template-columns: 8.5rem;
+    gap: 6px;
     margin-top: 0;
   }
 }
