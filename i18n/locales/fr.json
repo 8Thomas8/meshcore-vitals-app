@@ -109,7 +109,7 @@
     "fullScreen": "Liste en plein écran",
     "showOutOfRange": "Afficher {n} répéteur hors de portée | Afficher {n} répéteurs hors de portée",
     "hideOutOfRange": "Masquer {n} répéteur hors de portée | Masquer {n} répéteurs hors de portée",
-    "outOfRangeHint": "Répéteurs entendus en direct auparavant, qui n'ont pas répondu au dernier scan, et ceux entendus seulement à travers eux."
+    "outOfRangeHint": "Répéteurs entendus en direct auparavant mais plus depuis le début du dernier scan complet, et ceux entendus seulement à travers eux."
   },
   "detail": {
     "marginTitle": "Marge de liaison, dans le sens le plus faible",
@@ -135,7 +135,7 @@
     "keyPrefix": "Préfixe de clé",
     "publicKey": "Clé publique",
     "unknown": "inconnue",
-    "outOfRange": "Il n'a pas répondu au dernier scan, les valeurs ci-dessous sont les dernières connues.",
+    "outOfRange": "Il n'a pas été entendu en direct depuis le début du dernier scan complet, les valeurs ci-dessous sont les dernières connues.",
     "relayedOutOfRange": "Le répéteur par lequel il a été entendu en dernier est hors de portée, et il n'a pas été entendu depuis."
   },
   "gauge": {

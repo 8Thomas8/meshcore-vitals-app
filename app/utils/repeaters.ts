@@ -46,7 +46,7 @@ export interface RepeaterRow {
   tx: LinkMargin | null
   /** The weaker of the two ways. */
   link: LinkMargin | null
-  /** In direct range before, silent during the last full scan, or relayed through such a one. */
+  /** In direct range before, not heard directly since the last full scan started, or relayed through such a one. */
   outOfRange: boolean
 }
 

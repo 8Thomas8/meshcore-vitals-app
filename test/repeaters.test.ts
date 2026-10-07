@@ -196,63 +196,60 @@ describe('isOutOfRange', () => {
     tx: tx === null ? null : { snr: 5, at: tx },
     lastHeard
   })
-  const scannedAt = 2000
+  const lastFullScan = 2000
 
   it('keeps everything before a full scan', () => {
     expect(isOutOfRange(heard(), [], null)).toBe(false)
   })
 
   it('drops a direct repeater not heard directly since the last full scan', () => {
-    expect(isOutOfRange(heard({ tx: 1000 }), [], scannedAt)).toBe(true)
-    expect(isOutOfRange(heard({ tx: 2000 }), [], scannedAt)).toBe(false)
-    expect(isOutOfRange(heard({ tx: 2500 }), [], scannedAt)).toBe(false)
-    expect(isOutOfRange(heard({ tx: 1000, rx: 2500 }), [], scannedAt)).toBe(false)
+    expect(isOutOfRange(heard({ tx: 1000 }), [], lastFullScan)).toBe(true)
+    expect(isOutOfRange(heard({ tx: 2000 }), [], lastFullScan)).toBe(false)
+    expect(isOutOfRange(heard({ tx: 2500 }), [], lastFullScan)).toBe(false)
+    expect(isOutOfRange(heard({ tx: 1000, rx: 2500 }), [], lastFullScan)).toBe(false)
+    expect(isOutOfRange(heard({ tx: 2500, rx: 1000 }), [], lastFullScan)).toBe(false)
   })
 
   it('does not count being named in a relayed path', () => {
-    expect(isOutOfRange(heard({ tx: 1000, lastHeard: 2500 }), [], scannedAt)).toBe(true)
+    expect(isOutOfRange(heard({ tx: 1000, lastHeard: 2500 }), [], lastFullScan)).toBe(true)
   })
 
   it('drops a repeater that never answered a scan once no longer heard directly', () => {
-    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), [], scannedAt)).toBe(true)
-    expect(isOutOfRange(heard({ tx: null, rx: 2500 }), [], scannedAt)).toBe(false)
+    expect(isOutOfRange(heard({ tx: null, rx: 1000 }), [], lastFullScan)).toBe(true)
+    expect(isOutOfRange(heard({ tx: null, rx: 2000 }), [], lastFullScan)).toBe(false)
+    expect(isOutOfRange(heard({ tx: null, rx: 2500 }), [], lastFullScan)).toBe(false)
   })
 
   it('drops a relayed repeater with the one it was last heard through', () => {
     const via = { ...heard({ tx: 1000 }), id: 'b1ff' }
     const relayed = { ...heard({ hops: 2 }), lastVia: 'b1' }
-    expect(isOutOfRange(relayed, [via], scannedAt)).toBe(true)
-    expect(isOutOfRange({ ...relayed, lastHeard: 2000 }, [via], scannedAt)).toBe(false)
-    expect(isOutOfRange({ ...relayed, lastHeard: 2500 }, [via], scannedAt)).toBe(false)
-    expect(isOutOfRange(relayed, [{ ...via, tx: { snr: 5, at: 2500 } }], scannedAt)).toBe(false)
+    expect(isOutOfRange(relayed, [via], lastFullScan)).toBe(true)
+    expect(isOutOfRange({ ...relayed, lastHeard: 2000 }, [via], lastFullScan)).toBe(false)
+    expect(isOutOfRange({ ...relayed, lastHeard: 2500 }, [via], lastFullScan)).toBe(false)
+    expect(isOutOfRange(relayed, [{ ...via, tx: { snr: 5, at: 2500 } }], lastFullScan)).toBe(false)
   })
 
   it('follows the last route, not the shortest one', () => {
     const shortest = { ...heard({ tx: 1000 }), id: 'b1ff' }
     const last = { ...heard({ tx: 2500 }), id: 'c3ff' }
     const relayed = { ...heard({ hops: 2 }), via: 'b1', lastVia: 'c3' }
-    expect(isOutOfRange(relayed, [shortest, last], scannedAt)).toBe(false)
-    expect(isOutOfRange({ ...relayed, via: 'c3', lastVia: 'b1' }, [shortest, last], scannedAt)).toBe(true)
+    expect(isOutOfRange(relayed, [shortest, last], lastFullScan)).toBe(false)
+    expect(isOutOfRange({ ...relayed, via: 'c3', lastVia: 'b1' }, [shortest, last], lastFullScan)).toBe(true)
   })
 
   it('keeps a relayed repeater when the one it came through is unknown or ambiguous', () => {
     const via = { ...heard({ tx: 1000 }), id: 'b1ff' }
     const relayed = { ...heard({ hops: 2 }), lastVia: 'b1' }
-    expect(isOutOfRange({ ...relayed, lastVia: null }, [via], scannedAt)).toBe(false)
-    expect(isOutOfRange(relayed, [], scannedAt)).toBe(false)
-    expect(isOutOfRange(relayed, [via, { ...via, id: 'b1aa' }], scannedAt)).toBe(false)
-    expect(isOutOfRange(relayed, [via, { ...heard({ hops: 1 }), id: 'b1cc' }], scannedAt)).toBe(false)
+    expect(isOutOfRange({ ...relayed, lastVia: null }, [via], lastFullScan)).toBe(false)
+    expect(isOutOfRange(relayed, [], lastFullScan)).toBe(false)
+    expect(isOutOfRange(relayed, [via, { ...via, id: 'b1aa' }], lastFullScan)).toBe(false)
+    expect(isOutOfRange(relayed, [via, { ...heard({ hops: 1 }), id: 'b1cc' }], lastFullScan)).toBe(false)
     const relayedOutOfRange = { ...heard({ hops: 1 }), id: 'b1cc', lastVia: 'd4' }
-    expect(isOutOfRange(relayed, [relayedOutOfRange, { ...via, id: 'd4ff' }], scannedAt)).toBe(false)
+    expect(isOutOfRange(relayed, [relayedOutOfRange, { ...via, id: 'd4ff' }], lastFullScan)).toBe(false)
   })
 
   it('matches the repeater it came through by a longer path hash too', () => {
     const via = { ...heard({ tx: 1000 }), id: 'b1' }
-    expect(isOutOfRange({ ...heard({ hops: 2 }), lastVia: 'b1ff' }, [via], scannedAt)).toBe(true)
-  })
-
-  it('keeps a relayed repeater before a full scan', () => {
-    const via = { ...heard({ tx: 1000 }), id: 'b1ff' }
-    expect(isOutOfRange({ ...heard({ hops: 2 }), lastVia: 'b1' }, [via], null)).toBe(false)
+    expect(isOutOfRange({ ...heard({ hops: 2 }), lastVia: 'b1ff' }, [via], lastFullScan)).toBe(true)
   })
 })

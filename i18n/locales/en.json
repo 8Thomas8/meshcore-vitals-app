@@ -109,7 +109,7 @@
     "fullScreen": "Full screen list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
-    "outOfRangeHint": "Repeaters heard directly before that did not answer the last scan, and the ones only heard through them."
+    "outOfRangeHint": "Repeaters heard directly before but not since the last full scan started, and the ones only heard through them."
   },
   "detail": {
     "marginTitle": "Link margin, the weaker way",
@@ -135,7 +135,7 @@
     "keyPrefix": "Key prefix",
     "publicKey": "Public key",
     "unknown": "unknown",
-    "outOfRange": "It did not answer the last scan, the values below are the last ones.",
+    "outOfRange": "It was not heard directly since the last full scan started, the values below are the last ones.",
     "relayedOutOfRange": "The repeater it was last heard through is out of range, and it was not heard since."
   },
   "gauge": {
