@@ -10,13 +10,15 @@ Check which repeaters hear you and how good each link is, from where you stand.
 ![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?logo=bluetooth&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?logo=pwa&logoColor=white)
 
-<p>
-  <img src="docs/screenshot.png" alt="Repeaters map" width="260">
-  <img src="docs/screenshot-history.png" alt="Session history" width="260">
-  <img src="docs/screenshot-companion.png" alt="Companion page" width="260">
+<p align="center">
+  <img src="docs/screenshot-desktop.png" alt="Desktop layout" width="100%">
 </p>
 
-<img src="docs/screenshot-desktop.png" alt="Desktop layout" width="800">
+<p align="center">
+  <img src="docs/screenshot.png" alt="Repeaters map" width="31%">
+  <img src="docs/screenshot-history.png" alt="Session history" width="31%">
+  <img src="docs/screenshot-companion.png" alt="Companion page" width="31%">
+</p>
 
 ## What it does
 
