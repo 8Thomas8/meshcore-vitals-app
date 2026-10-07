@@ -228,7 +228,6 @@ export const COVERAGE_RECENT_MS = 10 * 60_000
 export const COVERAGE_GOOD_USABLE = 2
 
 export const COVERAGE_TONES = { good: 'success', fair: 'warning', weak: 'error', none: 'error' } as const
-export const COVERAGE_HEIGHTS = { good: '100%', fair: '70%', weak: '45%', none: '20%' } as const
 
 export const MARGIN_COMFORTABLE_DB = 10
 export const MARGIN_FAIR_DB = 5

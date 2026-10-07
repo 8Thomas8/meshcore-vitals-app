@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{ session: Session }>()
 
+const COVERAGE_HEIGHTS = { good: '100%', fair: '70%', weak: '45%', none: '20%' } as const
+
 const { t } = useI18n()
 const { formatNumber } = useFormat()
 
