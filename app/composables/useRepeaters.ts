@@ -6,8 +6,8 @@ const scanUntil = ref<number | null>(null)
 const scannedAt = ref<number | null>(null)
 // Failed scans count too, so auto scan does not retry every second.
 const lastScanAttempt = ref<number | null>(null)
-// Start times of the scans whose window ran to its end, oldest first.
-const fullScans = ref<number[]>([])
+// Start time of the last scan whose window ran to its end.
+const lastFullScan = ref<number | null>(null)
 const autoScan = ref(false)
 const scanError = ref<string | null>(null)
 let listening: MeshCoreConnection | null = null
@@ -72,7 +72,7 @@ async function scan() {
     scannedAt.value = Date.now()
     scanTimer = setTimeout(() => {
       scanUntil.value = null
-      fullScans.value = recordFullScan(fullScans.value, startedAt)
+      lastFullScan.value = startedAt
     }, DISCOVER_WINDOW_MS)
   }
   catch (e) {
@@ -96,7 +96,7 @@ async function start(conn: MeshCoreConnection, reconnected: boolean) {
     contacts.value = []
     scannedAt.value = null
     lastScanAttempt.value = null
-    fullScans.value = []
+    lastFullScan.value = null
     autoScan.value = false
   }
   scanUntil.value = null
@@ -130,7 +130,7 @@ export function useRepeaters() {
     scanUntil: readonly(scanUntil),
     scannedAt: readonly(scannedAt),
     lastScanAttempt: readonly(lastScanAttempt),
-    fullScans: readonly(fullScans),
+    lastFullScan: readonly(lastFullScan),
     autoScan,
     scanError: readonly(scanError),
     start,

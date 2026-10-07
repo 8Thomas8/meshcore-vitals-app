@@ -3,7 +3,7 @@ import { mdiAlert, mdiAutorenew, mdiChevronDown, mdiChevronRight, mdiChevronUp, 
 import { useMediaQuery } from '@vueuse/core'
 
 const { status } = useMeshCore()
-const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, fullScans, autoScan, scanError, scan } = useRepeaters()
+const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, lastFullScan, autoScan, scanError, scan } = useRepeaters()
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
@@ -119,7 +119,7 @@ const rows = computed(() => repeaters.value
     const viaName = repeater.via && nameOf(repeater.via)
     const rx = margin(repeater.rx)
     const tx = margin(repeater.tx)
-    const outOfRange = isOutOfRange(repeater, repeaters.value, fullScans.value)
+    const outOfRange = isOutOfRange(repeater, repeaters.value, lastFullScan.value)
     const route = outOfRange
       ? t('repeaters.outOfRange')
       : repeater.hops ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') }) : t('repeaters.direct')
@@ -202,7 +202,7 @@ const coverage = computed(() => {
 })
 
 const { addScan } = useHistory()
-watch(() => fullScans.value.at(-1), (at) => {
+watch(lastFullScan, (at) => {
   if (at) addScan(here.value, coverage.value?.level ?? 'none', coverage.value?.usable ?? 0)
 })
 

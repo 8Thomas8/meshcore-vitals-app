@@ -77,7 +77,7 @@
     },
     "share": "{level}: {percent}%",
     "reason": {
-      "nothing-heard": "No repeater heard directly in the last {minutes} minutes.",
+      "nothing-heard": "No repeater in range heard directly in the last {minutes} minutes.",
       "confirmed": "{confirmed} usable repeaters confirmed both ways, {solid} solid. | {confirmed} usable repeaters confirmed both ways, {solid} solid.",
       "unscanned": "{n} more not scanned yet. | {n} more not scanned yet.",
       "unconfirmed": "Scan to confirm the repeaters hear you.",
@@ -86,7 +86,7 @@
       "weak": "Only weak links, under +{fair} dB."
     },
     "help": {
-      "usable": "A repeater heard directly in the last {minutes} minutes is usable from +{fair} dB above the floor both ways, solid from +{comfortable} dB. The ring counts the usable ones.",
+      "usable": "A repeater in range and heard directly in the last {minutes} minutes is usable from +{fair} dB above the floor both ways, solid from +{comfortable} dB. The ring counts the usable ones.",
       "levels": "Good: {count} usable, one of them solid, confirmed by a scan. Fair: one usable, or not confirmed yet. Weak: only links under +{fair} dB."
     }
   },
@@ -109,7 +109,7 @@
     "fullScreen": "Full screen list",
     "showOutOfRange": "Show {n} out of range | Show {n} out of range",
     "hideOutOfRange": "Hide {n} out of range | Hide {n} out of range",
-    "outOfRangeHint": "Repeaters heard directly before that did not answer several scans in a row, and the ones only heard through them."
+    "outOfRangeHint": "Repeaters heard directly before but not since the last full scan started, and the ones only heard through them."
   },
   "detail": {
     "marginTitle": "Link margin, the weaker way",
@@ -135,7 +135,7 @@
     "keyPrefix": "Key prefix",
     "publicKey": "Public key",
     "unknown": "unknown",
-    "outOfRange": "It did not answer several scans in a row, the values below are the last ones.",
+    "outOfRange": "It was not heard directly since the last full scan started, the values below are the last ones.",
     "relayedOutOfRange": "The repeater it was last heard through is out of range, and it was not heard since."
   },
   "gauge": {
