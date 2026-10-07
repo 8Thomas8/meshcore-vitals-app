@@ -1,2 +1,5 @@
 User-Agent: *
-Disallow: /
+Allow: /
+Disallow: /200.html
+
+Sitemap: https://www.meshcore-vitals.com/sitemap.xml
