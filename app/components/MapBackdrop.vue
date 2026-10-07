@@ -90,7 +90,7 @@ const labels = computed(() => props.rows.filter(row => row.position).map((row) =
     id: repeater.id,
     lngLat: [row.position!.lon, row.position!.lat] as [number, number],
     name: row.name,
-    meta: [row.distance !== null && formatDistance(row.distance), typeof row.altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(row.altitude) })].filter(Boolean).join(' · '),
+    meta: [row.distance !== null && formatDistance(row.distance), typeof row.altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(row.altitude) })].filter(part => typeof part === 'string'),
     hops: row.outOfRange ? t('repeaters.outOfRange') : repeater.hops ? hops(repeater.hops) : null,
     rx: way(repeater.rx?.snr, row.rx),
     tx: way(repeater.tx?.snr, row.tx),
@@ -104,9 +104,9 @@ function labelElement(): HTMLElement {
   element.className = 'map-label'
   element.innerHTML = `
     <span class="map-label-name"><span class="map-label-dot"></span><span data-name></span></span>
-    <span class="map-label-detail" data-meta></span>
+    <span class="map-label-detail separated" data-meta></span>
     <span class="map-label-detail" data-hops></span>
-    <span class="map-label-detail" data-signal>RX <b data-rx></b> · TX <b data-tx></b></span>`
+    <span class="map-label-detail separated" data-signal><span>RX <b data-rx></b></span><span>TX <b data-tx></b></span></span>`
   return element
 }
 
@@ -151,8 +151,12 @@ function syncLabels() {
     const element = marker.getElement()
     const part = (name: string) => element.querySelector<HTMLElement>(`[data-${name}]`)!
     part('name').textContent = label.name
-    part('meta').textContent = label.meta
-    part('meta').hidden = !label.meta
+    part('meta').replaceChildren(...label.meta.map((text) => {
+      const span = document.createElement('span')
+      span.textContent = text
+      return span
+    }))
+    part('meta').hidden = !label.meta.length
     part('hops').textContent = label.hops ?? ''
     part('hops').hidden = !label.hops
     part('signal').hidden = !!label.hops
@@ -475,12 +479,11 @@ onBeforeUnmount(() => {
   :deep(.map-label) {
     display: flex;
     flex-direction: column;
-    padding: 4px 10px;
-    border-radius: 12px;
-    background: rgba(var(--theme-surface), 0.6);
-    border: 1px solid var(--color-glass-border);
-    box-shadow: inset 0 1px 0 var(--color-glass-highlight), 0 6px 16px var(--color-glass-shadow);
-    backdrop-filter: blur(12px);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 2px 6px var(--color-shadow);
     color: rgb(var(--theme-on-surface));
     white-space: nowrap;
     cursor: pointer;
@@ -527,7 +530,7 @@ onBeforeUnmount(() => {
     }
   }
 
-  // Required attribution, dark so it does not glow through the glass.
+  // Required attribution, dark so it does not glow over the map.
   :deep(.maplibregl-ctrl-attrib) {
     background: rgba(var(--theme-background), 0.6);
     color: rgba(var(--theme-on-surface), 0.6);

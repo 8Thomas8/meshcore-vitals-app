@@ -101,8 +101,7 @@ export const THEME_COLORS = {
   'success': '#5be49b',
   'warning': '#ffc857',
   'error': '#ff6b6b',
-  'info': '#7cc4ff',
-  'halo': '#18406b'
+  'info': '#7cc4ff'
 }
 
 // The companion protocol version meshcore.js itself announces on connect.

@@ -130,7 +130,10 @@ const summary = computed(() => {
     </svg>
     <div v-if="tooltip" class="chart-tooltip top-0 w-35" :style="{ left: `${tooltip.left}px` }">
       <div class="font-mono font-medium">{{ formatNumber(tooltip.sample.snr, 2, 0) }} dB</div>
-      <div class="text-small text-medium">{{ formatNumber(tooltip.sample.rssi) }} dBm · {{ ago(tooltip.sample.at, now) }}</div>
+      <div class="separated text-small text-medium">
+        <span>{{ formatNumber(tooltip.sample.rssi) }} dBm</span>
+        <span>{{ ago(tooltip.sample.at, now) }}</span>
+      </div>
     </div>
   </div>
 </template>

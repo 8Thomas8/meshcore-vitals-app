@@ -62,7 +62,7 @@
     "inProgress": "Recherche des répéteurs à portée",
     "done": "Scanné {ago}",
     "never": "Pas encore scanné",
-    "noLocation": "pas de position pour les directions",
+    "noLocation": "{status}, pas de position pour les directions",
     "autoHint": "Rescanner toutes les minutes tant que cette page est ouverte. | Rescanner toutes les {minutes} minutes tant que cette page est ouverte.",
     "nothingAnswered": "Rien n'a répondu au dernier scan",
     "auto": "Auto",
@@ -98,7 +98,8 @@
     "hops": "{n} saut | {n} sauts",
     "altitude": "alt. {altitude} m",
     "noneYet": "Aucun répéteur",
-    "counts": "{direct} en direct · {relayed}",
+    "counts": "{direct} en direct et {relayed}",
+    "directOnly": "{direct} en direct",
     "empty": "Un scan demande aux répéteurs à portée de répondre en indiquant comment ils vous entendent. Les répéteurs qui relaient du trafic s'ajoutent au fil des paquets reçus.",
     "relayed": "{n} relayé | {n} relayés",
     "outOfRange": "Hors de portée",
@@ -112,6 +113,8 @@
     "outOfRangeHint": "Répéteurs entendus en direct auparavant mais plus depuis le début du dernier scan complet, et ceux entendus seulement à travers eux."
   },
   "detail": {
+    "rxHint": "RX : {rssi} dBm, {ago}",
+    "txHint": "TX : {status}",
     "marginTitle": "Marge de liaison, dans le sens le plus faible",
     "marginHelp": "Par rapport au plancher SF{sf} de {floor} dB. Correcte à partir de +{fair}, confortable à partir de +{comfortable}.",
     "signal": "Signal dans les deux sens",
@@ -204,7 +207,7 @@
     "nominal": "Normale",
     "low": "Batterie faible",
     "critical": "Batterie critique",
-    "charged": "chargée à {percent} %"
+    "summary": "{label}, {percent} %"
   },
   "altitude": {
     "label": "Altitude",
@@ -241,16 +244,15 @@
     "problem": "Problème",
     "attention": "À surveiller",
     "healthy": "En bonne santé",
-    "title": "Santé",
     "uptime": "Allumé depuis",
     "queue": "File d'envoi",
     "queueWaiting": "paquets en attente",
     "queueEmpty": "rien en attente"
   },
   "settings": {
-    "title": "Réglages radio",
-    "frequency": "Fréquence",
-    "bandwidth": "Bande passante",
+    "title": "Radio",
+    "spreadingFactor": "Facteur d'étalement",
+    "codingRate": "Taux de codage",
     "txPower": "Puissance TX",
     "txPowerMax": "max {max} dBm",
     "floor": "Plancher de démodulation",
@@ -266,9 +268,8 @@
     "clockOffsetHint": "nœud par rapport à cet appareil"
   },
   "reception": {
-    "title": "Réception",
     "noiseFloor": "Bruit de fond",
-    "lastRssi": "Dernier RSSI",
+    "lastRssiHint": "RSSI {rssi} dBm",
     "lastSnr": "Dernier SNR",
     "margin": "Marge"
   },
@@ -279,7 +280,7 @@
     "sent": "Envoyés",
     "errors": "Erreurs de réception",
     "airtime": "Temps d'antenne",
-    "split": "{direct} en direct · {flood} en flood",
+    "split": "{direct} en direct et {flood} en flood",
     "badPackets": "{n} paquet invalide | {n} paquets invalides"
   },
   "quota": {
@@ -307,7 +308,8 @@
   },
   "history": {
     "title": "{count} dernières sessions",
-    "hint": "Gardées sur cet appareil. Chaque connexion au Companion fait une session, la plus ancienne s'efface au-delà.",
+    "stored": "Gardées sur cet appareil",
+    "hint": "Chaque connexion au Companion fait une session, la plus ancienne s'efface au-delà.",
     "beta": "Bêta",
     "betaHint": "Fonction en test : les sessions enregistrées pourraient changer ou être effacées dans une prochaine version.",
     "empty": "Aucune session pour l'instant. Chaque connexion au Companion est enregistrée ici, avec les répéteurs entendus et la couverture à chaque scan.",

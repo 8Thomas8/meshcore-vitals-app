@@ -15,6 +15,7 @@ defineProps<{ value?: number }>()
 .progress-top {
   position: absolute;
   inset: 0 0 auto;
+  height: 6px;
   border-radius: 0;
 }
 </style>

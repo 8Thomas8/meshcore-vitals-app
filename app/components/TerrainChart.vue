@@ -150,7 +150,10 @@ const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain
       </template>
     </svg>
     <div v-if="tooltip" class="chart-tooltip w-37.5" :style="{ left: `${tooltip.left}px`, top: `${tooltip.top}px` }">
-      <div class="font-mono font-medium">{{ formatDistance(tooltip.point.distance) }} · {{ formatNumber(tooltip.point.ground) }} m</div>
+      <div class="separated font-mono font-medium">
+        <span>{{ formatDistance(tooltip.point.distance) }}</span>
+        <span>{{ formatNumber(tooltip.point.ground) }} m</span>
+      </div>
       <div class="text-small text-medium">
         {{ $t(tooltip.point.clearance >= 0 ? 'terrain.belowSight' : 'terrain.aboveSight', { height: formatNumber(Math.abs(tooltip.point.clearance)) }) }}
       </div>

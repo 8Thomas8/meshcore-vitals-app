@@ -2,7 +2,7 @@
   <div class="relative size-21" aria-hidden="true">
     <span class="absolute inset-0 animate-radar rounded-full border border-primary/50 motion-reduce:hidden" />
     <span class="absolute inset-0 animate-radar rounded-full border border-primary/50 [animation-delay:1.5s] motion-reduce:hidden" />
-    <div class="glass relative flex size-full items-center justify-center rounded-3xl bg-radial-[circle_at_30%_20%] from-primary/28 to-transparent to-70%">
+    <div class="panel relative flex size-full items-center justify-center rounded-xl">
       <svg width="62" height="62" viewBox="0 0 64 64" fill="none">
         <defs>
           <linearGradient id="logo-pulse" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">

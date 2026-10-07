@@ -95,3 +95,7 @@ export function formatOffset(secs: number, units = DURATION_UNITS): string {
   const abs = Math.abs(Math.round(secs))
   return `${sign}${abs < 60 ? `${abs} ${units.second}` : formatDuration(abs, units)}`
 }
+
+export function isNumeric(text: string): boolean {
+  return /^[\d\s.,+−-]+$/.test(text)
+}
