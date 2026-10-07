@@ -34,7 +34,7 @@ export interface RepeaterRow {
   repeater: DeepReadonly<HeardRepeater>
   name: string
   viaName: string | null
-  details: string
+  details: string[]
   /** Its own advert first, then the companion's contact. */
   position: DeepReadonly<Position> | null
   /** Metres, ground under its position. Undefined while looking up, null when unknown. */

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mdiAlert, mdiAutorenew, mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiCoffeeOutline, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline, mdiRadar } from '@mdi/js'
+import { mdiAlert, mdiAutorenew, mdiChevronDown, mdiChevronRight, mdiChevronUp, mdiCoffeeOutline, mdiEye, mdiEyeOff, mdiFormatListBulleted, mdiInformationOutline, mdiMapOutline } from '@mdi/js'
 import { useMediaQuery } from '@vueuse/core'
 
 const { status } = useMeshCore()
@@ -133,7 +133,7 @@ const rows = computed(() => repeaters.value
       name: nameOf(repeater.id),
       viaName,
       // The route may wrap, each other part stays whole.
-      details: [route, ...details.filter(part => typeof part === 'string').map(part => part.replaceAll(' ', '\u00a0'))].join(' · '),
+      details: [route, ...details.filter(part => typeof part === 'string').map(part => part.replaceAll(' ', '\u00a0'))],
       position,
       altitude,
       distance,
@@ -160,6 +160,7 @@ const shownRows = computed(() => showOutOfRange.value ? rows.value : inRange.val
 const mapShown = computed(() => here.value !== null && (listHidden.value || !listFull.value || !rows.value.length))
 const column = computed(() => mapShown.value && !smAndDown.value)
 const { shown: footerShown } = useFooter()
+const scanStatus = computed(() => scannedAt.value ? t('scan.done', { ago: ago(scannedAt.value, now.value) }) : t('scan.never'))
 watch(() => here.value !== null && !mapShown.value, (shown) => {
   footerShown.value = shown
 }, { immediate: true })
@@ -213,19 +214,20 @@ watch(coverage, (value) => {
 </script>
 
 <template>
-  <div class="pointer-events-none mx-auto flex w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto" :class="{ 'h-[calc(100dvh-var(--spacing-app-bar))]': column }">
+  <div class="pointer-events-none mx-auto flex min-h-0 w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto" :class="{ 'h-[calc(100svh-var(--spacing-app-bar))]': column, 'h-[calc(100svh-var(--spacing-app-bar))] max-[960px]:h-[calc(100svh-var(--spacing-app-bar)-var(--spacing-bottom-nav)-env(safe-area-inset-bottom))] shrink-0': !mapShown && rows.length && !listHidden }">
     <h1 class="sr-only">{{ $t('nav.repeaters') }}</h1>
-    <!-- The coverage card on top, the list held at the bottom of the page just
-         above the menu, growing upwards. The map behind takes the gestures
-         outside the cards. -->
+    <!-- The coverage card on top. Over the map, the list is held at the bottom
+         of the page just above the menu, growing upwards, and the map behind
+         takes the gestures outside the cards. Without it, the list scrolls
+         under the coverage card. -->
     <!-- Lazy: MapLibre, its styles and its worker only load once there is a map to show. -->
     <LazyMapBackdrop v-if="here && mapShown" :here="here" :rows="shownRows" :below="summary" :list="list" :located-at="locatedAt" :companion-name="selfInfo?.name ?? null" />
-    <section ref="summary" class="glass @container card flex flex-col gap-2.5 px-4 py-3.5" :class="{ 'sticky top-app-bar z-1': !mapShown, 'w-100': column }">
+    <section ref="summary" class="@container card flex shrink-0 flex-col gap-2.5 px-4 py-3.5" :class="[mapShown ? 'float' : 'panel', { 'w-100': column }]">
       <AppProgress v-if="scanning" class="progress-top text-primary" :value="scanProgress" />
-      <div class="flex items-center gap-2">
+      <div class="flex min-h-11 items-center gap-2">
         <PopoverRoot v-model:open="coverageOpen">
           <PopoverTrigger class="flex min-w-0 grow items-center gap-2 text-left" :disabled="!coverage">
-            <svg class="shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+            <svg class="shrink-0" :class="`text-${coverage?.tone ?? 'primary'}`" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
               <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="4" stroke-opacity="0.2" />
               <circle
                 class="transition-[stroke-dasharray] duration-300"
@@ -245,15 +247,15 @@ watch(coverage, (value) => {
                 <span class="truncate text-subtitle leading-[1.2]">{{ coverage?.label ?? (scanning ? $t('scan.scanning') : rows.length ? $t('repeaters.noneInRange') : $t('repeaters.noneYet')) }}</span>
                 <span class="flex min-w-0 items-center gap-1 text-small text-medium">
                   <span class="truncate">
-                    <template v-if="inRange.length">{{ $t('repeaters.counts', { direct: direct.length, relayed: $t('repeaters.relayed', inRange.length - direct.length) }) }}</template>
+                    <template v-if="inRange.length">{{ $t(inRange.length > direct.length ? 'repeaters.counts' : 'repeaters.directOnly', { direct: direct.length, relayed: $t('repeaters.relayed', inRange.length - direct.length) }) }}</template>
                     <template v-else>{{ scanning ? $t('scan.waiting') : rows.length ? $t('scan.nothingAnswered') : $t('scan.prompt') }}</template>
                   </span>
-                  <AppIcon v-if="coverage" :icon="mdiInformationOutline" size="14" />
+                  <AppIcon v-if="coverage" class="shrink-0" :icon="mdiInformationOutline" size="20" />
                 </span>
               </span>
           </PopoverTrigger>
           <PopoverPortal>
-            <PopoverContent side="bottom" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
+            <PopoverContent side="bottom" :side-offset="4" :collision-padding="8" class="float popover">
               <div class="flex flex-col gap-2 py-1">
                 <span class="font-medium">{{ coverage?.reason }}</span>
                 <span>{{ $t('coverage.help.usable', { minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB, comfortable: MARGIN_COMFORTABLE_DB }) }}</span>
@@ -267,32 +269,33 @@ watch(coverage, (value) => {
              unless a translation needs more. -->
         <button
           type="button"
-          class="btn h-11 min-w-26 @max-xs:min-w-21"
+          class="btn h-11 min-w-20 overflow-hidden px-3 tabular-nums"
           :class="scanning || autoScan || status !== 'connected' ? 'btn-tonal text-primary' : 'btn-filled'"
           :aria-disabled="scanning || autoScan || status !== 'connected'"
           @click="autoScan || scan()"
         >
-          <AppIcon class="@max-xs:hidden" :icon="mdiRadar" size="18" />
-          <template v-if="scanning">{{ Math.ceil((scanLeftMs ?? 0) / 1000) }} s</template>
-          <template v-else-if="nextScanAt !== null && lastScanAttempt">{{ formatCountdown(nextScanAt - now) }}</template>
-          <template v-else>{{ $t('scan.button') }}</template>
+          <span v-if="scanning" class="radar-sweep motion-reduce:hidden" aria-hidden="true" />
+          <span class="relative">
+            <template v-if="scanning">{{ Math.ceil((scanLeftMs ?? 0) / 1000) }} s</template>
+            <template v-else-if="nextScanAt !== null && lastScanAttempt">{{ formatCountdown(nextScanAt - now) }}</template>
+            <template v-else>{{ $t('scan.button') }}</template>
+          </span>
         </button>
       </div>
       <div class="status-row">
         <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : screenRefused ? $t('wakeLock.refused') : '' }}</span>
         <PopoverRoot>
-          <PopoverTrigger class="flex h-8 max-w-full min-w-0 items-center gap-2 text-left">
+          <PopoverTrigger class="status-trigger">
             <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : screenRefused ? 'text-warning' : 'text-success', { 'animate-blink': scanning }]" />
             <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
             <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
             <span v-else class="truncate">
-              {{ scannedAt ? $t('scan.done', { ago: ago(scannedAt, now) }) : $t('scan.never') }}
-              <template v-if="noLocation"> · {{ $t('scan.noLocation') }}</template>
+              {{ noLocation ? $t('scan.noLocation', { status: scanStatus }) : scanStatus }}
             </span>
-            <AppIcon :icon="mdiInformationOutline" size="14" />
+            <AppIcon class="shrink-0" :icon="mdiInformationOutline" size="20" />
           </PopoverTrigger>
           <PopoverPortal>
-            <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="glass-dense z-(--z-overlay) max-w-75 rounded-2xl px-3.5 py-2.5 text-label data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in">
+            <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="float popover">
               <div class="flex flex-col gap-2 py-1">
                 <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
                 <span v-if="screenRefused" class="text-warning">{{ $t('wakeLock.refused') }}</span>
@@ -332,8 +335,8 @@ watch(coverage, (value) => {
     <section
       v-if="rows.length"
       ref="list"
-      class="glass card flex flex-col"
-      :class="column ? 'min-h-0 w-100' : mapShown ? 'mt-auto shrink-0' : 'shrink-0 bg-surface/85 backdrop-blur-none'"
+      class="card flex flex-col"
+      :class="column ? 'float min-h-0 w-100' : mapShown ? 'float mt-auto shrink-0' : 'panel min-h-0'"
       :style="mapShown && !column ? { maxHeight: `${LIST_MAX_HEIGHT_SHARE * 100}dvh` } : undefined"
     >
       <div class="flex">
@@ -351,7 +354,7 @@ watch(coverage, (value) => {
         <button
           v-if="here && !listHidden"
           type="button"
-          class="list-button flex w-12 shrink-0 items-center justify-center border-l border-glass-border text-medium"
+          class="list-button flex w-12 shrink-0 items-center justify-center border-l border-line text-medium"
           :aria-label="$t('repeaters.fullScreen')"
           :aria-pressed="listFull"
           @click="listFull = !listFull"
@@ -360,7 +363,7 @@ watch(coverage, (value) => {
         </button>
       </div>
       <!-- Unmounted when folded, the rows would keep updating every second. -->
-      <div v-if="!listHidden" id="repeater-rows" class="min-h-0 divide-y divide-glass-border border-t border-glass-border" :class="{ 'overflow-y-auto': mapShown }">
+      <div v-if="!listHidden" id="repeater-rows" class="min-h-0 divide-y divide-line overflow-y-auto border-t border-line">
         <button
           v-for="row in shownRows"
           :key="row.repeater.id"
@@ -376,7 +379,7 @@ watch(coverage, (value) => {
             :heading="heading"
           />
           <span class="name truncate font-medium">{{ row.name }}</span>
-          <span class="details text-small text-medium">{{ row.details }}</span>
+          <span class="details separated text-small text-medium"><span v-for="(part, i) in row.details" :key="i">{{ part }}</span></span>
           <LinkReadout
             v-if="!row.repeater.hops"
             class="links"
@@ -406,7 +409,7 @@ watch(coverage, (value) => {
     <DialogRoot v-model:open="detailOpen">
       <DialogPortal>
         <DialogOverlay class="overlay" />
-        <DialogContent class="glass-dense sheet" :aria-describedby="undefined">
+        <DialogContent class="float sheet" :aria-describedby="undefined">
           <RepeaterDetail
             v-if="selected"
             :row="selected"
@@ -419,7 +422,7 @@ watch(coverage, (value) => {
       </DialogPortal>
     </DialogRoot>
 
-    <section v-if="!rows.length" class="glass card mt-auto p-4 text-hint text-medium" :class="{ 'w-100': column }">
+    <section v-if="!rows.length" class="card mt-auto p-4 text-hint text-medium" :class="[mapShown ? 'float' : 'panel', { 'w-100': column }]">
       {{ $t('repeaters.empty') }}
     </section>
   </div>
@@ -433,7 +436,7 @@ watch(coverage, (value) => {
   grid-template-areas: 'icon name chevron' 'icon details chevron' 'icon links chevron';
   align-items: center;
   gap: 2px 12px;
-  padding: 12px 16px;
+  padding: 10px 16px;
 
   @media (width >= 600px) {
     grid-template-columns: 48px minmax(0, 1fr) auto auto;

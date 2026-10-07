@@ -3,15 +3,15 @@ import { ELEVATION_API_URL, MAP_STYLE_URL } from './app/utils/constants'
 
 // The prerendered pages inline Nuxt's config as a script and the theme colors
 // as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
-// what the app loads: Google Fonts, OpenFreeMap for the map and Open-Meteo for
-// the elevation.
+// what the app loads: Google Fonts, which the service worker also caches,
+// OpenFreeMap for the map and Open-Meteo for the elevation.
 const CONTENT_SECURITY_POLICY = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline'`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
   `img-src 'self' data: blob:`,
-  `connect-src 'self' ${new URL(MAP_STYLE_URL).origin} ${new URL(ELEVATION_API_URL).origin}`,
+  `connect-src 'self' ${new URL(MAP_STYLE_URL).origin} ${new URL(ELEVATION_API_URL).origin} https://fonts.googleapis.com https://fonts.gstatic.com`,
   `worker-src 'self' blob:`,
   `object-src 'none'`,
   `base-uri 'self'`,
@@ -119,7 +119,19 @@ export default defineNuxtConfig({
       })],
       // Any other page opens the SPA shell, which renders it on the client.
       navigateFallback: '/200.html',
-      cleanupOutdatedCaches: true
+      cleanupOutdatedCaches: true,
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+          handler: 'StaleWhileRevalidate',
+          options: { cacheName: 'google-fonts-css' }
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\//,
+          handler: 'CacheFirst',
+          options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 }, cacheableResponse: { statuses: [0, 200] } }
+        }
+      ]
     },
     client: {
       // The app-update plugin registers the worker itself, to decide when a
@@ -159,7 +171,7 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap' }
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap' }
       ]
     }
   }

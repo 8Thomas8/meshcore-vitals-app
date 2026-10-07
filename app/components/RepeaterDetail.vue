@@ -45,9 +45,9 @@ const shortKey = computed(() => {
       <div class="min-w-0 grow">
         <DialogTitle class="truncate text-title">{{ row.name }}</DialogTitle>
         <!-- One line: only the key gets cut short. -->
-        <div class="flex min-w-0 overflow-hidden font-mono text-small whitespace-nowrap text-medium">
-          <span v-if="row.distance !== null" class="shrink-0">{{ formatDistance(row.distance) }} ·&nbsp;</span>
-          <span v-if="typeof row.altitude === 'number'" class="shrink-0">{{ $t('repeaters.altitude', { altitude: formatNumber(row.altitude) }) }} ·&nbsp;</span>
+        <div class="separated min-w-0 flex-nowrap overflow-hidden font-mono text-small whitespace-nowrap text-medium">
+          <span v-if="row.distance !== null" class="shrink-0">{{ formatDistance(row.distance) }}</span>
+          <span v-if="typeof row.altitude === 'number'" class="shrink-0">{{ $t('repeaters.altitude', { altitude: formatNumber(row.altitude) }) }}</span>
           <span class="truncate">{{ shortKey }}</span>
         </div>
       </div>
@@ -78,7 +78,7 @@ const shortKey = computed(() => {
             :value="row.repeater.rx ? formatNumber(row.repeater.rx.snr, 2, 0) : $t('common.na')"
             :unit="row.repeater.rx ? 'dB SNR' : undefined"
             :tone="row.rx?.tone"
-            :hint="row.repeater.rx ? `RX · ${formatNumber(row.repeater.rx.rssi)} dBm · ${ago(row.repeater.rx.at, now)}` : 'RX'"
+            :hint="row.repeater.rx ? t('detail.rxHint', { rssi: formatNumber(row.repeater.rx.rssi), ago: ago(row.repeater.rx.at, now) }) : 'RX'"
           >
             <MarginBar class="my-1" :margin="row.rx" />
           </VitalStat>
@@ -87,7 +87,7 @@ const shortKey = computed(() => {
             :value="row.repeater.tx ? formatNumber(row.repeater.tx.snr, 2, 0) : $t('common.na')"
             :unit="row.repeater.tx ? 'dB SNR' : undefined"
             :tone="row.tx?.tone"
-            :hint="row.repeater.tx ? `TX · ${t('detail.scanned', { ago: ago(row.repeater.tx.at, now) })}` : `TX · ${t('detail.scanToMeasure')}`"
+            :hint="row.repeater.tx ? t('detail.txHint', { status: t('detail.scanned', { ago: ago(row.repeater.tx.at, now) }) }) : t('detail.txHint', { status: t('detail.scanToMeasure') })"
           >
             <MarginBar class="my-1" :margin="row.tx" />
           </VitalStat>

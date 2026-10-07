@@ -41,8 +41,9 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
     <header class="sticky top-0 z-1 -mx-4 -mt-4 flex items-center gap-3 bg-surface p-4">
       <div class="min-w-0 grow">
         <DialogTitle class="truncate text-title first-letter:uppercase">{{ day(session.startedAt) }}</DialogTitle>
-        <div class="truncate text-small text-medium">
-          {{ time(session.startedAt) }} – {{ time(session.endedAt) }}<template v-if="session.companionName"> · {{ session.companionName }}</template>
+        <div class="separated flex-nowrap text-small text-medium">
+          <span class="shrink-0">{{ time(session.startedAt) }} – {{ time(session.endedAt) }}</span>
+          <span v-if="session.companionName" class="truncate">{{ session.companionName }}</span>
         </div>
       </div>
       <DialogClose class="btn btn-icon" :aria-label="$t('common.close')">
@@ -75,7 +76,7 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
         <span>{{ $t('repeaters.count', session.repeaters.length) }}</span>
         <span class="text-small text-medium">{{ $t('history.bestSnr') }}</span>
       </div>
-      <div class="-mx-4 divide-y divide-glass-border border-y border-glass-border">
+      <div class="-mx-4 divide-y divide-line border-y border-line">
         <div v-for="row in rows" :key="row.repeater.id" class="flex items-center gap-3 px-4 py-2.5">
           <AppIcon
             :icon="row.repeater.hops || !row.link ? mdiCircleMedium : TONE_ICONS[row.link.tone]"

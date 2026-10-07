@@ -193,15 +193,18 @@ const health = computed(() => {
 </script>
 
 <template>
-  <div class="mx-auto grid w-full max-w-page grid-cols-1 gap-3 px-4 py-3.5 sm:grid-cols-2">
-    <section class="glass card col-span-full flex flex-col gap-2.5 px-4 py-3.5">
+  <div class="mx-auto grid w-full max-w-page grid-cols-1 items-start gap-3 px-4 py-3.5 sm:grid-cols-3">
+    <section class="panel card col-span-full flex flex-col gap-2.5 px-4 py-3.5">
       <AppProgress v-if="refreshing" class="progress-top text-primary" />
-      <div class="flex items-center gap-2">
+      <div class="flex min-h-11 items-center gap-2">
         <div class="min-w-0 grow">
-          <h1 class="text-title">{{ selfInfo?.name ?? $t('nav.companion') }}</h1>
+          <h1 class="line-clamp-2 text-title leading-7 wrap-anywhere">{{ selfInfo?.name ?? $t('nav.companion') }}</h1>
           <!-- Kept while loading so the card does not grow once the node answers. -->
-          <div class="font-mono text-small text-medium">
-            <template v-if="selfInfo">{{ formatNumber(selfInfo.radioFreq / 1000, 3) }} MHz · {{ formatNumber(selfInfo.radioBw / 1000, 1, 0) }} kHz</template>
+          <div class="separated flex-nowrap font-mono text-small leading-4 whitespace-nowrap text-medium">
+            <template v-if="selfInfo">
+              <span>{{ formatNumber(selfInfo.radioFreq / 1000, 3) }} MHz</span>
+              <span>{{ formatNumber(selfInfo.radioBw / 1000, 1, 0) }} kHz</span>
+            </template>
             <template v-else>&nbsp;</template>
           </div>
         </div>
@@ -223,9 +226,8 @@ const health = computed(() => {
           </DialogTrigger>
           <DialogPortal>
             <DialogOverlay class="overlay bg-black/60" />
-            <!-- Opaque, the glass lets the cards behind show through the text. -->
             <DialogContent
-              class="card fixed top-1/2 left-1/2 z-(--z-overlay) flex max-h-[calc(100dvh-48px)] w-[calc(100%-48px)] max-w-110 -translate-1/2 flex-col border border-glass-border bg-surface shadow-[0_12px_32px_var(--color-glass-shadow)]"
+              class="card fixed top-1/2 left-1/2 z-(--z-overlay) flex max-h-[calc(100dvh-48px)] w-[calc(100%-48px)] max-w-110 -translate-1/2 flex-col border border-line bg-surface shadow-[0_2px_8px_var(--color-shadow)]"
               :aria-describedby="undefined"
             >
               <DialogTitle class="px-6 pt-4 pb-2.5 text-title tracking-normal">{{ health.label }}</DialogTitle>
@@ -255,44 +257,39 @@ const health = computed(() => {
       </div>
     </section>
 
-    <VitalsCard v-if="selfInfo" :title="$t('settings.title')" :chip="`SF${selfInfo.radioSf} · CR 4/${selfInfo.radioCr}`">
-      <VitalStat :label="$t('settings.frequency')" :value="formatNumber(selfInfo.radioFreq / 1000, 3)" unit="MHz" />
-      <VitalStat :label="$t('settings.bandwidth')" :value="formatNumber(selfInfo.radioBw / 1000, 1, 0)" unit="kHz" />
-      <VitalStat :label="$t('settings.txPower')" :value="formatNumber(selfInfo.txPower)" unit="dBm" :hint="$t('settings.txPowerMax', { max: selfInfo.maxTxPower })" />
-      <VitalStat :label="$t('settings.floor')" :value="formatNumber(snrFloor(selfInfo.radioSf), 1, 0)" unit="dB" :hint="$t('settings.floorFor', { sf: selfInfo.radioSf })" />
+    <section v-if="core && battery" class="panel card col-span-full grid grid-cols-[repeat(auto-fit,minmax(96px,1fr))] gap-3 px-4 py-3.5">
+      <VitalStat :label="$t('checks.battery')" :value="formatNumber(core.batteryMilliVolts / 1000, 2)" unit="V" :tone="battery.tone" :hint="$t('battery.summary', { label: battery.label, percent: formatNumber(battery.level * 100) })" large />
+      <VitalStat v-if="margin" :label="$t('reception.margin')" :value="formatNumber(margin.value, 1)" unit="dB" :tone="margin.tone" :hint="$t(`margin.${margin.grade}`)" large />
+      <VitalStat v-if="radio" :label="$t('reception.noiseFloor')" :value="formatNumber(radio.noiseFloor)" unit="dBm" :hint="$t('reception.lastRssiHint', { rssi: formatNumber(radio.lastRssi) })" large />
+    </section>
+
+    <VitalsCard v-if="selfInfo" :title="$t('settings.title')">
+      <VitalRow :label="$t('settings.spreadingFactor')" :value="String(selfInfo.radioSf)" />
+      <VitalRow :label="$t('settings.codingRate')" :value="`4/${selfInfo.radioCr}`" />
+      <VitalRow :label="$t('settings.txPower')" :value="formatNumber(selfInfo.txPower)" unit="dBm" :hint="$t('settings.txPowerMax', { max: selfInfo.maxTxPower })" />
+      <VitalRow :label="$t('settings.floor')" :value="formatNumber(snrFloor(selfInfo.radioSf), 1, 0)" unit="dB" :hint="$t('settings.floorFor', { sf: selfInfo.radioSf })" />
+      <VitalRow v-if="radio" :label="$t('reception.lastSnr')" :value="formatNumber(radio.lastSnr, 1)" unit="dB" />
     </VitalsCard>
 
-    <VitalsCard v-if="device" :title="$t('device.title')" :chip="$t('device.protocol', { version: device.protocol })">
-      <VitalStat class="col-span-full" :label="$t('device.model')" :value="device.model ?? $t('common.unknown')" />
-      <VitalStat :label="$t('device.firmware')" :value="device.version ?? $t('common.unknown')" :hint="device.buildDate ? $t('device.built', { date: device.buildDate }) : undefined" />
-      <VitalStat v-if="clockOffset !== null" :label="$t('device.clockOffset')" :value="offset(clockOffset)" :tone="clockTone" :hint="$t('device.clockOffsetHint')" />
-      <VitalStat
+    <VitalsCard v-if="packets" :title="$t('traffic.title')" :note="$t('traffic.sinceBoot')">
+      <VitalRow :label="$t('traffic.received')" :value="formatNumber(packets.recv)" :hint="$t('traffic.split', { direct: formatNumber(packets.nRecvDirect), flood: formatNumber(packets.nRecvFlood) })" />
+      <VitalRow :label="$t('traffic.sent')" :value="formatNumber(packets.sent)" :hint="$t('traffic.split', { direct: formatNumber(packets.nSentDirect), flood: formatNumber(packets.nSentFlood) })" />
+      <VitalRow :label="$t('traffic.errors')" :value="errorRate === null ? $t('common.na') : formatNumber(errorRate * 100, 1)" :unit="errorRate === null ? undefined : '%'" :tone="errorTone(errorRate)" :hint="$t('traffic.badPackets', { n: formatNumber(packets.nRecvErrors) }, packets.nRecvErrors)" />
+      <VitalRow v-if="radio" :label="$t('traffic.airtime')" :value="txShare === null ? $t('common.na') : formatNumber(txShare * 100, 2)" :unit="txShare === null ? undefined : '% TX'" :hint="`RX ${formatNumber(radio.rxAirSecs / 60)} min`" />
+      <VitalRow v-if="core" :label="$t('health.queue')" :value="formatNumber(core.queueLen)" :hint="core.queueLen ? $t('health.queueWaiting') : $t('health.queueEmpty')" />
+    </VitalsCard>
+
+    <VitalsCard v-if="device" :title="$t('device.title')" :note="$t('device.protocol', { version: device.protocol })">
+      <VitalRow :label="$t('device.model')" :value="device.model ?? $t('common.unknown')" />
+      <VitalRow :label="$t('device.firmware')" :value="device.version ?? $t('common.unknown')" :hint="device.buildDate ? $t('device.built', { date: device.buildDate }) : undefined" />
+      <VitalRow v-if="core" :label="$t('health.uptime')" :value="duration(core.uptimeSecs)" />
+      <VitalRow v-if="clockOffset !== null" :label="$t('device.clockOffset')" :value="offset(clockOffset)" :tone="clockTone" :hint="$t('device.clockOffsetHint')" />
+      <VitalRow
         :label="$t('altitude.label')"
         :value="altitudeStat.value === null ? $t('common.na') : formatNumber(altitudeStat.value)"
         :unit="altitudeStat.value === null ? undefined : 'm'"
         :hint="altitudeStat.hint"
       />
-    </VitalsCard>
-
-    <VitalsCard v-if="core && battery" :title="$t('health.title')" :chip="battery.label" :chip-color="battery.tone">
-      <VitalStat :label="$t('checks.battery')" :value="formatNumber(core.batteryMilliVolts / 1000, 2)" unit="V" :tone="battery.tone" :hint="$t('battery.charged', { percent: formatNumber(battery.level * 100) })" />
-      <VitalStat :label="$t('health.uptime')" :value="duration(core.uptimeSecs)" />
-      <AppProgress class="col-span-full" :class="`text-${battery.tone}`" :value="battery.level * 100" />
-      <VitalStat :label="$t('health.queue')" :value="formatNumber(core.queueLen)" :hint="core.queueLen ? $t('health.queueWaiting') : $t('health.queueEmpty')" />
-    </VitalsCard>
-
-    <VitalsCard v-if="radio" :title="$t('reception.title')" :chip="margin ? $t(`margin.${margin.grade}`) : undefined" :chip-color="margin?.tone">
-      <VitalStat :label="$t('reception.noiseFloor')" :value="formatNumber(radio.noiseFloor)" unit="dBm" />
-      <VitalStat :label="$t('reception.lastRssi')" :value="formatNumber(radio.lastRssi)" unit="dBm" />
-      <VitalStat :label="$t('reception.lastSnr')" :value="formatNumber(radio.lastSnr, 1)" unit="dB" />
-      <VitalStat v-if="margin" :label="$t('reception.margin')" :value="formatNumber(margin.value, 1)" unit="dB" :tone="margin.tone" />
-    </VitalsCard>
-
-    <VitalsCard v-if="packets" :title="$t('traffic.title')" :chip="$t('traffic.sinceBoot')">
-      <VitalStat :label="$t('traffic.received')" :value="formatNumber(packets.recv)" :hint="$t('traffic.split', { direct: formatNumber(packets.nRecvDirect), flood: formatNumber(packets.nRecvFlood) })" />
-      <VitalStat :label="$t('traffic.sent')" :value="formatNumber(packets.sent)" :hint="$t('traffic.split', { direct: formatNumber(packets.nSentDirect), flood: formatNumber(packets.nSentFlood) })" />
-      <VitalStat :label="$t('traffic.errors')" :value="errorRate === null ? $t('common.na') : formatNumber(errorRate * 100, 1)" :unit="errorRate === null ? undefined : '%'" :tone="errorTone(errorRate)" :hint="$t('traffic.badPackets', { n: formatNumber(packets.nRecvErrors) }, packets.nRecvErrors)" />
-      <VitalStat v-if="radio" :label="$t('traffic.airtime')" :value="txShare === null ? $t('common.na') : formatNumber(txShare * 100, 2)" :unit="txShare === null ? undefined : '% TX'" :hint="`RX ${formatNumber(radio.rxAirSecs / 60)} min`" />
     </VitalsCard>
   </div>
 </template>
