@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.6.0...v1.7.0) (2026-10-07)
+
+
+### Features
+
+* less generic interface ([#56](https://github.com/8Thomas8/meshcore-vitals-app/issues/56)) ([8105f0b](https://github.com/8Thomas8/meshcore-vitals-app/commit/8105f0b5bf928b1210f1d3076e630a6d0af6aa94))
+
+
+### Bug Fixes
+
+* mark a repeater out of range as soon as it misses the last full scan ([#54](https://github.com/8Thomas8/meshcore-vitals-app/issues/54)) ([ab40100](https://github.com/8Thomas8/meshcore-vitals-app/commit/ab40100ea6f7a47827f65a0e498e789743bff4ab))
+
 ## [1.6.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.5.0...v1.6.0) (2026-10-06)
 
 
