@@ -120,10 +120,8 @@ export const PUSH_CONTROL_DATA = 0x8e
 export const CTL_NODE_DISCOVER_REQ = 0x80
 export const CTL_NODE_DISCOVER_RESP = 0x90
 
-// Repeaters delay their answer by up to a few seconds so they do not collide,
-// and each answers at most 4 requests every 2 minutes.
+// Repeaters delay their answer by up to a few seconds so they do not collide.
 export const DISCOVER_WINDOW_MS = 30_000
-export const DISCOVER_QUOTA_MS = 2 * 60_000
 
 // Half the 4 requests every 2 minutes each repeater answers, leaving the rest
 // to everyone else scanning around.
