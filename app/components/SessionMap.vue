@@ -42,14 +42,14 @@ const features = computed(() => {
 })
 
 onMounted(async () => {
-  const { AttributionControl, LngLatBounds, Map, setWorkerUrl } = await import('maplibre-gl')
+  const { AttributionControl, LngLatBounds, Map: MapLibre, setWorkerUrl } = await import('maplibre-gl')
   if (unmounted) return
   setWorkerUrl(workerUrl)
   const bounds = new LngLatBounds()
   for (const feature of features.value.features) {
     if (feature.geometry.type === 'Point') bounds.extend(feature.geometry.coordinates as [number, number])
   }
-  map = new Map({
+  map = new MapLibre({
     container: container.value!,
     style: MAP_STYLE_URL,
     bounds,
