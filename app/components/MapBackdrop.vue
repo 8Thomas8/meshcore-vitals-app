@@ -261,12 +261,12 @@ function frame() {
 }
 
 onMounted(async () => {
-  const { AttributionControl, Map, Marker, setWorkerUrl } = await import('maplibre-gl')
+  const { AttributionControl, Map: MapLibre, Marker, setWorkerUrl } = await import('maplibre-gl')
   if (unmounted) return
   MarkerClass = Marker
   // Its worker ships as a separate file the bundler does not pick up alone.
   setWorkerUrl(workerUrl)
-  map = new Map({
+  map = new MapLibre({
     container: container.value!,
     style: MAP_STYLE_URL,
     center: [stableHere.value.lon, stableHere.value.lat],

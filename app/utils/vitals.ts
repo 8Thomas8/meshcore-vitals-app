@@ -54,7 +54,7 @@ export interface DurationUnits {
 }
 
 // The abbreviations change with the language, English by default.
-export const DURATION_UNITS: DurationUnits = { day: 'd', hour: 'h', minute: 'min', second: 's' }
+const DURATION_UNITS: DurationUnits = { day: 'd', hour: 'h', minute: 'min', second: 's' }
 
 export function formatDuration(totalSecs: number, units = DURATION_UNITS): string {
   const days = Math.floor(totalSecs / 86400)

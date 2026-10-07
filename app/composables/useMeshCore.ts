@@ -33,6 +33,22 @@ function advertised(device: MeshCoreBleDevice) {
   }), CONNECT_TIMEOUT_MS, 'errors.unreachable').finally(() => controller.abort())
 }
 
+async function open(device: MeshCoreBleDevice | undefined, lost: MeshCoreConnection | null) {
+  const { default: WebBleConnection } = await import('@liamcottle/meshcore.js/src/connection/web_ble_connection.js')
+  if (!device) return WebBleConnection.open()
+  if (!lost) await advertised(device)
+  await withTimeout(device.gatt.connect(), CONNECT_TIMEOUT_MS, 'errors.connectTimeout')
+  return new WebBleConnection(device)
+}
+
+function failed(e: unknown, lost: MeshCoreConnection | null) {
+  status.value = connection.value ? 'lost' : 'disconnected'
+  // Dismissing the device picker rejects with NotFoundError.
+  if (e instanceof DOMException && e.name === 'NotFoundError') return
+  error.value = e instanceof DOMException ? 'errors.unreachable' : e instanceof Error ? e.message : String(e)
+  if (!lost) showToast(error.value)
+}
+
 async function connect(device = connection.value?.bleDevice) {
   if (status.value === 'connecting') return
   const lost = connection.value
@@ -40,10 +56,7 @@ async function connect(device = connection.value?.bleDevice) {
   status.value = 'connecting'
   let conn: MeshCoreConnection | null | undefined
   try {
-    const { default: WebBleConnection } = await import('@liamcottle/meshcore.js/src/connection/web_ble_connection.js')
-    if (device && !lost) await advertised(device)
-    if (device) await withTimeout(device.gatt.connect(), CONNECT_TIMEOUT_MS, 'errors.connectTimeout')
-    conn = device ? new WebBleConnection(device) : await WebBleConnection.open()
+    conn = await open(device, lost)
     if (!conn) {
       status.value = 'disconnected'
       return
@@ -64,12 +77,7 @@ async function connect(device = connection.value?.bleDevice) {
   catch (e) {
     if (connection.value !== lost) return
     (conn?.bleDevice ?? device)?.gatt.disconnect()
-    status.value = connection.value ? 'lost' : 'disconnected'
-    // Dismissing the device picker rejects with NotFoundError.
-    if (!(e instanceof DOMException && e.name === 'NotFoundError')) {
-      error.value = e instanceof DOMException ? 'errors.unreachable' : e instanceof Error ? e.message : String(e)
-      if (!lost) showToast(error.value)
-    }
+    failed(e, lost)
   }
 }
 

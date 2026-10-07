@@ -97,7 +97,7 @@ export function sightings(raw: Uint8Array): Sighting[] {
   if (flags & ADVERT_HAS_FEAT1) j += 2
   if (flags & ADVERT_HAS_FEAT2) j += 2
   const name = flags & ADVERT_HAS_NAME
-    ? new TextDecoder().decode(raw.subarray(j)).replace(/\0.*$/s, '').trim() || null
+    ? new TextDecoder().decode(raw.subarray(j)).split('\0')[0]!.trim() || null
     : null
   return [...seen, { id: toHex(payload.subarray(0, 32)), hops, via, name, position }]
 }
@@ -172,7 +172,7 @@ export interface DirectLink {
 }
 
 /** Why the coverage got its level, the words depend on the language. */
-export type CoverageReason = 'nothing-heard' | 'confirmed' | 'unconfirmed' | 'none-solid' | 'single' | 'weak'
+type CoverageReason = 'nothing-heard' | 'confirmed' | 'unconfirmed' | 'none-solid' | 'single' | 'weak'
 
 export interface Coverage {
   level: CoverageLevel
