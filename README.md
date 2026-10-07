@@ -15,7 +15,7 @@ Check which repeaters hear you and how good each link is, from where you stand.
 </p>
 
 <p align="center">
-  <img src="docs/screenshot.png" alt="Repeaters map" width="31%">
+  <img src="docs/screenshot-repeater.png" alt="Repeater detail" width="31%">
   <img src="docs/screenshot-history.png" alt="Session history" width="31%">
   <img src="docs/screenshot-companion.png" alt="Companion page" width="31%">
 </p>
