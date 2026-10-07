@@ -10,20 +10,27 @@ Check which repeaters hear you and how good each link is, from where you stand.
 ![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?logo=bluetooth&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?logo=pwa&logoColor=white)
 
-<p>
-  <img src="docs/screenshot.png" alt="Repeaters map" width="300">
-  <img src="docs/screenshot-companion.png" alt="Companion page" width="300">
+<p align="center">
+  <img src="docs/screenshot-desktop.png" alt="Desktop layout" width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/screenshot-repeater.png" alt="Repeater detail" width="31%">
+  <img src="docs/screenshot-history.png" alt="Session history" width="31%">
+  <img src="docs/screenshot-companion.png" alt="Companion page" width="31%">
 </p>
 
 ## What it does
 
-The app connects to a MeshCore companion over Bluetooth from the browser. Press Scan and the repeaters in range answer with how well they hear you. You get the signal both ways, a coverage score and a map with every repeater, direct or relayed.
+The app connects to a MeshCore companion over Bluetooth from the browser. Press Scan and the repeaters in range answer with how well they hear you. You get the signal both ways, a coverage score and a map with every repeater, direct or relayed, or a full screen list. Open a repeater for its link margin, signal over time and the terrain profile between you.
 
-The Companion page shows the radio settings, battery, noise floor, traffic and a few health checks.
+The auto scan switch scans again every minute, and the stay awake switch keeps the screen on. If the Bluetooth link drops, the app keeps the page and reconnects.
+
+The Companion page puts the battery, link margin and noise floor up top, then the radio settings, traffic, device details and a few health checks.
 
 The History page (beta) keeps your last 20 sessions: the route you walked colored by coverage, and the best signal of each repeater heard.
 
-Works on a phone and can be installed as an app. English and French.
+Works on a phone or a desktop and can be installed as an app. English and French.
 
 ## Requirements
 
