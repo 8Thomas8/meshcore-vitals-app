@@ -20,11 +20,11 @@ Check which repeaters hear you and how good each link is, from where you stand.
 
 ## What it does
 
-The app connects to a MeshCore companion over Bluetooth from the browser. Press Scan and the repeaters in range answer with how well they hear you. You get the signal both ways, a coverage score and a map with every repeater, direct or relayed. Open a repeater for its link margin, signal over time and the terrain profile between you.
+The app connects to a MeshCore companion over Bluetooth from the browser. Press Scan and the repeaters in range answer with how well they hear you. You get the signal both ways, a coverage score and a map with every repeater, direct or relayed, or a full screen list. Open a repeater for its link margin, signal over time and the terrain profile between you.
 
-Auto mode scans again every minute, and Stay awake keeps the screen on. If the Bluetooth link drops, the app keeps the page and reconnects.
+The auto scan switch scans again every minute, and the stay awake switch keeps the screen on. If the Bluetooth link drops, the app keeps the page and reconnects.
 
-The Companion page shows the radio settings, battery, noise floor, traffic and a few health checks.
+The Companion page puts the battery, link margin and noise floor up top, then the radio settings, traffic, device details and a few health checks.
 
 The History page (beta) keeps your last 20 sessions: the route you walked colored by coverage, and the best signal of each repeater heard.
 
