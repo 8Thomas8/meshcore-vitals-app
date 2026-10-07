@@ -77,7 +77,7 @@
     },
     "share": "{level} : {percent} %",
     "reason": {
-      "nothing-heard": "Aucun répéteur entendu en direct ces {minutes} dernières minutes.",
+      "nothing-heard": "Aucun répéteur à portée entendu en direct ces {minutes} dernières minutes.",
       "confirmed": "{confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solide. | {confirmed} répéteurs utilisables confirmés dans les deux sens, dont {solid} solides.",
       "unscanned": "{n} autre pas encore scanné. | {n} autres pas encore scannés.",
       "unconfirmed": "Scannez pour confirmer que les répéteurs vous entendent.",
@@ -86,7 +86,7 @@
       "weak": "Uniquement des liaisons faibles, sous +{fair} dB."
     },
     "help": {
-      "usable": "Un répéteur entendu en direct ces {minutes} dernières minutes est utilisable à partir de +{fair} dB au-dessus du plancher dans les deux sens, solide à partir de +{comfortable} dB. L'anneau compte les répéteurs utilisables.",
+      "usable": "Un répéteur à portée et entendu en direct ces {minutes} dernières minutes est utilisable à partir de +{fair} dB au-dessus du plancher dans les deux sens, solide à partir de +{comfortable} dB. L'anneau compte les répéteurs utilisables.",
       "levels": "Bonne : {count} utilisables, dont un solide, confirmés par un scan. Correcte : un seul utilisable, ou pas encore confirmés. Faible : uniquement des liaisons sous +{fair} dB."
     }
   },
