@@ -4,6 +4,8 @@ import { useMediaQuery } from '@vueuse/core'
 const { connection } = useMeshCore()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const route = useRoute()
+const localePath = useLocalePath()
+const routeBaseName = useRouteBaseName()
 const { shown: footerShown } = useFooter()
 </script>
 
@@ -20,7 +22,7 @@ const { shown: footerShown } = useFooter()
             <NuxtLink
               v-for="item in NAV_ITEMS"
               :key="item.to"
-              :to="item.to"
+              :to="localePath(item.to)"
               class="flex h-10 items-center gap-2 rounded-lg px-4 text-label font-medium hover:bg-on-surface/6 aria-[current=page]:bg-primary/14 aria-[current=page]:text-primary"
             >
               <AppIcon :icon="item.icon" size="20" />
@@ -33,7 +35,7 @@ const { shown: footerShown } = useFooter()
         <NuxtLink
           v-for="item in NAV_ITEMS"
           :key="item.to"
-          :to="item.to"
+          :to="localePath(item.to)"
           class="flex flex-1 flex-col items-center justify-center gap-0.5 border-t-2 border-transparent outline-offset-[-2px] text-small font-medium text-medium hover:bg-on-surface/6 aria-[current=page]:border-primary aria-[current=page]:text-primary"
         >
           <AppIcon :icon="item.icon" size="20" />
@@ -48,7 +50,7 @@ const { shown: footerShown } = useFooter()
       <ConnectScreen v-if="!connection" />
       <!-- Every page needs a node, they only show once one is connected. -->
       <slot v-if="connection" />
-      <AppFooter v-if="!connection || route.path !== '/' || footerShown" />
+      <AppFooter v-if="!connection || routeBaseName(route) !== 'index' || footerShown" />
     </main>
     <UpdateBanner />
     <AppToasts />
