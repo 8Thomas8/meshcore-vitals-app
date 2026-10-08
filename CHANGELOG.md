@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.7.0...v1.8.0) (2026-10-08)
+
+
+### Features
+
+* serve the French pages under /fr ([#59](https://github.com/8Thomas8/meshcore-vitals-app/issues/59)) ([1463819](https://github.com/8Thomas8/meshcore-vitals-app/commit/1463819249196694065be3671681945bec480d32))
+
 ## [1.7.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.6.0...v1.7.0) (2026-10-07)
 
 
