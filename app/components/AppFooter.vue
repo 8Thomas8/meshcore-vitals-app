@@ -6,6 +6,7 @@ const { version } = useRuntimeConfig().public
 const { locale, locales, localeProperties, setLocale } = useI18n()
 const { connection } = useMeshCore()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
+const cookie = useCookie<string | null>(LOCALE_COOKIE, { maxAge: LOCALE_COOKIE_MAX_AGE_SECS, sameSite: 'lax' })
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
           </DropdownMenuTrigger>
           <DropdownMenuPortal>
             <DropdownMenuContent side="top" align="end" :side-offset="4" class="float z-(--z-overlay) min-w-35 rounded-lg py-1">
-              <DropdownMenuRadioGroup :model-value="locale" @update:model-value="setLocale($event as typeof locale)">
+              <DropdownMenuRadioGroup :model-value="locale" @update:model-value="cookie = String($event); setLocale($event as typeof locale)">
                 <DropdownMenuRadioItem
                   v-for="option in locales"
                   :key="option.code"
