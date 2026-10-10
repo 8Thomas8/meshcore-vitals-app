@@ -39,11 +39,86 @@
     "elevation": "Elevation {dem} via {api}"
   },
   "connect": {
-    "tagline": "Check MeshCore coverage where you stand: signal (SNR) of nearby repeaters, link quality and overall health.",
     "button": "Connect over Bluetooth",
+    "connecting": "Connecting…",
     "reconnect": "Reconnect to {name}",
-    "noBluetooth": "This browser has no Web Bluetooth. Use Chrome or Edge on desktop or Android.",
-    "hint": "Turn the Companion on and keep it nearby before pairing."
+    "noBluetooth": "This browser has no Web Bluetooth. Use Chrome or Edge on desktop or Android, or Bluefy on iPhone.",
+    "hint": "Turn your Companion on and keep it nearby before pairing."
+  },
+  "landing": {
+    "title": "Your MeshCore coverage, live, wherever you stand.",
+    "lead": "Connect your Companion over Bluetooth and run a scan to see which repeaters hear you, and how well.",
+    "install": "No app to download: it all runs in your browser, on your phone or your computer.",
+    "map": {
+      "alt": "The app on a phone after a scan: the coverage, the repeaters on the map and their list."
+    },
+    "list": {
+      "title": "The repeaters in range",
+      "text": "After a scan, each repeater that heard you shows up with two readings, RX and TX. If it shares its position, you also see its direction, distance and altitude. The ones heard through another repeater are marked \"via\".",
+      "alt": "The repeater list as the app shows it: Foxtrot and Juliett with a comfortable margin, Golf fair, Hotel tight, and Mike, relayed by Bravo.",
+      "rx": {
+        "title": "What you receive from it.",
+        "text": "The fuller the bar, the stronger the link."
+      },
+      "tx": {
+        "title": "What it receives from you.",
+        "text": "Measured by the repeater during the scan."
+      },
+      "bearing": {
+        "title": "Its direction.",
+        "text": "On Android, the arrow turns with your phone."
+      }
+    },
+    "detail": {
+      "title": "A repeater in detail",
+      "text": "Tap a repeater to see the signal both ways, the margin over the weakest signal your radio can decode, how reception changed since you connected, and the terrain between you.",
+      "alt": "A repeater's page on a phone: the margin gauge, the signal both ways and the reception chart of the session."
+    },
+    "history": {
+      "title": "Your session history",
+      "text": "Each connection with auto scan on is recorded as a session. The last {count} stay on your device, with the places you scanned from, the coverage at each scan and the best signal of each repeater.",
+      "alt": "A session from the history on a phone: the scans on the map, the coverage over time and the repeaters heard."
+    },
+    "companion": {
+      "title": "The state of your Companion",
+      "text": "The battery, the quality of the last signal received, the radio noise around you, the radio settings and the number of packets received and sent since boot.",
+      "alt": "The Companion page on a phone: battery, margin and noise floor, then the radio settings and the traffic."
+    },
+    "extras": {
+      "title": "Made for the field",
+      "autoScan": {
+        "title": "Automatic scans",
+        "text": "Turn it on for a new scan every minute while the page is open. Sessions are only kept with it on."
+      },
+      "wakeLock": {
+        "title": "Screen kept on",
+        "text": "Optionally keeps the screen on while you walk around, phone in hand."
+      },
+      "terrain": {
+        "title": "Terrain profile",
+        "text": "The ground between you and a repeater, with the Fresnel zone and adjustable antenna heights."
+      },
+      "install": {
+        "title": "Installable",
+        "text": "Add the app to your home screen, it starts even without a network."
+      }
+    },
+    "needs": {
+      "title": "Requirements",
+      "companion": {
+        "title": "A MeshCore Companion",
+        "text": "Bluetooth-enabled and running recent firmware."
+      },
+      "browser": {
+        "title": "A compatible browser",
+        "text": "Chrome or Edge on Android and desktop, Bluefy on iPhone. Firefox and Safari do not support Web Bluetooth."
+      },
+      "location": {
+        "title": "Location access",
+        "text": "To place you on the map and work out how far the repeaters are."
+      }
+    },
+    "cta": "Test your coverage."
   },
   "errors": {
     "connectTimeout": "Timed out connecting to the node.",

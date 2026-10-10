@@ -39,11 +39,86 @@
     "elevation": "Altitudes {dem} via {api}"
   },
   "connect": {
-    "tagline": "Vérifiez la couverture MeshCore là où vous êtes : signal (SNR) des répéteurs proches, qualité des liaisons et santé générale.",
     "button": "Se connecter en Bluetooth",
+    "connecting": "Connexion…",
     "reconnect": "Reconnecter à {name}",
-    "noBluetooth": "Ce navigateur ne gère pas le Web Bluetooth. Utilisez Chrome ou Edge sur ordinateur ou sur Android.",
-    "hint": "Allumez le Companion et gardez-le à proximité avant l'appairage."
+    "noBluetooth": "Ce navigateur ne gère pas le Web Bluetooth. Utilisez Chrome ou Edge sur ordinateur ou sur Android, ou Bluefy sur iPhone.",
+    "hint": "Allumez votre Companion et gardez-le à proximité avant l'appairage."
+  },
+  "landing": {
+    "title": "Votre couverture MeshCore, en direct, là où vous êtes.",
+    "lead": "Connectez votre Companion en Bluetooth et lancez un scan pour voir quels répéteurs vous entendent, et avec quel signal.",
+    "install": "Aucune application à télécharger : tout se passe dans le navigateur, sur téléphone comme sur ordinateur.",
+    "map": {
+      "alt": "L'app sur téléphone après un scan : la couverture, les répéteurs sur la carte et leur liste."
+    },
+    "list": {
+      "title": "Les répéteurs à portée",
+      "text": "Après un scan, chaque répéteur qui vous a entendu apparaît avec deux mesures, RX et TX. S'il partage sa position, vous voyez aussi sa direction, sa distance et son altitude. Ceux qui vous parviennent par un autre répéteur sont marqués « via ».",
+      "alt": "La liste des répéteurs telle qu'elle apparaît dans l'app : Foxtrot et Juliett avec une marge confortable, Golf correcte, Hotel juste, et Mike, relayé par Bravo.",
+      "rx": {
+        "title": "Ce que vous recevez de lui.",
+        "text": "Plus la barre est pleine, plus la liaison est solide."
+      },
+      "tx": {
+        "title": "Ce qu'il reçoit de vous.",
+        "text": "Mesuré par le répéteur pendant le scan."
+      },
+      "bearing": {
+        "title": "Sa direction.",
+        "text": "Sur Android, la flèche tourne avec votre téléphone."
+      }
+    },
+    "detail": {
+      "title": "Le détail d'un répéteur",
+      "text": "Touchez un répéteur pour voir le signal dans les deux sens, la marge par rapport au signal minimum que votre radio sait décoder, l'évolution de la réception depuis la connexion, et le relief entre vous et lui.",
+      "alt": "La fiche d'un répéteur sur téléphone : la jauge de marge, le signal dans les deux sens et la courbe de réception de la session."
+    },
+    "history": {
+      "title": "L'historique de vos sessions",
+      "text": "Chaque connexion avec le scan auto activé est enregistrée comme une session. Les {count} dernières restent sur votre appareil, avec les points d'où vous avez scanné, la couverture à chaque scan et le meilleur signal de chaque répéteur.",
+      "alt": "Une session de l'historique sur téléphone : les scans sur la carte, la couverture dans le temps et les répéteurs entendus."
+    },
+    "companion": {
+      "title": "L'état de votre Companion",
+      "text": "La batterie, la qualité du dernier signal reçu, le bruit radio ambiant, les réglages radio et le nombre de paquets reçus et envoyés depuis le démarrage.",
+      "alt": "La page Companion sur téléphone : batterie, marge et bruit de fond, puis les réglages radio et le trafic."
+    },
+    "extras": {
+      "title": "Pensé pour le terrain",
+      "autoScan": {
+        "title": "Scan automatique",
+        "text": "En option, un nouveau scan chaque minute tant que la page est affichée. Indispensable pour garder l'historique."
+      },
+      "wakeLock": {
+        "title": "Écran allumé",
+        "text": "En option, l'écran reste allumé pendant que vous marchez, téléphone en main."
+      },
+      "terrain": {
+        "title": "Profil du relief",
+        "text": "Le relief entre vous et un répéteur, avec la zone de Fresnel et des hauteurs d'antenne réglables."
+      },
+      "install": {
+        "title": "Installable",
+        "text": "Ajoutez l'app à votre écran d'accueil, elle se lance même sans réseau."
+      }
+    },
+    "needs": {
+      "title": "Prérequis",
+      "companion": {
+        "title": "Un Companion MeshCore",
+        "text": "Équipé du Bluetooth, avec un firmware récent."
+      },
+      "browser": {
+        "title": "Un navigateur compatible",
+        "text": "Chrome ou Edge sur Android et sur ordinateur, Bluefy sur iPhone. Firefox et Safari ne gèrent pas le Web Bluetooth."
+      },
+      "location": {
+        "title": "L'accès à la localisation",
+        "text": "Pour vous placer sur la carte et calculer la distance des répéteurs."
+      }
+    },
+    "cta": "Testez votre couverture."
   },
   "errors": {
     "connectTimeout": "Le nœud n'a pas répondu à temps pendant la connexion.",

@@ -131,7 +131,7 @@ export default defineNuxtConfig({
       ]
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,json,png,svg,ico}'],
+      globPatterns: ['**/*.{js,css,html,json,png,svg,ico,webp}'],
       globIgnores: [
         // Fetched fresh to spot a new deployment, never from the cache.
         '_nuxt/builds/**',
