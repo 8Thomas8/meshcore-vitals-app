@@ -1,5 +1,5 @@
 import { version } from './package.json'
-import { ELEVATION_API_URL, MAP_STYLE_URL } from './app/utils/constants'
+import { ELEVATION_API_URL, MAP_STYLE_URL, SITE_URL } from './app/utils/constants'
 
 // The prerendered pages inline Nuxt's config as a script and the theme colors
 // as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
@@ -68,12 +68,22 @@ export default defineNuxtConfig({
   },
 
   // Sent by Vercel. A route rule would become a Vercel route that ends the
-  // routing, so the assets would miss the headers. This route lets the
-  // routing go on.
+  // routing, so the assets would miss the headers. The first route lets the
+  // routing go on. The second drops the trailing slash so each page has a
+  // single URL, the third keeps search engines off the preview deployments.
   nitro: {
     vercel: {
       config: {
-        routes: [{ src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true }]
+        routes: [
+          { src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true },
+          { src: '^/([^/].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
+          {
+            src: '/(.*)',
+            missing: [{ type: 'host', value: new URL(SITE_URL).host }],
+            headers: { 'X-Robots-Tag': 'noindex' },
+            continue: true
+          } as { src: string, headers: Record<string, string> }
+        ]
       }
     }
   },
@@ -86,7 +96,7 @@ export default defineNuxtConfig({
     manifest: {
       name: APP_NAME,
       short_name: APP_NAME,
-      description: 'Check the MeshCore network where you stand: coverage, link quality with nearby repeaters and overall health.',
+      description: 'Check MeshCore coverage where you stand: signal (SNR) of nearby repeaters, link quality and overall health.',
       lang: 'en',
       start_url: '/',
       scope: '/',
@@ -107,7 +117,8 @@ export default defineNuxtConfig({
         '404.html',
         // Only the browser reads these, when installing.
         'pwa-*.png',
-        'maskable-*.png'
+        'maskable-*.png',
+        'og-image.png'
       ],
       // Pages by the URL the host serves them at: Vercel serves
       // companion/index.html at /companion and not under its file name. The
@@ -119,6 +130,7 @@ export default defineNuxtConfig({
       })],
       // Any other page opens the SPA shell, which renders it on the client.
       navigateFallback: '/200.html',
+      navigateFallbackDenylist: [/\.\w+$/],
       cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
@@ -153,6 +165,7 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
+    baseUrl: SITE_URL,
     detectBrowserLanguage: false
   },
 
@@ -163,7 +176,13 @@ export default defineNuxtConfig({
       meta: [
         { name: 'theme-color', content: BACKGROUND_COLOR },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
-        { name: 'apple-mobile-web-app-title', content: APP_NAME }
+        { name: 'apple-mobile-web-app-title', content: APP_NAME },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: APP_NAME },
+        { property: 'og:image', content: `${SITE_URL}/og-image.png` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { name: 'twitter:card', content: 'summary_large_image' }
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },

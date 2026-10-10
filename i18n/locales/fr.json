@@ -18,13 +18,28 @@
     "history": "Historique",
     "companion": "Companion"
   },
+  "seo": {
+    "index": {
+      "title": "Couverture MeshCore et signal des répéteurs · MeshCore Vitals",
+      "description": "Vérifiez la couverture MeshCore là où vous êtes : répéteurs à portée, signal (SNR), distance et direction. Dans le navigateur, en Bluetooth via votre Companion."
+    },
+    "companion": {
+      "title": "Batterie et radio du Companion · MeshCore Vitals",
+      "description": "Consultez votre Companion MeshCore en Bluetooth : batterie, firmware, réglages radio LoRa, bruit de fond, paquets et temps d'antenne."
+    },
+    "history": {
+      "title": "Historique de couverture · MeshCore Vitals",
+      "description": "Revoyez vos dernières sessions MeshCore : la couverture le long de votre trajet et les répéteurs entendus, avec leur signal, sur une carte."
+    },
+    "imageAlt": "MeshCore Vitals : carte des répéteurs à portée autour de votre Companion, avec leur signal"
+  },
   "footer": {
     "source": "Code source sur GitHub",
     "language": "Langue : {name}",
     "elevation": "Altitudes {dem} via {api}"
   },
   "connect": {
-    "tagline": "Vérifiez le réseau MeshCore là où vous êtes : couverture, qualité des liaisons avec les répéteurs proches et santé générale.",
+    "tagline": "Vérifiez la couverture MeshCore là où vous êtes : signal (SNR) des répéteurs proches, qualité des liaisons et santé générale.",
     "button": "Se connecter en Bluetooth",
     "reconnect": "Reconnecter à {name}",
     "noBluetooth": "Ce navigateur ne gère pas le Web Bluetooth. Utilisez Chrome ou Edge sur ordinateur ou sur Android.",
