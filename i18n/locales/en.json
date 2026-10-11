@@ -18,13 +18,28 @@
     "history": "History",
     "companion": "Companion"
   },
+  "seo": {
+    "index": {
+      "title": "MeshCore coverage and repeater signal · MeshCore Vitals",
+      "description": "Check MeshCore coverage where you stand: repeaters in range, their signal (SNR), distance and direction. In your browser, over Bluetooth with your Companion."
+    },
+    "companion": {
+      "title": "Companion battery and radio · MeshCore Vitals",
+      "description": "Check your MeshCore Companion over Bluetooth: battery, firmware, LoRa radio settings, noise floor, packets and airtime."
+    },
+    "history": {
+      "title": "Coverage history · MeshCore Vitals",
+      "description": "Look back at your last MeshCore sessions: coverage along your route and the repeaters heard, with their signal, on a map."
+    },
+    "imageAlt": "MeshCore Vitals: map of the repeaters in range around your Companion, with their signal"
+  },
   "footer": {
     "source": "Source on GitHub",
     "language": "Language: {name}",
     "elevation": "Elevation {dem} via {api}"
   },
   "connect": {
-    "tagline": "Check the MeshCore network where you stand: coverage, link quality with nearby repeaters and overall health.",
+    "tagline": "Check MeshCore coverage where you stand: signal (SNR) of nearby repeaters, link quality and overall health.",
     "button": "Connect over Bluetooth",
     "reconnect": "Reconnect to {name}",
     "noBluetooth": "This browser has no Web Bluetooth. Use Chrome or Edge on desktop or Android.",

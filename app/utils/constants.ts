@@ -66,6 +66,8 @@ export interface HeardRepeater {
   lastHeard: number
 }
 
+export const SITE_URL = 'https://www.meshcore-vitals.com'
+
 // OpenFreeMap's dark style, free and keyless. Its tiles, fonts and sprites come
 // from the same host.
 export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/dark'
