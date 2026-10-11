@@ -79,13 +79,15 @@ export default defineNuxtConfig({
   // Sent by Vercel. A route rule would become a Vercel route that ends the
   // routing, so the assets would miss the headers. The first route lets the
   // routing go on. The second drops the trailing slash so each page has a
-  // single URL, the third keeps search engines off the preview deployments.
+  // single URL, from a path that starts with a plain character so the
+  // redirect never leaves the site. The third keeps search engines off the
+  // preview deployments.
   nitro: {
     vercel: {
       config: {
         routes: [
           { src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true },
-          { src: '^/([^/].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
+          { src: '^/([\\w.-].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
           {
             src: '/(.*)',
             missing: [{ type: 'host', value: new URL(SITE_URL).host }],
