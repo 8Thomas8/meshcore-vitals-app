@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.8.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.7.0...v1.8.0) (2026-10-11)
+
+
+### Features
+
+* make the site indexable by search engines ([#61](https://github.com/8Thomas8/meshcore-vitals-app/issues/61)) ([c2fd523](https://github.com/8Thomas8/meshcore-vitals-app/commit/c2fd523292553816d83cca92db6f2f9482051d3d))
+* serve the French pages under /fr ([#59](https://github.com/8Thomas8/meshcore-vitals-app/issues/59)) ([1463819](https://github.com/8Thomas8/meshcore-vitals-app/commit/1463819249196694065be3671681945bec480d32))
+
+
+### Bug Fixes
+
+* harden the app and its pipeline after a security review ([#62](https://github.com/8Thomas8/meshcore-vitals-app/issues/62)) ([b291051](https://github.com/8Thomas8/meshcore-vitals-app/commit/b29105150219644ccb921a6f2d0b87471df8aef8))
+
 ## [1.7.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.6.0...v1.7.0) (2026-10-07)
 
 
