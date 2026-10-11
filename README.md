@@ -57,7 +57,7 @@ Open http://localhost:3000 (Node 24, see `.nvmrc`). Before opening a pull reques
 
 ## Privacy
 
-The app has no backend. It counts visits with Vercel Web Analytics, which sets no cookie and only sees the page, the referrer, the country and the browser, never your radio or your location. Otherwise it only loads map tiles from OpenFreeMap, fonts from Google Fonts, and ground elevation from Open-Meteo (repeater positions, yours when the GPS gives no altitude, and the path to a repeater whose terrain profile you open). The session history, with your positions at each scan, stays in your browser and is never sent anywhere.
+The app has no backend. It counts visits with Vercel Web Analytics, which sets no cookie and only sees the page, the referrer, the country and the browser, never your radio or your location. Otherwise it only loads map tiles from OpenFreeMap and ground elevation from Open-Meteo (repeater positions, yours when the GPS gives no altitude, and the path to a repeater whose terrain profile you open). The session history, with your positions at each scan, stays in your browser and is never sent anywhere.
 
 ## License
 

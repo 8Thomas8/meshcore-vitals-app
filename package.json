@@ -19,6 +19,8 @@
     "knip": "knip"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "@liamcottle/meshcore.js": "^1.15.0",
     "@mdi/js": "^7.4.47",
     "@nuxtjs/i18n": "^10.6.0",
