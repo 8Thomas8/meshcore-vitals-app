@@ -75,6 +75,9 @@ export function sightings(raw: Uint8Array): Sighting[] {
   const hashSize = (pathLen >> 6) + 1
   const hops = pathLen & 0x3f
   const payloadStart = i + hops * hashSize
+  // A broken or forged packet can announce a path longer than itself, whose
+  // empty ids would match every repeater.
+  if (raw.length < payloadStart) return []
   const payload = raw.subarray(payloadStart)
   const flood = route === ROUTE_FLOOD || route === ROUTE_TRANSPORT_FLOOD
   if (!flood && hops) return []
@@ -131,7 +134,7 @@ export function parseDiscoverResponse(frame: Uint8Array): DiscoverResponse | nul
   const payload = frame.subarray(4)
   if (payload[0] !== (CTL_NODE_DISCOVER_RESP | ADV_TYPE_REPEATER)) return null
   return {
-    id: toHex(payload.subarray(6)),
+    id: toHex(payload.subarray(6, 38)),
     tag: new DataView(payload.buffer, payload.byteOffset).getUint32(2, true),
     txSnr: int8(payload[1]!) / 4,
     rxSnr: int8(frame[1]!) / 4,

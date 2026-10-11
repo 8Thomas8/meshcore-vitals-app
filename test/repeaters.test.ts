@@ -37,6 +37,11 @@ describe('sightings', () => {
     expect(sightings(Uint8Array.from([0x0a, 0x01, 0x11, 0xff]))).toEqual([])
   })
 
+  it('drops a packet shorter than its path', () => {
+    expect(sightings(Uint8Array.from([0x15, 0x45, 0x11, 0x22, 0x33]))).toEqual([])
+    expect(sightings(Uint8Array.from([0x15, 0x42, 0x11, 0x22, 0x33]))).toEqual([])
+  })
+
   it('reads a repeater advert heard straight from it', () => {
     const name = [...new TextEncoder().encode('Hilltop')]
     expect(sightings(advert(0x92, [...int32LE(48_856_600), ...int32LE(2_352_200), ...name]))).toEqual([{
@@ -71,6 +76,11 @@ describe('parseDiscoverResponse', () => {
   it('reads both directions of the link', () => {
     const frame = Uint8Array.from([0x8e, 0xd6, 0x9c, 0x00, 0x92, 0x37, 0x04, 0x03, 0x02, 0x01, ...KEY])
     expect(parseDiscoverResponse(frame)).toEqual({ id: toHex(KEY), tag: 0x01020304, txSnr: 13.75, rxSnr: -10.5, rxRssi: -100 })
+  })
+
+  it('reads no more than a key', () => {
+    const frame = Uint8Array.from([0x8e, 0xd6, 0x9c, 0x00, 0x92, 0x37, 0x04, 0x03, 0x02, 0x01, ...KEY, 0xff])
+    expect(parseDiscoverResponse(frame)?.id).toBe(toHex(KEY))
   })
 
   it('ignores other frames', () => {

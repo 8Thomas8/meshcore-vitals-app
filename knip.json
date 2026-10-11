@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignoreDependencies": ["buffer", "tailwindcss", "@tailwindcss/postcss", "vue-tsc"],
+  "ignoreDependencies": ["buffer", "tailwindcss", "@tailwindcss/postcss", "vue-tsc", "@fontsource/ibm-plex-sans", "@fontsource/ibm-plex-mono"],
   "rules": {
     "duplicates": "off"
   }

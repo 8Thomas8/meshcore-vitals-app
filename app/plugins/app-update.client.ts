@@ -13,6 +13,8 @@ import { registerSW } from 'virtual:pwa-register'
 // the check compares the deployed build id instead.
 export default defineNuxtPlugin(() => {
   if (import.meta.dev) return
+  // Left over from when the fonts came from Google.
+  for (const name of ['google-fonts', 'google-fonts-css']) globalThis.caches?.delete(name).catch(() => {})
   const { app } = useRuntimeConfig()
   const { available, apply, setApply, reload } = useAppUpdate()
   const { status } = useMeshCore()

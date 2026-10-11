@@ -3,15 +3,15 @@ import { ELEVATION_API_URL, MAP_STYLE_URL, SITE_URL } from './app/utils/constant
 
 // The prerendered pages inline Nuxt's config as a script and the theme colors
 // as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
-// what the app loads: Google Fonts, which the service worker also caches,
-// OpenFreeMap for the map and Open-Meteo for the elevation.
+// what the app loads: OpenFreeMap for the map and Open-Meteo for the
+// elevation. The fonts are served with the app.
 const CONTENT_SECURITY_POLICY = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline'`,
-  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-  `font-src 'self' https://fonts.gstatic.com`,
+  `style-src 'self' 'unsafe-inline'`,
+  `font-src 'self'`,
   `img-src 'self' data: blob:`,
-  `connect-src 'self' ${new URL(MAP_STYLE_URL).origin} ${new URL(ELEVATION_API_URL).origin} https://fonts.googleapis.com https://fonts.gstatic.com`,
+  `connect-src 'self' ${new URL(MAP_STYLE_URL).origin} ${new URL(ELEVATION_API_URL).origin}`,
   `worker-src 'self' blob:`,
   `object-src 'none'`,
   `base-uri 'self'`,
@@ -61,7 +61,16 @@ export default defineNuxtConfig({
     checkOutdatedBuildInterval: false
   },
 
-  css: ['~/assets/scss/main.scss'],
+  css: [
+    '@fontsource/ibm-plex-sans/400.css',
+    '@fontsource/ibm-plex-sans/500.css',
+    '@fontsource/ibm-plex-sans/600.css',
+    '@fontsource/ibm-plex-sans/700.css',
+    '@fontsource/ibm-plex-mono/400.css',
+    '@fontsource/ibm-plex-mono/500.css',
+    '@fontsource/ibm-plex-mono/600.css',
+    '~/assets/scss/main.scss'
+  ],
 
   postcss: {
     plugins: { '@tailwindcss/postcss': {} }
@@ -70,13 +79,15 @@ export default defineNuxtConfig({
   // Sent by Vercel. A route rule would become a Vercel route that ends the
   // routing, so the assets would miss the headers. The first route lets the
   // routing go on. The second drops the trailing slash so each page has a
-  // single URL, the third keeps search engines off the preview deployments.
+  // single URL, from a path that starts with a plain character so the
+  // redirect never leaves the site. The third keeps search engines off the
+  // preview deployments.
   nitro: {
     vercel: {
       config: {
         routes: [
           { src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true },
-          { src: '^/([^/].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
+          { src: '^/([\\w.-].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
           {
             src: '/(.*)',
             missing: [{ type: 'host', value: new URL(SITE_URL).host }],
@@ -132,16 +143,13 @@ export default defineNuxtConfig({
       navigateFallback: '/200.html',
       navigateFallbackDenylist: [/\.\w+$/],
       cleanupOutdatedCaches: true,
+      // Each font comes in one file per script, only the ones a page shows get
+      // fetched and kept.
       runtimeCaching: [
         {
-          urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
-          handler: 'StaleWhileRevalidate',
-          options: { cacheName: 'google-fonts-css' }
-        },
-        {
-          urlPattern: /^https:\/\/fonts\.gstatic\.com\//,
+          urlPattern: /\.woff2?$/,
           handler: 'CacheFirst',
-          options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 }, cacheableResponse: { statuses: [0, 200] } }
+          options: { cacheName: 'fonts', expiration: { maxEntries: 40, maxAgeSeconds: 365 * 24 * 60 * 60 } }
         }
       ]
     },
@@ -187,10 +195,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
         { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
-        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap' }
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
       ]
     }
   }
