@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.8.0...v1.8.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* reframe the map on each scan even after you moved it ([#67](https://github.com/8Thomas8/meshcore-vitals-app/issues/67)) ([578b462](https://github.com/8Thomas8/meshcore-vitals-app/commit/578b4622ac4ed0cc5888160ba8dd5052343d9d56))
+
 ## [1.8.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.7.0...v1.8.0) (2026-10-11)
 
 
