@@ -42,6 +42,8 @@ watch(() => props.here, (next) => {
 })
 watch(() => props.locatedAt, () => {
   stableHere.value = props.here
+  movedByUser = false
+  frame()
 })
 
 function colorOf(row: RepeaterRow): string {
