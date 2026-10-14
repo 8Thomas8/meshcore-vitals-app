@@ -9,6 +9,7 @@ Check which repeaters hear you and how good each link is, from where you stand.
 ![Reka UI 2](https://img.shields.io/badge/Reka_UI-2-10B981?logo=vuedotjs&logoColor=white)
 ![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?logo=bluetooth&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?logo=pwa&logoColor=white)
+![AI Assisted coding](https://img.shields.io/badge/AI_Assisted-coding-8A2BE2)
 
 <p align="center">
   <img src="docs/screenshot-desktop.png" alt="Desktop layout" width="100%">
