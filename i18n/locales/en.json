@@ -78,7 +78,6 @@
     "done": "Scanned {ago}",
     "never": "Not scanned yet",
     "noLocation": "{status}, no location for directions",
-    "autoHint": "Scan again every minute while this page is open. | Scan again every {minutes} minutes while this page is open.",
     "nothingAnswered": "Nothing answered the last scan",
     "auto": "Auto",
     "paused": "Paused for {duration}"
@@ -318,7 +317,6 @@
   },
   "wakeLock": {
     "label": "Stay awake",
-    "hint": "Keep the screen on while the app is shown.",
     "refused": "The browser refused to keep the screen on."
   },
   "history": {

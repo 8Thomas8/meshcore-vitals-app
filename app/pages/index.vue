@@ -202,22 +202,20 @@ watch(coverage, (value) => {
       <div class="status-row">
         <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : screenRefused ? $t('wakeLock.refused') : '' }}</span>
         <PopoverRoot>
-          <PopoverTrigger class="status-trigger">
+          <PopoverTrigger class="status-trigger" :disabled="!scanError && !screenRefused">
             <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : screenRefused ? 'text-warning' : 'text-success', { 'animate-blink': scanning }]" />
             <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
             <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
             <span v-else class="truncate">
               {{ noLocation ? $t('scan.noLocation', { status: scanStatus }) : scanStatus }}
             </span>
-            <AppIcon class="shrink-0" :icon="mdiInformationOutline" size="20" />
+            <AppIcon v-if="scanError || screenRefused" class="shrink-0" :icon="mdiInformationOutline" size="20" />
           </PopoverTrigger>
           <PopoverPortal>
             <PopoverContent side="top" :side-offset="4" :collision-padding="8" class="float popover">
               <div class="flex flex-col gap-2 py-1">
                 <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
                 <span v-if="screenRefused" class="text-warning">{{ $t('wakeLock.refused') }}</span>
-                <span>{{ $t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000) }}</span>
-                <span v-if="wakeLockSupported">{{ $t('wakeLock.hint') }}</span>
               </div>
             </PopoverContent>
           </PopoverPortal>
