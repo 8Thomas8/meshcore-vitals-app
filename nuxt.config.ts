@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { version } from './package.json'
 import { ELEVATION_API_URL, MAP_STYLE_URL, SITE_URL } from './app/utils/constants'
 
@@ -31,6 +32,8 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'bluetooth=(self), geolocation=(self), accelerometer=(self), gyroscope=(self), magnetometer=(self), camera=(), microphone=(), payment=(), usb=()'
 }
 
+const DOCS_MOCK = process.env.DOCS_MOCK === '1'
+
 const APP_NAME = 'MeshCore Vitals'
 // THEME_COLORS.background, the colour around the app while it opens.
 const BACKGROUND_COLOR = '#0c121d'
@@ -51,7 +54,12 @@ export default defineNuxtConfig({
     assetsInclude: ['**/*.bin']
   },
 
-  devtools: { enabled: true },
+  ...DOCS_MOCK && {
+    alias: { '@liamcottle/meshcore.js/src/connection/web_ble_connection.js': fileURLToPath(new URL('./docs/mock/connection.ts', import.meta.url)) },
+    plugins: ['~~/docs/mock/plugin.client.ts']
+  },
+
+  devtools: { enabled: !DOCS_MOCK },
 
   experimental: {
     // Windows Chrome cannot map the WSL project root as a DevTools workspace.
@@ -83,6 +91,7 @@ export default defineNuxtConfig({
   // redirect never leaves the site. The third keeps search engines off the
   // preview deployments.
   nitro: {
+    ...DOCS_MOCK && { output: { dir: '.output-docs' } },
     vercel: {
       config: {
         routes: [
@@ -103,6 +112,7 @@ export default defineNuxtConfig({
   // every asset are precached. A new deployment installs a new service worker
   // in the background, and the app-update plugin decides when to switch.
   pwa: {
+    disable: DOCS_MOCK,
     registerType: 'prompt',
     manifest: {
       name: APP_NAME,

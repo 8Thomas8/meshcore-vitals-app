@@ -1,5 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["docs/mock/plugin.client.ts"],
   "ignoreDependencies": ["buffer", "tailwindcss", "@tailwindcss/postcss", "vue-tsc", "@fontsource/ibm-plex-sans", "@fontsource/ibm-plex-mono"],
   "rules": {
     "duplicates": "off"

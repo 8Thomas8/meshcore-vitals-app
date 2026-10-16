@@ -254,5 +254,6 @@ export const ANTENNA_HEIGHTS_STORAGE_KEY = 'antenna-heights'
 
 export const SHARE_ROWS = 6
 export const SHARE_MAP_TIMEOUT_MS = 10_000
+export const SHARE_PRIVATE_MAX_ZOOM = 11
 export const SHARE_JPEG_QUALITY = 0.9
 export const SHARE_FILE_NAME = 'meshcore-vitals.jpg'

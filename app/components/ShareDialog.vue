@@ -3,13 +3,10 @@ import { mdiClose, mdiDownload, mdiInformationOutline, mdiShareVariant } from '@
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
-  title: string
-  build: (withPosition: boolean) => ShareContent
-  disabled?: boolean
-}>()
+const props = defineProps<{ session?: Session }>()
 
 const { t } = useI18n()
+const { title, disabled, build } = props.session ? useSessionShare(() => props.session!) : useScanShare()
 
 const open = ref(false)
 const withPosition = ref(false)
@@ -20,24 +17,21 @@ const alt = ref('')
 const positioned = ref(false)
 const route = ref(false)
 const closeButton = ref<{ $el: HTMLElement } | null>(null)
-let contents = new Map<boolean, ShareContent>()
+let contents = new Map<boolean, ShareScan>()
 let blobs = new Map<boolean, Blob>()
 
 let rendering = 0
 async function render() {
   const id = ++rendering
   const position = withPosition.value
+  const cache = blobs
   image.value = null
   failed.value = false
   try {
     const content = contents.get(position)!
     alt.value = t('share.preview', { title: content.title })
-    const blob = blobs.get(position) ?? await renderShareImage({
-      ...content,
-      more: content.repeaters.length > SHARE_ROWS ? t('share.more', content.repeaters.length - SHARE_ROWS) : null,
-      tagline: t('share.tagline')
-    })
-    blobs.set(position, blob)
+    const blob = cache.get(position) ?? await renderShareImage(content)
+    cache.set(position, blob)
     if (id !== rendering) return
     image.value = new File([blob], SHARE_FILE_NAME, { type: blob.type })
     if (preview.value) URL.revokeObjectURL(preview.value)
@@ -51,8 +45,10 @@ async function render() {
 watch(withPosition, render)
 watch(open, (value) => {
   if (!value) return
-  contents = new Map([true, false].map(position => [position, props.build(position)]))
+  contents = new Map([true, false].map(position => [position, build(position)]))
   blobs = new Map()
+  if (preview.value) URL.revokeObjectURL(preview.value)
+  preview.value = null
   const shown = contents.get(true)!
   route.value = !!shown.track.length
   positioned.value = !!shown.here || route.value
@@ -103,7 +99,7 @@ function focusClose(event: Event) {
       <DialogOverlay class="overlay" />
       <DialogContent class="float dialog flex flex-col gap-4 p-4" :aria-describedby="undefined" @open-auto-focus="focusClose">
         <header class="flex items-center gap-3">
-          <DialogTitle class="min-w-0 truncate text-title">{{ title }}</DialogTitle>
+          <DialogTitle class="min-w-0 text-title">{{ title }}</DialogTitle>
           <PopoverRoot>
             <PopoverTrigger class="chip chip-small shrink-0 text-warning">
               {{ $t('history.beta') }}
@@ -120,15 +116,17 @@ function focusClose(event: Event) {
           </DialogClose>
         </header>
 
-        <div class="relative flex min-h-60 items-center justify-center overflow-hidden rounded-xl border border-line bg-background">
-          <img v-if="preview" :src="preview" :alt="alt" class="block max-h-[55dvh] w-full object-contain" :class="{ 'opacity-40': !image }">
-          <span v-if="!image" role="status" class="absolute text-small text-medium">{{ failed ? $t('share.failed') : $t('share.rendering') }}</span>
+        <span role="status" class="sr-only">{{ failed ? $t('share.failed') : image ? $t('share.ready') : $t('share.rendering') }}</span>
+        <div class="relative flex min-h-[min(15rem,35dvh)] items-center justify-center overflow-hidden rounded-xl border border-line bg-background">
+          <img v-if="preview" :src="preview" :alt="alt" class="block max-h-[40dvh] w-full object-contain" :class="{ 'opacity-40': !image }">
+          <span v-if="!image" class="absolute text-small text-medium" aria-hidden="true">{{ failed ? $t('share.failed') : $t('share.rendering') }}</span>
+          <button v-if="failed" type="button" class="btn btn-tonal absolute bottom-3 text-primary" @click="render">{{ $t('share.retry') }}</button>
         </div>
         <p v-if="touch" class="-mt-2 text-small text-medium">{{ $t('share.longPress') }}</p>
 
         <label v-if="positioned" class="flex cursor-pointer items-center gap-3">
           <span class="flex min-w-0 grow flex-col">
-            <span>{{ $t('share.withPosition') }}</span>
+            <span>{{ $t(route ? 'share.withRoute' : 'share.withPosition') }}</span>
             <span class="text-small text-medium">{{ $t(`share.${route ? 'route' : 'position'}${withPosition ? 'Shown' : 'Hidden'}`) }}</span>
           </span>
           <SwitchRoot v-model="withPosition" class="switch shrink-0">
@@ -136,7 +134,7 @@ function focusClose(event: Event) {
           </SwitchRoot>
         </label>
 
-        <div class="flex gap-3">
+        <div class="sticky -bottom-4 -mx-4 -mb-4 flex gap-3 bg-surface px-4 pt-2 pb-4">
           <button type="button" class="btn btn-filled h-11 grow gap-2" :disabled="!canShare || !image" @click="share">
             <AppIcon :icon="mdiShareVariant" size="20" />
             {{ $t('share.share') }}

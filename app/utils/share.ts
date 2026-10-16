@@ -1,7 +1,7 @@
 import type { Map as MapLibreMap } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import type { CoverageLevel, Position } from './constants'
-import { COVERAGE_GOOD_USABLE, COVERAGE_TONES, MAP_CREDIT, MAP_MAX_ZOOM, MAP_MUTED_COLOR, MAP_STYLE_URL, SHARE_JPEG_QUALITY, SHARE_MAP_TIMEOUT_MS, SHARE_ROWS, SITE_URL, THEME_COLORS } from './constants'
+import { COVERAGE_TONES, MAP_CREDIT, MAP_MAX_ZOOM, MAP_MUTED_COLOR, MAP_STYLE_URL, SHARE_JPEG_QUALITY, SHARE_PRIVATE_MAX_ZOOM, SHARE_MAP_TIMEOUT_MS, SHARE_ROWS, SITE_URL, THEME_COLORS } from './constants'
 import { withTimeout } from './timeout'
 import { freePlacement, labelPlacements, paintDark, pointBox } from './map'
 import type { Box, ScreenPoint } from './map'
@@ -23,7 +23,7 @@ export interface ShareScan {
   track: { position: Position, color: string }[]
   repeaters: ShareRepeater[]
   level: CoverageLevel
-  usable: number
+  ring: { text: string, share: number }
   title: string
   subtitle: string
   date: string
@@ -67,7 +67,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
-async function captureMap(points: [number, number][]): Promise<{ image: HTMLCanvasElement, project: (lngLat: [number, number]) => ScreenPoint } | null> {
+async function captureMap(points: [number, number][], maxZoom: number): Promise<{ image: HTMLCanvasElement, project: (lngLat: [number, number]) => ScreenPoint } | null> {
   const { Map: MapLibre, setWorkerUrl } = await import('maplibre-gl')
   setWorkerUrl(workerUrl)
   const container = document.createElement('div')
@@ -96,7 +96,7 @@ async function captureMap(points: [number, number][]): Promise<{ image: HTMLCanv
         const lats = points.map(([, lat]) => lat)
         loaded.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], {
           padding: MAP_PADDING,
-          maxZoom: MAP_MAX_ZOOM,
+          maxZoom,
           duration: 0
         })
         loaded.once('idle', () => resolve())
@@ -212,8 +212,8 @@ function drawTrack(context: CanvasRenderingContext2D, track: ShareScan['track'],
   return segments
 }
 
-function drawMesh(context: CanvasRenderingContext2D, scan: ShareScan, project: (lngLat: [number, number]) => ScreenPoint) {
-  const placed = scan.repeaters.filter(repeater => repeater.position)
+function drawMesh(context: CanvasRenderingContext2D, scan: ShareScan, shown: ShareRepeater[], project: (lngLat: [number, number]) => ScreenPoint) {
+  const placed = shown.filter(repeater => repeater.position)
   const at = (position: Position) => project([position.lon, position.lat])
   const here = scan.here && at(scan.here)
   const links = [...drawTrack(context, scan.track, at), ...drawLinks(context, here, placed, at)]
@@ -245,26 +245,27 @@ function drawRing(context: CanvasRenderingContext2D, x: number, y: number, scan:
   context.strokeStyle = color
   context.lineCap = 'round'
   context.beginPath()
-  const share = Math.min(scan.usable, COVERAGE_GOOD_USABLE) / COVERAGE_GOOD_USABLE
+  const { text, share } = scan.ring
   if (share) {
     context.arc(x, y, radius, -Math.PI / 2, -Math.PI / 2 + share * Math.PI * 2)
     context.stroke()
   }
   context.lineCap = 'butt'
   context.fillStyle = TEXT
-  context.font = `500 40px ${MONO}`
+  context.font = `500 ${text.length > 2 ? 30 : 40}px ${MONO}`
   context.textAlign = 'center'
-  context.fillText(String(scan.usable), x, y + 2)
+  context.fillText(text, x, y + 2)
   context.textAlign = 'left'
 }
 
 export async function renderShareImage(scan: ShareScan): Promise<Blob> {
-  const texts = [scan.title, scan.subtitle, scan.date, ...scan.repeaters.flatMap(repeater => [repeater.name, repeater.route])].join(' ')
-  await Promise.all([`500 32px ${SANS}`, `32px ${SANS}`, `500 32px ${MONO}`].map(font => document.fonts.load(font, texts).catch(() => [])))
-  const positions = [...scan.repeaters.flatMap(repeater => repeater.position ? [repeater.position] : []), ...scan.track.map(({ position }) => position), ...scan.here ? [scan.here] : []]
-  const points = positions.map(({ lon, lat }): [number, number] => [lon, lat])
-  const [map, logo] = await Promise.all([points.length ? captureMap(points) : null, loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(LOGO)}`)])
   const shown = scan.repeaters.slice(0, SHARE_ROWS)
+  const texts = ['MeshCore Vitals', scan.title, scan.subtitle, scan.date, scan.more ?? '', scan.tagline, ...shown.flatMap(repeater => [repeater.name, repeater.route])].join(' ')
+  await Promise.all([`500 32px ${SANS}`, `32px ${SANS}`, `500 32px ${MONO}`].map(font => document.fonts.load(font, texts).catch(() => [])))
+  const positions = [...shown.flatMap(repeater => repeater.position ? [repeater.position] : []), ...scan.track.map(({ position }) => position), ...scan.here ? [scan.here] : []]
+  const points = positions.map(({ lon, lat }): [number, number] => [lon, lat])
+  const located = !!scan.here || !!scan.track.length
+  const [map, logo] = await Promise.all([points.length ? captureMap(points, located ? MAP_MAX_ZOOM : SHARE_PRIVATE_MAX_ZOOM) : null, loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(LOGO)}`)])
   const mapHeight = map ? MAP_HEIGHT : NO_MAP_HEIGHT
   const listTop = mapHeight + LIST_OFFSET
   const listHeight = shown.length * ROW_HEIGHT + (scan.more ? MORE_HEIGHT : 0)
@@ -289,7 +290,7 @@ export async function renderShareImage(scan: ShareScan): Promise<Blob> {
     top.addColorStop(1, `${THEME_COLORS.background}00`)
     context.fillStyle = top
     context.fillRect(0, 0, WIDTH, HEADER_HEIGHT)
-    drawMesh(context, scan, map.project)
+    drawMesh(context, scan, shown, map.project)
   }
 
   context.drawImage(logo, 40, 32, 72, 72)
@@ -311,12 +312,14 @@ export async function renderShareImage(scan: ShareScan): Promise<Blob> {
   context.font = `28px ${SANS}`
   context.fillText(fitText(context, scan.subtitle, WIDTH - 240), 180, cardTop + 98)
 
-  roundRect(context, 32, listTop - 20, WIDTH - 64, listHeight + 20, 28)
-  context.fillStyle = THEME_COLORS.surface
-  context.fill()
-  context.lineWidth = 2
-  context.strokeStyle = LINE
-  context.stroke()
+  if (listHeight) {
+    roundRect(context, 32, listTop - 20, WIDTH - 64, listHeight + 20, 28)
+    context.fillStyle = THEME_COLORS.surface
+    context.fill()
+    context.lineWidth = 2
+    context.strokeStyle = LINE
+    context.stroke()
+  }
   shown.forEach((repeater, i) => {
     const y = listTop + i * ROW_HEIGHT + ROW_HEIGHT / 2 - 10
     if (i) {

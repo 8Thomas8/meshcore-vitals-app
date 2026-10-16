@@ -4,6 +4,7 @@ node_modules/
 
 # nuxt build outputs
 .output/
+.output-docs/
 .nuxt/
 .nitro/
 .cache/

@@ -12,28 +12,8 @@ const announcement = ref('')
 watch(confirming, (value) => {
   announcement.value = t(value ? 'history.confirmRemove' : 'history.removeCancelled')
 })
-const { hops, duration, time, day, formatNumber, formatDistance } = useFormat()
-
-function margin(snr: number | null) {
-  return snr === null || props.session.spreadingFactor === null ? null : linkMargin(snr, props.session.spreadingFactor)
-}
-
-function nameOf(id: string) {
-  return props.session.repeaters.find(repeater => samePrefix(repeater.id, id))?.name ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
-}
-
-const rows = computed(() => props.session.repeaters
-  .map(repeater => ({
-    repeater,
-    name: repeater.name ?? t('repeaters.unnamed', { id: repeater.id.slice(0, 8).toUpperCase() }),
-    route: repeater.hops ? t('repeaters.via', { hops: hops(repeater.hops), name: repeater.via ? nameOf(repeater.via) : t('repeaters.unknown') }) : t('repeaters.direct'),
-    rx: margin(repeater.rx),
-    tx: margin(repeater.tx),
-    link: margin(repeater.rx === null ? null : Math.min(repeater.rx, repeater.tx ?? repeater.rx))
-  }))
-  .sort((a, b) => a.repeater.hops - b.repeater.hops || (b.link?.value ?? -Infinity) - (a.link?.value ?? -Infinity)))
-
-const sessionImage = useSessionShare()
+const { duration, time, day, formatNumber, formatDistance } = useFormat()
+const rows = useSessionRows(() => props.session)
 
 const mapped = computed(() => props.session.scans.some(scan => scan.position) || props.session.repeaters.some(repeater => repeater.position))
 </script>
@@ -48,7 +28,7 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
           <span v-if="session.companionName" class="truncate">{{ session.companionName }}</span>
         </div>
       </div>
-      <ShareDialog class="btn btn-icon text-medium" :title="$t('share.sessionTitle')" :build="withPosition => sessionImage(session, rows, withPosition)" />
+      <ShareDialog class="btn btn-icon text-medium" :session="session" />
       <DialogClose class="btn btn-icon" :aria-label="$t('common.close')">
         <AppIcon :icon="mdiClose" />
       </DialogClose>
