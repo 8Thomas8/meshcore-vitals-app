@@ -202,6 +202,8 @@ const coverage = computed(() => {
   }
 })
 
+const scanImage = useScanShare()
+
 const { addScan } = useHistory()
 watch(lastFullScan, (at) => {
   if (at) addScan(here.value, coverage.value?.level ?? 'none', coverage.value?.usable ?? 0)
@@ -351,6 +353,12 @@ watch(coverage, (value) => {
           <span class="text-medium">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
           <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium" />
         </button>
+        <ShareDialog
+          class="list-button flex w-12 shrink-0 items-center justify-center border-l border-line text-medium disabled:text-disabled"
+          :title="$t('share.scanTitle')"
+          :build="withPosition => scanImage(inRange, coverage!, withPosition)"
+          :disabled="!coverage"
+        />
         <button
           v-if="here && !listHidden"
           type="button"

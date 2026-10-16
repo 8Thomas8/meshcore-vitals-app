@@ -13,8 +13,8 @@ let attributionTimer: ReturnType<typeof setTimeout> | undefined
 
 function colorOf(repeater: SessionRepeater): string {
   const { spreadingFactor } = props.session
-  if (repeater.hops || repeater.rx === null || spreadingFactor === null) return MAP_MUTED_COLOR
-  return THEME_COLORS[linkMargin(Math.min(repeater.rx, repeater.tx ?? repeater.rx), spreadingFactor).tone]
+  if (repeater.rx === null || spreadingFactor === null) return MAP_MUTED_COLOR
+  return linkColor(!!repeater.hops, linkMargin(Math.min(repeater.rx, repeater.tx ?? repeater.rx), spreadingFactor).tone)
 }
 
 const features = computed(() => {
@@ -53,7 +53,7 @@ onMounted(async () => {
     container: container.value!,
     style: MAP_STYLE_URL,
     bounds,
-    fitBoundsOptions: { padding: 32, maxZoom: 14 },
+    fitBoundsOptions: { padding: 32, maxZoom: MAP_MAX_ZOOM },
     interactive: false,
     attributionControl: false,
     locale: {

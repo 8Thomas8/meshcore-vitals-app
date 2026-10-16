@@ -457,6 +457,26 @@
     }
   }
 
+  .dialog {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    width: min(440px, calc(100vw - 32px));
+    height: fit-content;
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    overflow-y: auto;
+    border-radius: var(--radius-xl);
+
+    &[data-state='open'] {
+      animation: var(--animate-fade-in);
+    }
+
+    &[data-state='closed'] {
+      animation: var(--animate-fade-out);
+    }
+  }
+
   .sheet {
     position: fixed;
     top: var(--spacing-app-bar);

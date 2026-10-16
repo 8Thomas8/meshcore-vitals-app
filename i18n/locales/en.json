@@ -339,5 +339,23 @@
     "remove": "Delete this session",
     "confirmRemove": "Tap again to delete",
     "removeCancelled": "Deletion cancelled"
+  },
+  "share": {
+    "scanTitle": "Share this scan",
+    "sessionTitle": "Share this session",
+    "share": "Share",
+    "download": "Download",
+    "preview": "Image to share: {title}",
+    "rendering": "Preparing the image…",
+    "failed": "The image could not be created",
+    "withPosition": "Show my position",
+    "positionShown": "Your position, the links to the repeaters and their distances are on the image.",
+    "positionHidden": "The map only shows the repeaters, with no link or distance that would give you away.",
+    "routeShown": "Your route and the distance walked are on the image.",
+    "routeHidden": "The map only shows the repeaters, with no route or distance that would give you away.",
+    "more": "and {n} more repeater | and {n} more repeaters",
+    "tagline": "Check your MeshCore coverage",
+    "betaHint": "Sharing is still being tested: the image may change in a future version.",
+    "longPress": "You can also press and hold the image to save it."
   }
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { bestPlacement, boxesOverlap, flowGradient, freePlacement, labelPlacements, segmentCrossesBox, slideInto, visibleShare } from '~/utils/map'
+import { MAP_MUTED_COLOR, THEME_COLORS } from '~/utils/constants'
+import { bestPlacement, boxesOverlap, flowGradient, freePlacement, labelPlacements, linkColor, pointBox, segmentCrossesBox, slideInto, visibleShare } from '~/utils/map'
 
 const box = { left: 10, top: 10, right: 30, bottom: 20 }
 
@@ -128,5 +129,22 @@ describe('flowGradient', () => {
     const positions = flowGradient(1.1, 0.2, 0.8, 10).slice(3).filter((_, i) => i % 2 === 0) as number[]
     expect(positions).toEqual([...positions].sort((a, b) => a - b))
     expect(positions).toHaveLength(11)
+  })
+})
+
+describe('pointBox', () => {
+  it('squares the room around a point', () => {
+    expect(pointBox([10, 20], 5)).toEqual({ left: 5, top: 15, right: 15, bottom: 25 })
+  })
+})
+
+describe('linkColor', () => {
+  it('takes the tone of the link, primary while unknown', () => {
+    expect(linkColor(false, 'warning')).toBe(THEME_COLORS.warning)
+    expect(linkColor(false, undefined)).toBe(THEME_COLORS.primary)
+  })
+
+  it('mutes the relayed and out of range ones', () => {
+    expect(linkColor(true, 'success')).toBe(MAP_MUTED_COLOR)
   })
 })

@@ -33,6 +33,8 @@ const rows = computed(() => props.session.repeaters
   }))
   .sort((a, b) => a.repeater.hops - b.repeater.hops || (b.link?.value ?? -Infinity) - (a.link?.value ?? -Infinity)))
 
+const sessionImage = useSessionShare()
+
 const mapped = computed(() => props.session.scans.some(scan => scan.position) || props.session.repeaters.some(repeater => repeater.position))
 </script>
 
@@ -46,6 +48,7 @@ const mapped = computed(() => props.session.scans.some(scan => scan.position) ||
           <span v-if="session.companionName" class="truncate">{{ session.companionName }}</span>
         </div>
       </div>
+      <ShareDialog class="btn btn-icon text-medium" :title="$t('share.sessionTitle')" :build="withPosition => sessionImage(session, rows, withPosition)" />
       <DialogClose class="btn btn-icon" :aria-label="$t('common.close')">
         <AppIcon :icon="mdiClose" />
       </DialogClose>

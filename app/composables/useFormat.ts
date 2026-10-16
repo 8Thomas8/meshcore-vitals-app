@@ -11,6 +11,8 @@ export function useFormat() {
     second: t('units.second')
   }))
 
+  const date = (at: number) => new Intl.DateTimeFormat(language.value, { weekday: 'long', day: 'numeric', month: 'long' }).format(at)
+
   return {
     formatNumber: (value: number, maxDecimals = 0, minDecimals = maxDecimals) => formatNumber(value, maxDecimals, minDecimals, language.value),
     formatDistance: (meters: number) => formatDistance(meters, language.value),
@@ -25,8 +27,9 @@ export function useFormat() {
       if (day === today.toDateString()) return t('history.today')
       today.setDate(today.getDate() - 1)
       if (day === today.toDateString()) return t('history.yesterday')
-      return new Intl.DateTimeFormat(language.value, { weekday: 'long', day: 'numeric', month: 'long' }).format(at)
+      return date(at)
     },
+    date,
     // Errors thrown by the app carry a message key, the browser's own come as
     // they are.
     message: (text: string) => te(text) ? t(text) : text
