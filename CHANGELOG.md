@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.0...v1.9.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* drop the auto scan and stay awake hints from the scan status and limit history to auto scan ([#72](https://github.com/8Thomas8/meshcore-vitals-app/issues/72)) ([75d67c0](https://github.com/8Thomas8/meshcore-vitals-app/commit/75d67c0c881793f7e5c606e71dfc5b4b65f9d826))
+* keep the map view from scrolling when the cards outgrow the screen ([#75](https://github.com/8Thomas8/meshcore-vitals-app/issues/75)) ([00d87e9](https://github.com/8Thomas8/meshcore-vitals-app/commit/00d87e97ce9d71e7cffddf33a30448cba7f76a01))
+
 ## [1.9.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.8.1...v1.9.0) (2026-10-16)
 
 
