@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
 import { SESSION_GAP_MS } from '~/utils/constants'
 import type { Session, SessionRepeater, SessionScan } from '~/utils/history'
-import { copyPosition, fillFromContacts, isSessionOver, keepLatest, mainLevel, sessionDistance, summarizeRepeaters } from '~/utils/history'
+import { copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, sessionDistance, summarizeRepeaters } from '~/utils/history'
 
 function heard(overrides: Partial<HeardRepeater> = {}): HeardRepeater {
   return { id: 'aabb', name: 'Alpha', position: null, hops: 0, via: null, lastVia: null, rx: null, history: [], tx: null, lastHeard: 1000, ...overrides }
@@ -12,8 +12,8 @@ function session(startedAt: number, overrides: Partial<Session> = {}): Session {
   return { startedAt, endedAt: startedAt, companionName: null, spreadingFactor: 10, repeaters: [], scans: [], ...overrides }
 }
 
-function scan(at: number, level: SessionScan['level'], position: SessionScan['position'] = null): SessionScan {
-  return { at, position, level, usable: 0 }
+function scan(at: number, level: SessionScan['level'], position: SessionScan['position'] = null, auto = false): SessionScan {
+  return { at, position, level, usable: 0, auto }
 }
 
 describe('summarizeRepeaters', () => {
@@ -83,6 +83,14 @@ describe('isSessionOver', () => {
   it('ends a session after a long pause', () => {
     expect(isSessionOver(session(0, { endedAt: 1000 }), 1000 + SESSION_GAP_MS)).toBe(false)
     expect(isSessionOver(session(0, { endedAt: 1000 }), 1001 + SESSION_GAP_MS)).toBe(true)
+  })
+})
+
+describe('hasAutoScan', () => {
+  it('needs at least one scan made with auto scan on', () => {
+    expect(hasAutoScan([])).toBe(false)
+    expect(hasAutoScan([scan(1000, 'good'), scan(2000, 'poor')])).toBe(false)
+    expect(hasAutoScan([scan(1000, 'good'), scan(2000, 'poor', null, true)])).toBe(true)
   })
 })
 

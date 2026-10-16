@@ -19,6 +19,7 @@ export interface SessionScan {
   position: Position | null
   level: CoverageLevel
   usable: number
+  auto: boolean
 }
 
 export interface Session {
@@ -72,6 +73,10 @@ export function fillFromContacts(repeaters: SessionRepeater[], contacts: readonl
 
 export function isSessionOver(session: Session | null, now: number): boolean {
   return !session || now - session.endedAt > SESSION_GAP_MS
+}
+
+export function hasAutoScan(scans: readonly SessionScan[]): boolean {
+  return scans.some(scan => scan.auto)
 }
 
 export function sessionDistance(scans: readonly SessionScan[]): number {

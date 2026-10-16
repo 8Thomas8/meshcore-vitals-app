@@ -30,7 +30,7 @@ The auto scan switch scans again every minute, and the stay awake switch keeps t
 
 The Companion page puts the battery, link margin and noise floor up top, then the radio settings, traffic, device details and a few health checks.
 
-The History page (beta) keeps your last 20 sessions: the route you walked colored by coverage, and the best signal of each repeater heard.
+The History page (beta) keeps your last 20 sessions recorded with auto scan turned on: the route you walked colored by coverage, and the best signal of each repeater heard.
 
 Share a scan or a session as an image (beta): the map, the coverage and the signal of each repeater, with your position or your route only if you turn it on.
 

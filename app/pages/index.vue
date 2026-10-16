@@ -70,8 +70,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('deviceorientationabsolute', onOrientation)
 })
 
+let scanAuto = false
 watch(lastScanAttempt, (at) => {
   if (at) locate()
+  scanAuto = autoScan.value
 })
 
 let autoOnAt = 0
@@ -96,6 +98,10 @@ const mapShown = computed(() => here.value !== null && (listHidden.value || !lis
 const column = computed(() => mapShown.value && !smAndDown.value)
 const { shown: footerShown } = useFooter()
 const scanStatus = computed(() => scannedAt.value ? t('scan.done', { ago: ago(scannedAt.value, now.value) }) : t('scan.never'))
+const statusText = computed(() => pausedSecs.value
+  ? t('scan.paused', { duration: duration(pausedSecs.value) })
+  : scanning.value ? t('scan.inProgress') : noLocation.value ? t('scan.noLocation', { status: scanStatus.value }) : scanStatus.value)
+const statusDot = computed(() => [scanning.value ? 'text-primary' : scanError.value ? 'text-error' : screenRefused.value ? 'text-warning' : 'text-success', { 'animate-blink': scanning.value }])
 watch(() => here.value !== null && !mapShown.value, (shown) => {
   footerShown.value = shown
 }, { immediate: true })
@@ -121,7 +127,7 @@ onBeforeRouteLeave(() => {
 
 const { addScan } = useHistory()
 watch(lastFullScan, (at) => {
-  if (at) addScan(here.value, coverage.value?.level ?? 'none', coverage.value?.usable ?? 0)
+  if (at) addScan(here.value, coverage.value?.level ?? 'none', coverage.value?.usable ?? 0, scanAuto)
 })
 
 const coverageOpen = ref(false)
@@ -201,14 +207,10 @@ watch(coverage, (value) => {
       </div>
       <div class="status-row">
         <span class="sr-only" aria-live="polite">{{ pausedSecs ? $t('scan.paused', { duration: duration(pausedSecs) }) : screenRefused ? $t('wakeLock.refused') : '' }}</span>
-        <PopoverRoot>
+        <PopoverRoot v-if="scanError || screenRefused">
           <PopoverTrigger class="status-trigger">
-            <span class="dot" :class="[scanning ? 'text-primary' : scanError ? 'text-error' : screenRefused ? 'text-warning' : 'text-success', { 'animate-blink': scanning }]" />
-            <span v-if="pausedSecs" class="truncate">{{ $t('scan.paused', { duration: duration(pausedSecs) }) }}</span>
-            <span v-else-if="scanning" class="truncate">{{ $t('scan.inProgress') }}</span>
-            <span v-else class="truncate">
-              {{ noLocation ? $t('scan.noLocation', { status: scanStatus }) : scanStatus }}
-            </span>
+            <span class="dot" :class="statusDot" />
+            <span class="truncate">{{ statusText }}</span>
             <AppIcon class="shrink-0" :icon="mdiInformationOutline" size="20" />
           </PopoverTrigger>
           <PopoverPortal>
@@ -216,12 +218,14 @@ watch(coverage, (value) => {
               <div class="flex flex-col gap-2 py-1">
                 <span v-if="scanError" class="text-error">{{ message(scanError) }}</span>
                 <span v-if="screenRefused" class="text-warning">{{ $t('wakeLock.refused') }}</span>
-                <span>{{ $t('scan.autoHint', { minutes: AUTO_SCAN_INTERVAL_MS / 60_000 }, AUTO_SCAN_INTERVAL_MS / 60_000) }}</span>
-                <span v-if="wakeLockSupported">{{ $t('wakeLock.hint') }}</span>
               </div>
             </PopoverContent>
           </PopoverPortal>
         </PopoverRoot>
+        <div v-else class="status-trigger">
+          <span class="dot" :class="statusDot" />
+          <span class="truncate">{{ statusText }}</span>
+        </div>
         <!-- As tall as the status line, the card keeps its height. -->
         <div class="ms-auto flex gap-3">
           <label class="flex h-8 flex-none cursor-pointer items-center gap-1.5" :title="$t('scan.auto')">
@@ -296,7 +300,10 @@ watch(coverage, (value) => {
             :bearing="row.bearing"
             :heading="heading"
           />
-          <span class="name truncate font-medium">{{ row.name }}</span>
+          <span class="name flex items-baseline gap-3">
+            <span class="truncate font-medium">{{ row.name }}</span>
+            <span class="ms-auto text-small whitespace-nowrap text-medium">{{ row.heard }}</span>
+          </span>
           <span class="details separated text-small text-medium"><span v-for="(part, i) in row.details" :key="i">{{ part }}</span></span>
           <LinkReadout
             v-if="!row.repeater.hops"

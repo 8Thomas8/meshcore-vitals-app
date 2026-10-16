@@ -46,13 +46,13 @@ export function useScanResult() {
         : repeater.hops ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') }) : t('repeaters.direct')
       const details = [
         distance !== null && formatDistance(distance),
-        typeof altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(altitude) }),
-        ago(repeater.lastHeard, now.value)
+        typeof altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(altitude) })
       ]
       return {
         repeater,
         name: nameOf(repeater.id),
         viaName,
+        heard: ago(repeater.lastHeard, now.value),
         // The route may wrap, each other part stays whole.
         details: [route, ...details.filter(part => typeof part === 'string').map(part => part.replaceAll(' ', '\u00a0'))],
         position,

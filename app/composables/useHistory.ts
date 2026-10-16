@@ -94,11 +94,11 @@ function record(scan?: SessionScan) {
     repeaters: summary,
     scans: scan ? [...session.scans, scan] : session.scans
   }
-  if (current.scans.length) save(current).catch(() => {})
+  if (hasAutoScan(current.scans)) save(current).catch(() => {})
 }
 
-function addScan(position: DeepReadonly<Position> | null, level: CoverageLevel, usable: number) {
-  record({ at: Date.now(), position: copyPosition(position), level, usable })
+function addScan(position: DeepReadonly<Position> | null, level: CoverageLevel, usable: number, auto: boolean) {
+  record({ at: Date.now(), position: copyPosition(position), level, usable, auto })
 }
 
 function start() {
