@@ -3,7 +3,6 @@ import type { DeepReadonly } from 'vue'
 
 const sessions = shallowRef<Session[]>([])
 let current: Session | null = null
-let automatic = false
 let connectedAt = 0
 let database: Promise<IDBDatabase> | null = null
 let started = false
@@ -83,9 +82,7 @@ function record(scan?: SessionScan) {
       : connectedAt
     if (!Number.isFinite(since)) return
     current = { startedAt: since, endedAt: since, companionName: null, spreadingFactor: null, repeaters: [], scans: [] }
-    automatic = false
   }
-  if (scan && useRepeaters().autoScan.value) automatic = true
   const session = current!
   const summary = fillFromContacts(summarizeRepeaters(session.repeaters, repeaters.value, session.startedAt), contacts.value)
   if (!summary.length && !scan) return
@@ -97,11 +94,11 @@ function record(scan?: SessionScan) {
     repeaters: summary,
     scans: scan ? [...session.scans, scan] : session.scans
   }
-  if (automatic) save(current).catch(() => {})
+  if (hasAutoScan(current.scans)) save(current).catch(() => {})
 }
 
-function addScan(position: DeepReadonly<Position> | null, level: CoverageLevel, usable: number) {
-  record({ at: Date.now(), position: copyPosition(position), level, usable })
+function addScan(position: DeepReadonly<Position> | null, level: CoverageLevel, usable: number, auto: boolean) {
+  record({ at: Date.now(), position: copyPosition(position), level, usable, auto })
 }
 
 function start() {

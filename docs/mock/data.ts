@@ -60,7 +60,7 @@ export function pastSession(): Session {
     endedAt: startedAt + 43 * 60_000,
     companionName: COMPANION.name,
     spreadingFactor: COMPANION.spreadingFactor,
-    scans: LEVELS.map((level, i) => ({ at: startedAt + i * 150_000, position: around(200, 2.2 - i * 0.25), level, usable: level === 'good' ? 3 : 1 })),
+    scans: LEVELS.map((level, i) => ({ at: startedAt + i * 150_000, position: around(200, 2.2 - i * 0.25), level, usable: level === 'good' ? 3 : 1, auto: true })),
     repeaters: REPEATERS.filter(repeater => !repeater.via).slice(0, 8).map(repeater => ({
       id: hex(keyOf(repeater.name)),
       name: repeater.name,

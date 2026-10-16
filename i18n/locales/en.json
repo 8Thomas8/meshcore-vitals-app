@@ -79,7 +79,7 @@
     "never": "Not scanned yet",
     "noLocation": "{status}, no location for directions",
     "nothingAnswered": "Nothing answered the last scan",
-    "auto": "Auto",
+    "auto": "Auto scan",
     "paused": "Paused for {duration}"
   },
   "coverage": {
@@ -322,10 +322,10 @@
   "history": {
     "title": "Last {count} sessions",
     "stored": "Stored on this device",
-    "hint": "Each connection to the companion with auto scan on makes a session, the oldest is removed once there are more.",
+    "hint": "Each connection to the Companion with auto scan turned on makes a session, the oldest is removed once there are more.",
     "beta": "Beta",
     "betaHint": "This feature is still being tested: recorded sessions may change or be cleared in a future version.",
-    "empty": "No session yet. Each connection to the companion with auto scan on is recorded here, with the repeaters heard and the coverage at each scan.",
+    "empty": "No session yet. Each connection to the Companion with auto scan turned on is recorded here, with the repeaters heard and the coverage at each scan. Manual scans alone are not kept.",
     "today": "Today",
     "yesterday": "Yesterday",
     "duration": "Duration",

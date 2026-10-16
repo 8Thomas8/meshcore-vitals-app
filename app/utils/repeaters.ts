@@ -34,6 +34,7 @@ export interface RepeaterRow {
   repeater: DeepReadonly<HeardRepeater>
   name: string
   viaName: string | null
+  heard: string
   details: string[]
   /** Its own advert first, then the companion's contact. */
   position: DeepReadonly<Position> | null
