@@ -47,8 +47,7 @@ watch(() => props.locatedAt, () => {
 })
 
 function colorOf(row: RepeaterRow): string {
-  if (row.repeater.hops || row.outOfRange) return MAP_MUTED_COLOR
-  return row.link ? THEME_COLORS[row.link.tone] : THEME_COLORS.primary
+  return linkColor(!!row.repeater.hops || row.outOfRange, row.link?.tone)
 }
 
 const features = computed(() => {
@@ -195,8 +194,7 @@ function declutter() {
     feature.geometry.type === 'LineString' ? [[project(feature.geometry.coordinates[0] as [number, number]), project(feature.geometry.coordinates[1] as [number, number])] as [ScreenPoint, ScreenPoint]] : [])
   const dots: Box[] = features.value.features.flatMap((feature) => {
     if (feature.geometry.type !== 'Point') return []
-    const [x, y] = project(feature.geometry.coordinates as [number, number])
-    return [{ left: x - MAP_DOT_CLEARANCE, top: y - MAP_DOT_CLEARANCE, right: x + MAP_DOT_CLEARANCE, bottom: y + MAP_DOT_CLEARANCE }]
+    return [pointBox(project(feature.geometry.coordinates as [number, number]), MAP_DOT_CLEARANCE)]
   })
   const controls: Box[] = [...container.value!.querySelectorAll('.maplibregl-ctrl')].map(control => control.getBoundingClientRect())
   const taken = [...dots, ...controls]
@@ -261,7 +259,7 @@ function frame() {
   const fit = Math.min(1, (height - MAP_MIN_FRAME_HEIGHT) / (above + bottom))
   map.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], {
     padding: { top: above * fit, bottom: bottom * fit, left: left.value + MAP_SIDE_MARGIN, right: MAP_SIDE_MARGIN },
-    maxZoom: 14,
+    maxZoom: MAP_MAX_ZOOM,
     duration: 0
   })
 }

@@ -339,5 +339,26 @@
     "remove": "Supprimer cette session",
     "confirmRemove": "Toucher encore pour supprimer",
     "removeCancelled": "Suppression annulée"
+  },
+  "share": {
+    "scanTitle": "Partager ce scan",
+    "sessionTitle": "Partager cette session",
+    "share": "Partager",
+    "download": "Télécharger",
+    "preview": "Image à partager : {title}",
+    "rendering": "Préparation de l'image…",
+    "ready": "Image prête",
+    "failed": "Impossible de créer l'image",
+    "retry": "Réessayer",
+    "withPosition": "Afficher ma position",
+    "withRoute": "Afficher mon trajet",
+    "positionShown": "Votre position, les liens vers les répéteurs et leurs distances apparaissent sur l'image.",
+    "positionHidden": "La carte ne montre que les répéteurs, sans lien ni distance. Ils indiquent quand même la zone où vous êtes.",
+    "routeShown": "Votre trajet et la distance parcourue apparaissent sur l'image.",
+    "routeHidden": "La carte ne montre que les répéteurs, sans trajet ni distance. Ils indiquent quand même la zone parcourue.",
+    "more": "et {n} autre répéteur | et {n} autres répéteurs",
+    "tagline": "Testez votre couverture MeshCore",
+    "betaHint": "Le partage est encore en test : l'image pourra changer dans une prochaine version.",
+    "longPress": "Vous pouvez aussi appuyer longuement sur l'image pour l'enregistrer."
   }
 }

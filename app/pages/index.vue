@@ -3,11 +3,11 @@ import { mdiAlert, mdiAutorenew, mdiChevronDown, mdiChevronRight, mdiChevronUp, 
 import { useMediaQuery } from '@vueuse/core'
 
 const { status } = useMeshCore()
-const { repeaters, selfInfo, contacts, scanUntil, scannedAt, lastScanAttempt, lastFullScan, autoScan, scanError, scan } = useRepeaters()
+const { selfInfo, scanUntil, scannedAt, lastScanAttempt, lastFullScan, autoScan, scanError, scan } = useRepeaters()
 
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const { t } = useI18n()
-const { ago, hops, duration, message, formatNumber, formatDistance } = useFormat()
+const { ago, duration, message } = useFormat()
 const { supported: wakeLockSupported, enabled: keepScreenOn, wanted: screenWanted, refused: screenRefused } = useWakeLock()
 const { position: here, unavailable: noLocation, locatedAt, locate } = useDevicePosition()
 const heading = ref<number | null>(null)
@@ -87,73 +87,8 @@ const nextScanAt = computed(() => autoScan.value && !scanning.value ? (lastScanA
 const scanLeftMs = computed(() => scanUntil.value && Math.max(0, scanUntil.value - now.value))
 const scanProgress = computed(() => scanLeftMs.value === null ? 0 : Math.min(100, Math.max(0, 100 * (1 - scanLeftMs.value / DISCOVER_WINDOW_MS))))
 
-const repeaterContacts = computed(() => contacts.value
-  .filter(contact => contact.type === ADV_TYPE_REPEATER)
-  .map(contact => ({ id: toHex(contact.publicKey), contact })))
-
-// A path hash can match several contacts, then none is picked.
-function contactFor(id: string) {
-  const matches = repeaterContacts.value.filter(entry => entry.id.startsWith(id))
-  return matches.length === 1 ? matches[0]!.contact : null
-}
-
-function margin(sample: LinkSample | null) {
-  return sample && selfInfo.value ? linkMargin(sample.snr, selfInfo.value.radioSf) : null
-}
-
-function weaker(rx: LinkMargin | null, tx: LinkMargin | null) {
-  return rx && tx && tx.value < rx.value ? tx : rx ?? tx
-}
-
-function nameOf(id: string): string {
-  const heard = repeaters.value.find(repeater => repeater.id.startsWith(id))
-  return heard?.name ?? contactFor(heard?.id ?? id)?.advName ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
-}
-
-const rows = computed(() => repeaters.value
-  .map((repeater): RepeaterRow => {
-    const contact = contactFor(repeater.id)
-    const position = repeater.position ?? (contact && toPosition(contact.advLat, contact.advLon))
-    const distance = here.value && position ? distanceMeters(here.value, position) : null
-    const altitude = position ? elevationAt(position) : null
-    const viaName = repeater.via && nameOf(repeater.via)
-    const rx = margin(repeater.rx)
-    const tx = margin(repeater.tx)
-    const outOfRange = isOutOfRange(repeater, repeaters.value, lastFullScan.value)
-    const route = outOfRange
-      ? t('repeaters.outOfRange')
-      : repeater.hops ? t('repeaters.via', { hops: hops(repeater.hops), name: viaName ?? t('repeaters.unknown') }) : t('repeaters.direct')
-    const details = [
-      distance !== null && formatDistance(distance),
-      typeof altitude === 'number' && t('repeaters.altitude', { altitude: formatNumber(altitude) }),
-      ago(repeater.lastHeard, now.value)
-    ]
-    return {
-      repeater,
-      name: nameOf(repeater.id),
-      viaName,
-      // The route may wrap, each other part stays whole.
-      details: [route, ...details.filter(part => typeof part === 'string').map(part => part.replaceAll(' ', '\u00a0'))],
-      position,
-      altitude,
-      distance,
-      bearing: here.value && position ? bearingDegrees(here.value, position) : null,
-      // A repeater out of range keeps its last values, not their colors.
-      rx: outOfRange ? null : rx,
-      tx: outOfRange ? null : tx,
-      link: outOfRange ? null : weaker(rx, tx),
-      outOfRange
-    }
-  })
-  // Direct ones by link quality, then the closest relayed ones, the ones out
-  // of range last.
-  .sort((a, b) => Number(a.outOfRange) - Number(b.outOfRange)
-    || a.repeater.hops - b.repeater.hops
-    || (b.link?.value ?? -Infinity) - (a.link?.value ?? -Infinity)
-    || b.repeater.lastHeard - a.repeater.lastHeard))
-
+const { rows, inRange, direct, coverage } = useScanResult()
 const showOutOfRange = ref(false)
-const inRange = computed(() => rows.value.filter(row => !row.outOfRange))
 const outOfRangeCount = computed(() => rows.value.length - inRange.value.length)
 const shownRows = computed(() => showOutOfRange.value ? rows.value : inRange.value)
 
@@ -164,8 +99,6 @@ const scanStatus = computed(() => scannedAt.value ? t('scan.done', { ago: ago(sc
 watch(() => here.value !== null && !mapShown.value, (shown) => {
   footerShown.value = shown
 }, { immediate: true })
-
-const direct = computed(() => inRange.value.filter(row => !row.repeater.hops))
 
 // By id prefix, the id grows from a path hash to the full key while it is open.
 const selectedId = ref<string | null>(null)
@@ -184,22 +117,6 @@ onBeforeRouteLeave(() => {
   if (!detailOpen.value) return
   detailOpen.value = false
   return false
-})
-
-const coverage = computed(() => {
-  if (!inRange.value.length) return null
-  const links = direct.value.flatMap(({ repeater, rx, tx }) =>
-    rx && repeater.rx && now.value - repeater.rx.at < COVERAGE_RECENT_MS ? [{ rx: rx.value, tx: tx?.value ?? null }] : [])
-  const assessment = assessCoverage(links)
-  const { reason, usable, confirmed, solid, unconfirmed } = assessment
-  return {
-    ...assessment,
-    tone: COVERAGE_TONES[assessment.level],
-    label: t(`coverage.level.${assessment.level}`),
-    reason: reason === 'confirmed' && unconfirmed
-      ? `${t('coverage.reason.confirmed', { confirmed, solid }, solid)} ${t('coverage.reason.unscanned', unconfirmed)}`
-      : t(`coverage.reason.${reason}`, { usable, confirmed, solid, minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB }, solid)
-  }
 })
 
 const { addScan } = useHistory()
@@ -351,6 +268,7 @@ watch(coverage, (value) => {
           <span class="text-medium">{{ listHidden ? $t('repeaters.showList') : $t('repeaters.hideList') }}</span>
           <AppIcon :icon="listHidden ? mdiChevronUp : mdiChevronDown" size="20" class="text-medium" />
         </button>
+        <ShareDialog class="list-button flex w-12 shrink-0 items-center justify-center border-l border-line text-medium disabled:text-disabled" />
         <button
           v-if="here && !listHidden"
           type="button"

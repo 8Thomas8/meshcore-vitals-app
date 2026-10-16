@@ -12,6 +12,7 @@
     "build": "nuxt generate",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
+    "docs:mock": "DOCS_MOCK=1 nuxt generate && npx -y serve@14.2.4 .output-docs/public -l 3100 --no-port-switching",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck",

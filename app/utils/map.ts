@@ -1,5 +1,6 @@
 import type { ExpressionSpecification, Map as MapLibreMap } from 'maplibre-gl'
-import { THEME_COLORS } from './constants'
+import type { Tone } from './constants'
+import { MAP_MUTED_COLOR, THEME_COLORS } from './constants'
 
 export type ScreenPoint = [number, number]
 
@@ -46,6 +47,15 @@ export function segmentCrossesBox([x1, y1]: ScreenPoint, [x2, y2]: ScreenPoint, 
     if (enter > exit) return false
   }
   return true
+}
+
+export function pointBox([x, y]: ScreenPoint, radius: number): Box {
+  return { left: x - radius, top: y - radius, right: x + radius, bottom: y + radius }
+}
+
+export function linkColor(muted: boolean, tone: Tone | undefined): string {
+  if (muted) return MAP_MUTED_COLOR
+  return THEME_COLORS[tone ?? 'primary']
 }
 
 export interface Placement {

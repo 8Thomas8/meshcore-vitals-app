@@ -71,6 +71,7 @@ export const SITE_URL = 'https://www.meshcore-vitals.com'
 // OpenFreeMap's dark style, free and keyless. Its tiles, fonts and sprites come
 // from the same host.
 export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/dark'
+export const MAP_CREDIT = '© OpenFreeMap © OpenMapTiles © OpenStreetMap'
 
 // Ground elevation from the Copernicus 90 m terrain model, free and keyless.
 export const ELEVATION_API_URL = 'https://api.open-meteo.com/v1/elevation'
@@ -161,6 +162,7 @@ export const MAP_TAP_RADIUS = 20
 
 // Relayed and out-of-range repeaters, whose signal is not current.
 export const MAP_MUTED_COLOR = '#8a94a6'
+export const MAP_MAX_ZOOM = 14
 
 // How long the map attribution shows in full before it folds to its button.
 // OpenStreetMap's guidelines allow folding it after five seconds.
@@ -249,3 +251,9 @@ export const DEFAULT_YOUR_ANTENNA_M = 1.5
 export const DEFAULT_REPEATER_ANTENNA_M = 5
 export const MAX_ANTENNA_M = 300
 export const ANTENNA_HEIGHTS_STORAGE_KEY = 'antenna-heights'
+
+export const SHARE_ROWS = 6
+export const SHARE_MAP_TIMEOUT_MS = 10_000
+export const SHARE_PRIVATE_MAX_ZOOM = 11
+export const SHARE_JPEG_QUALITY = 0.9
+export const SHARE_FILE_NAME = 'meshcore-vitals.jpg'
