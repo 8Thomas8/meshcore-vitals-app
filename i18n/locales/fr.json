@@ -322,10 +322,10 @@
   "history": {
     "title": "{count} dernières sessions",
     "stored": "Gardées sur cet appareil",
-    "hint": "Chaque connexion au Companion fait une session, la plus ancienne s'efface au-delà.",
+    "hint": "Chaque connexion au Companion avec le scan auto fait une session, la plus ancienne s'efface au-delà.",
     "beta": "Bêta",
     "betaHint": "Fonction en test : les sessions enregistrées pourraient changer ou être effacées dans une prochaine version.",
-    "empty": "Aucune session pour l'instant. Chaque connexion au Companion est enregistrée ici, avec les répéteurs entendus et la couverture à chaque scan.",
+    "empty": "Aucune session pour l'instant. Chaque connexion au Companion avec le scan auto est enregistrée ici, avec les répéteurs entendus et la couverture à chaque scan.",
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "duration": "Durée",

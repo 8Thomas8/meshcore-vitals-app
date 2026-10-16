@@ -322,10 +322,10 @@
   "history": {
     "title": "Last {count} sessions",
     "stored": "Stored on this device",
-    "hint": "Each connection to the companion makes a session, the oldest is removed once there are more.",
+    "hint": "Each connection to the companion with auto scan on makes a session, the oldest is removed once there are more.",
     "beta": "Beta",
     "betaHint": "This feature is still being tested: recorded sessions may change or be cleared in a future version.",
-    "empty": "No session yet. Each connection to the companion is recorded here with the repeaters heard and the coverage at each scan.",
+    "empty": "No session yet. Each connection to the companion with auto scan on is recorded here, with the repeaters heard and the coverage at each scan.",
     "today": "Today",
     "yesterday": "Yesterday",
     "duration": "Duration",
