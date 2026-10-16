@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.8.1...v1.9.0) (2026-10-16)
+
+
+### Features
+
+* share a scan or a session as an image ([#71](https://github.com/8Thomas8/meshcore-vitals-app/issues/71)) ([f6806ad](https://github.com/8Thomas8/meshcore-vitals-app/commit/f6806adeb8c4b2ce873cf67f61bf0bbc6933c429))
+
 ## [1.8.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.8.0...v1.8.1) (2026-10-12)
 
 
