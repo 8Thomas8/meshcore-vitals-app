@@ -6,9 +6,15 @@ const routeBaseName = useRouteBaseName()
 const theme = Object.entries(THEME_COLORS)
   .map(([name, hex]) => `--theme-${name}: ${[1, 3, 5].map(i => Number.parseInt(hex.slice(i, i + 2), 16)).join(', ')}`)
   .join('; ')
+const SEO = {
+  index: { title: 'seo.index.title', description: 'seo.index.description' },
+  companion: { title: 'seo.companion.title', description: 'seo.companion.description' },
+  history: { title: 'seo.history.title', description: 'seo.history.description' }
+}
 const page = () => String(routeBaseName(route) ?? 'index')
-const title = () => t(`seo.${page()}.title`)
-const description = () => t(`seo.${page()}.description`)
+const seo = () => SEO[page() as keyof typeof SEO] ?? SEO.index
+const title = () => t(seo().title)
+const description = () => t(seo().description)
 
 useHead({ htmlAttrs: { style: theme } })
 const localeHead = useLocaleHead()

@@ -5,7 +5,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { formatNumber, formatDistance } = useFormat()
+const { formatNumber, formatDistance, verdictLabel } = useFormat()
 
 const HEIGHT = 180
 const PAD = { top: 22, right: 12, bottom: 22, left: 38 }
@@ -98,7 +98,7 @@ const tooltip = computed(() => {
 
 const summary = computed(() => t(props.terrain.tightest.shortfall > 0 ? 'terrain.chartShortfall' : 'terrain.chartSpare', {
   length: formatDistance(props.terrain.length),
-  verdict: t(`terrain.verdict.${props.terrain.verdict}`),
+  verdict: verdictLabel(props.terrain.verdict),
   distance: formatDistance(props.terrain.tightest.distance),
   height: formatNumber(Math.abs(props.terrain.tightest.shortfall))
 }))

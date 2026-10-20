@@ -57,7 +57,7 @@ export function useScanShare() {
 
 export function useSessionShare(source: MaybeRefOrGetter<Session>) {
   const { t } = useI18n()
-  const { formatDistance, time, duration } = useFormat()
+  const { formatDistance, time, duration, coverageLabel } = useFormat()
   const { way, day, more, tagline } = useShareText()
   const rows = useSessionRows(source)
 
@@ -85,7 +85,7 @@ export function useSessionShare(source: MaybeRefOrGetter<Session>) {
         })),
         level,
         ring: { text: `${Math.round(covered * 100)}%`, share: covered },
-        title: t(`coverage.level.${level}`),
+        title: coverageLabel(level),
         subtitle: [
           duration(Math.round((session.endedAt - session.startedAt) / 1000)),
           shown && formatDistance(sessionDistance(session.scans)),

@@ -11,7 +11,7 @@ const props = defineProps<{
 defineEmits<{ select: [id: string] }>()
 
 const { t } = useI18n()
-const { ago, hops, formatNumber, formatDistance } = useFormat()
+const { ago, hops, formatNumber, formatDistance, marginLabel } = useFormat()
 
 // Following a via link removes the button that had the focus.
 const closeButton = ref<{ $el: HTMLElement } | null>(null)
@@ -61,7 +61,7 @@ const shortKey = computed(() => {
         <MarginGauge :margin="row.link?.value ?? null" :tone="row.link?.tone" />
         <div class="flex min-w-0 flex-col items-start gap-1">
           <span v-if="row.outOfRange" class="chip chip-small">{{ $t('repeaters.outOfRange') }}</span>
-          <span v-else-if="row.link" class="chip chip-small" :class="`text-${row.link.tone}`">{{ $t(`margin.${row.link.grade}`) }}</span>
+          <span v-else-if="row.link" class="chip chip-small" :class="`text-${row.link.tone}`">{{ marginLabel(row.link.grade) }}</span>
           <span v-if="row.outOfRange" class="text-small text-medium">{{ $t('detail.outOfRange') }}</span>
           <span>{{ $t('detail.marginTitle') }}</span>
           <span v-if="spreadingFactor !== null" class="text-small text-medium">

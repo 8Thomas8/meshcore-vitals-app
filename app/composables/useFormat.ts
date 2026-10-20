@@ -20,6 +20,9 @@ export function useFormat() {
     offset: (secs: number) => formatOffset(secs, units.value),
     ago: (at: number, now: number) => t('time.ago', { time: formatElapsed(at, now, units.value) }),
     hops: (hops: number) => t('repeaters.hops', hops),
+    coverageLabel: (level: CoverageLevel) => t({ good: 'coverage.level.good', fair: 'coverage.level.fair', weak: 'coverage.level.weak', none: 'coverage.level.none' }[level]),
+    marginLabel: (grade: LinkMargin['grade']) => t({ comfortable: 'margin.comfortable', fair: 'margin.fair', tight: 'margin.tight' }[grade]),
+    verdictLabel: (verdict: TerrainVerdict) => t({ clear: 'terrain.verdict.clear', marginal: 'terrain.verdict.marginal', partial: 'terrain.verdict.partial', blocked: 'terrain.verdict.blocked' }[verdict]),
     time: (at: number) => new Intl.DateTimeFormat(language.value, { hour: 'numeric', minute: '2-digit' }).format(at),
     day: (at: number) => {
       const day = new Date(at).toDateString()
