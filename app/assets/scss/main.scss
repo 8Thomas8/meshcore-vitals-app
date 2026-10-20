@@ -23,6 +23,7 @@
   --container-page: 1040px;
   --spacing-app-bar: 56px;
   --spacing-bottom-nav: 56px;
+  --spacing-section: clamp(72px, 10vw, 120px);
 
   --z-bar: 10;
   --z-overlay: 30;
@@ -33,7 +34,16 @@
   --font-mono--font-feature-settings: 'tnum';
 
   #{'--text-*'}: initial;
-  --text-display: 32px;
+  --text-display: clamp(36px, 4.6vw + 16px, 68px);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 600;
+  --text-headline: clamp(32px, 3.6vw, 46px);
+  --text-headline--line-height: 1.06;
+  --text-headline--letter-spacing: -0.025em;
+  --text-headline--font-weight: 600;
+  --text-lead: 17px;
+  --text-lead--line-height: 1.6;
   --text-reading: 26px;
   --text-title: 20px;
   --text-title--font-weight: 500;
@@ -143,6 +153,10 @@
   body,
   #__nuxt {
     height: 100%;
+  }
+
+  html {
+    scroll-padding-top: var(--spacing-app-bar);
   }
 
   body {

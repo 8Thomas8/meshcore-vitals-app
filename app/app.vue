@@ -25,7 +25,7 @@ useHead(() => ({
           'url': localeHead.value.link.find(link => link.rel === 'canonical')?.href,
           'description': description(),
           'applicationCategory': 'UtilitiesApplication',
-          'operatingSystem': 'Windows, macOS, ChromeOS, Android',
+          'operatingSystem': 'Windows, macOS, ChromeOS, Android, iOS',
           'isAccessibleForFree': true,
           'offers': { '@type': 'Offer', 'price': 0, 'priceCurrency': 'EUR' }
         })
