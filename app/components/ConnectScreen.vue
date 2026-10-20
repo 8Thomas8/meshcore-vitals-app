@@ -128,7 +128,9 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
         </div>
       </div>
       <div class="rise relative isolate mx-auto w-[min(320px,100%)] max-sm:w-[min(calc(100%-24px),400px)]">
-        <span v-for="delay in ['0s', '1s', '2s']" :key="delay" class="absolute top-1/3 left-1/2 -z-1 aspect-square w-full -translate-1/2 animate-radar rounded-full border border-primary/30 motion-reduce:hidden" :style="{ animationDelay: delay, pointerEvents: 'none' }" aria-hidden="true" />
+        <div class="pointer-events-none absolute inset-0 -z-1 [clip-path:inset(-100vmax_-100vmax_0)]" aria-hidden="true">
+          <span v-for="delay in ['0s', '1s', '2s']" :key="delay" class="absolute top-1/3 left-1/2 aspect-square w-full -translate-1/2 animate-radar rounded-full border border-primary/30 motion-reduce:hidden" :style="{ animationDelay: delay }" />
+        </div>
         <div class="phone cropped">
           <img :src="shot('map')" :alt="$t('landing.map.alt')" width="780" height="1688" fetchpriority="high">
         </div>
