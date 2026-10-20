@@ -6,6 +6,8 @@
 @source not '../../../.github';
 @source not '../../../i18n';
 
+@custom-variant short (@media (height < 500px) and (pointer: coarse));
+
 @theme static {
   #{'--color-*'}: initial;
   --color-black: #000;

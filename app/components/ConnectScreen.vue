@@ -102,12 +102,12 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
     </button>
   </DefineConnectButton>
   <div class="flex w-full grow flex-col overflow-x-clip">
-    <section class="mx-auto grid w-full max-w-page items-center gap-x-12 gap-y-8 px-gutter pt-8 pb-section max-sm:pb-0 sm:gap-y-14 sm:pt-22 min-[960px]:grid-cols-[minmax(0,1fr)_320px]">
-      <div class="flex min-w-0 flex-col gap-4 sm:gap-6">
-        <h1 class="rise text-display text-balance">{{ $t('landing.title') }}</h1>
+    <section class="mx-auto grid w-full max-w-page items-center gap-x-12 gap-y-8 px-gutter pt-8 pb-section max-sm:pb-0 sm:gap-y-14 sm:pt-22 short:pt-4 short:pb-0 min-[960px]:grid-cols-[minmax(0,1fr)_320px]">
+      <div class="flex min-w-0 flex-col gap-4 sm:gap-6 short:gap-4">
+        <h1 class="rise text-display text-balance short:text-headline">{{ $t('landing.title') }}</h1>
         <p class="rise max-w-[40ch] text-body text-medium [--delay:100ms] sm:text-lead">
           {{ $t('landing.lead') }}
-          <span class="max-sm:hidden">{{ $t('landing.install') }}</span>
+          <span class="max-sm:hidden short:hidden">{{ $t('landing.install') }}</span>
         </p>
         <div class="rise flex w-full flex-col gap-2 [--delay:200ms] sm:mt-2 sm:max-w-85">
           <ConnectButton />
@@ -329,7 +329,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
   }
 }
 
-@media (width < 600px) {
+@media (width < 600px), (height < 500px) and (pointer: coarse) {
   .cropped {
     height: 440px;
     overflow: hidden;
