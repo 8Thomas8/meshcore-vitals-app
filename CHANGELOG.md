@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.10.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.2...v1.10.0) (2026-10-20)
+
+
+### Features
+
+* landing page for the connect screen ([#79](https://github.com/8Thomas8/meshcore-vitals-app/issues/79)) ([5f46336](https://github.com/8Thomas8/meshcore-vitals-app/commit/5f46336435221cae079abcd414de14b2070332e5))
+
+
+### Refactor
+
+* write every translation key in full ([#81](https://github.com/8Thomas8/meshcore-vitals-app/issues/81)) ([cea1297](https://github.com/8Thomas8/meshcore-vitals-app/commit/cea12971b2bfe8164e914ce4ffe9e4f284ea5cac))
+
 ## [1.9.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.1...v1.9.2) (2026-10-20)
 
 
