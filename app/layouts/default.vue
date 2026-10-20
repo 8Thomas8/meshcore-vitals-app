@@ -16,7 +16,7 @@ watch(() => !!connection.value, () => window.scrollTo(0, 0))
     <!-- A bar along the top edge, only its bottom border shows. -->
     <header class="panel fixed inset-x-0 top-0 z-(--z-bar) flex h-app-bar border-x-0 border-t-0">
       <!-- Same width and gutter as the cards below. -->
-      <div class="mx-auto flex w-full max-w-page items-center gap-3 px-4">
+      <div class="mx-auto flex w-full max-w-page items-center gap-3 px-gutter">
         <img src="/favicon.svg" alt="" width="28" height="28">
         <span class="text-title">MeshCore Vitals</span>
         <nav v-if="connection && !smAndDown" class="ms-auto flex gap-1">

@@ -543,6 +543,7 @@ onBeforeUnmount(() => {
   // Below the coverage card.
   :deep(.maplibregl-ctrl-top-right) {
     top: var(--map-top);
+    right: env(safe-area-inset-right);
   }
 
   :deep(.maplibregl-ctrl-attrib-button) {

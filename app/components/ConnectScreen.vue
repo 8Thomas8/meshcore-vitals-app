@@ -102,7 +102,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
     </button>
   </DefineConnectButton>
   <div class="flex w-full grow flex-col overflow-x-clip">
-    <section class="mx-auto grid w-full max-w-page items-center gap-x-12 gap-y-8 px-4 pt-8 pb-section max-sm:pb-0 sm:gap-y-14 sm:pt-22 min-[960px]:grid-cols-[minmax(0,1fr)_320px]">
+    <section class="mx-auto grid w-full max-w-page items-center gap-x-12 gap-y-8 px-gutter pt-8 pb-section max-sm:pb-0 sm:gap-y-14 sm:pt-22 min-[960px]:grid-cols-[minmax(0,1fr)_320px]">
       <div class="flex min-w-0 flex-col gap-4 sm:gap-6">
         <h1 class="rise text-display text-balance">{{ $t('landing.title') }}</h1>
         <p class="rise max-w-[40ch] text-body text-medium [--delay:100ms] sm:text-lead">
@@ -136,7 +136,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
     </section>
 
     <section class="border-y border-on-surface/10 bg-surface/50">
-      <div class="mx-auto grid max-w-page items-start gap-x-18 gap-y-14 px-4 py-section min-[960px]:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      <div class="mx-auto grid max-w-page items-start gap-x-18 gap-y-14 px-gutter py-section min-[960px]:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <div class="reveal flex min-w-0 flex-col gap-9">
           <div class="flex flex-col gap-4">
             <h2 class="text-headline text-balance">{{ $t('landing.list.title') }}</h2>
@@ -187,7 +187,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </div>
     </section>
 
-    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-4 pt-section min-[960px]:grid-cols-[300px_minmax(0,1fr)]">
+    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-gutter pt-section min-[960px]:grid-cols-[300px_minmax(0,1fr)]">
       <div class="reveal flex min-w-0 flex-col gap-10">
         <div class="flex flex-col gap-4">
           <h2 class="text-headline text-balance">{{ $t('landing.detail.title') }}</h2>
@@ -215,7 +215,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </div>
     </section>
 
-    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-4 pt-section min-[960px]:grid-cols-[minmax(0,1fr)_300px]">
+    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-gutter pt-section min-[960px]:grid-cols-[minmax(0,1fr)_300px]">
       <div class="reveal flex min-w-0 flex-col gap-10">
         <div class="flex flex-col items-start gap-4">
           <span class="chip chip-small text-warning">{{ $t('history.beta') }}</span>
@@ -239,7 +239,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </div>
     </section>
 
-    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-4 pt-section min-[960px]:grid-cols-[300px_minmax(0,1fr)]">
+    <section class="mx-auto grid w-full max-w-page items-center gap-x-20 gap-y-14 px-gutter pt-section min-[960px]:grid-cols-[300px_minmax(0,1fr)]">
       <div class="reveal flex min-w-0 flex-col gap-10">
         <div class="flex flex-col gap-4">
           <h2 class="text-headline text-balance">{{ $t('landing.companion.title') }}</h2>
@@ -258,7 +258,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </div>
     </section>
 
-    <section class="mx-auto flex w-full max-w-page flex-col gap-10 px-4 pt-section">
+    <section class="mx-auto flex w-full max-w-page flex-col gap-10 px-gutter pt-section">
       <h2 class="text-headline text-balance">{{ $t('landing.extras.title') }}</h2>
       <ul class="grid gap-3 sm:grid-cols-2">
         <li v-for="(extra, i) in extras" :key="extra.title" class="reveal panel card flex gap-4 p-5" :style="{ '--i': i % 2 }">
@@ -271,7 +271,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </ul>
     </section>
 
-    <section class="mx-auto grid w-full max-w-page gap-x-20 gap-y-8 px-4 pt-section min-[960px]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+    <section class="mx-auto grid w-full max-w-page gap-x-20 gap-y-8 px-gutter pt-section min-[960px]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <h2 class="text-headline text-balance">{{ $t('landing.needs.title') }}</h2>
       <dl class="flex min-w-0 flex-col">
         <div v-for="need in needs" :key="need.title" class="grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-x-8 gap-y-1.5 border-t border-line py-5 last:border-b">
@@ -281,7 +281,7 @@ const shot = (name: string) => `${baseURL}landing/${locale.value}/${name}.webp`
       </dl>
     </section>
 
-    <section class="mx-auto flex w-full max-w-page flex-wrap items-end justify-between gap-8 px-4 py-section">
+    <section class="mx-auto flex w-full max-w-page flex-wrap items-end justify-between gap-8 px-gutter py-section">
       <h2 class="max-w-[14ch] text-display">{{ $t('landing.cta') }}</h2>
       <ConnectButton class="sm:w-85" />
     </section>

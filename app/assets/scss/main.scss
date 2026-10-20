@@ -520,6 +520,7 @@
       left: 0;
       width: auto;
       max-height: 85dvh;
+      padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
       border-width: 1px 0 0;
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
       --slide-from: translateY(100%);
@@ -632,4 +633,9 @@
     background: var(--color-surface);
     border: 1px solid var(--color-line);
   }
+}
+
+@utility px-gutter {
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-left: max(16px, env(safe-area-inset-left));
 }
