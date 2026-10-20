@@ -137,7 +137,7 @@ watch(coverage, (value) => {
 </script>
 
 <template>
-  <div class="pointer-events-none mx-auto flex min-h-0 w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto" :class="{ 'h-[calc(100svh-var(--spacing-app-bar))] max-[960px]:h-[calc(100svh-var(--spacing-app-bar)-var(--spacing-bottom-nav)-env(safe-area-inset-bottom))] shrink-0': mapShown || rows.length && !listHidden }">
+  <div class="pointer-events-none mx-auto flex min-h-0 w-full max-w-page grow flex-col gap-3 px-4 py-3.5 *:pointer-events-auto" :class="{ 'h-[calc(100dvh-var(--spacing-app-bar))] max-[960px]:h-[calc(100dvh-var(--spacing-app-bar)-var(--spacing-bottom-nav)-env(safe-area-inset-bottom))] shrink-0': mapShown || rows.length && !listHidden }">
     <h1 class="sr-only">{{ $t('nav.repeaters') }}</h1>
     <!-- The coverage card on top. Over the map, the list is held at the bottom
          of the page just above the menu, growing upwards, and the map behind
