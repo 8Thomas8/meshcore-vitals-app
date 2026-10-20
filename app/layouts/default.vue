@@ -12,7 +12,10 @@ watch(() => !!connection.value, () => window.scrollTo(0, 0))
 </script>
 
 <template>
-  <div class="h-full">
+  <div
+    class="flex min-h-full flex-col"
+    :class="{ 'pb-[calc(var(--spacing-bottom-nav)+env(safe-area-inset-bottom))]': connection && smAndDown }"
+  >
     <!-- A bar along the top edge, only its bottom border shows. -->
     <header class="panel fixed inset-x-0 top-0 z-(--z-bar) flex h-app-bar border-x-0 border-t-0">
       <!-- Same width and gutter as the cards below. -->
@@ -45,15 +48,12 @@ watch(() => !!connection.value, () => window.scrollTo(0, 0))
         </NuxtLink>
       </nav>
     </template>
-    <main
-      class="relative flex min-h-full flex-col pt-app-bar"
-      :class="{ 'pb-[calc(var(--spacing-bottom-nav)+env(safe-area-inset-bottom))]': connection && smAndDown }"
-    >
+    <main class="relative flex grow flex-col pt-app-bar">
       <ConnectScreen v-if="!connection" />
       <!-- Every page needs a node, they only show once one is connected. -->
       <slot v-if="connection" />
-      <AppFooter v-if="!connection || routeBaseName(route) !== 'index' || footerShown" />
     </main>
+    <AppFooter v-if="!connection || routeBaseName(route) !== 'index' || footerShown" />
     <UpdateBanner />
     <AppToasts />
   </div>
