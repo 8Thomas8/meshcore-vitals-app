@@ -127,7 +127,7 @@ function focusClose(event: Event) {
         <label v-if="positioned" class="flex cursor-pointer items-center gap-3">
           <span class="flex min-w-0 grow flex-col">
             <span>{{ $t(route ? 'share.withRoute' : 'share.withPosition') }}</span>
-            <span class="text-small text-medium">{{ $t(`share.${route ? 'route' : 'position'}${withPosition ? 'Shown' : 'Hidden'}`) }}</span>
+            <span class="text-small text-medium">{{ $t(route ? (withPosition ? 'share.routeShown' : 'share.routeHidden') : (withPosition ? 'share.positionShown' : 'share.positionHidden')) }}</span>
           </span>
           <SwitchRoot v-model="withPosition" class="switch shrink-0">
             <SwitchThumb class="switch-thumb" />

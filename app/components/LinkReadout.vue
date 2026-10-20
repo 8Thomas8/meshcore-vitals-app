@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { formatNumber } = useFormat()
+const { formatNumber, marginLabel } = useFormat()
 
 const links = computed(() => [
   { key: 'rx', tag: 'RX', label: t('link.received'), snr: props.rx, margin: props.rxMargin },
@@ -25,7 +25,7 @@ const links = computed(() => [
         <span class="font-mono" aria-hidden="true">{{ link.tag }}</span>
         <span class="sr-only">{{ link.label }}</span>
         <span class="font-mono font-medium whitespace-nowrap" :class="link.margin ? `text-${link.margin.tone}` : link.snr === null && 'text-disabled'">
-          {{ link.value }}<span v-if="link.snr !== null" class="@max-[5rem]:sr-only"> dB</span><span v-if="link.margin" class="sr-only">, {{ $t(`margin.${link.margin.grade}`) }}</span>
+          {{ link.value }}<span v-if="link.snr !== null" class="@max-[5rem]:sr-only"> dB</span><span v-if="link.margin" class="sr-only">, {{ marginLabel(link.margin.grade) }}</span>
         </span>
       </span>
       <MarginBar :margin="link.margin" />

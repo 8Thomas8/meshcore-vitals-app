@@ -5,7 +5,9 @@ const props = defineProps<{
   row: RepeaterRow
 }>()
 
-const { formatNumber, formatDistance } = useFormat()
+const EXPLAIN = { clear: 'terrain.explain.clear', marginal: 'terrain.explain.marginal', partial: 'terrain.explain.partial', blocked: 'terrain.explain.blocked' } as const
+
+const { formatNumber, formatDistance, verdictLabel } = useFormat()
 const { position: here } = useDevicePosition()
 const { selfInfo } = useRepeaters()
 const { heights } = useTerrain()
@@ -68,7 +70,7 @@ function reset() {
         <span class="font-medium">{{ $t('terrain.title') }}</span>
         <span v-if="open" class="flex flex-wrap items-center gap-2" aria-live="polite">
           <template v-if="terrain">
-            <span class="chip chip-small" :class="`text-${TERRAIN_TONES[terrain.verdict]}`">{{ $t(`terrain.verdict.${terrain.verdict}`) }}</span>
+            <span class="chip chip-small" :class="`text-${TERRAIN_TONES[terrain.verdict]}`">{{ verdictLabel(terrain.verdict) }}</span>
             <span class="text-small text-medium">
               {{ $t(terrain.tightest.shortfall > 0 ? 'terrain.shortfall' : 'terrain.spare', { height: formatNumber(Math.abs(terrain.tightest.shortfall)) }) }}
             </span>
@@ -98,7 +100,7 @@ function reset() {
           :hint="$t('terrain.needed', { height: formatNumber(FRESNEL_CLEAR_SHARE * terrain.tightest.radius) })"
         />
       </div>
-      <p class="text-small text-medium">{{ $t(`terrain.explain.${terrain.verdict}`) }}</p>
+      <p class="text-small text-medium">{{ $t(EXPLAIN[terrain.verdict]) }}</p>
 
       <form class="flex flex-col gap-2" novalidate @submit.prevent="apply">
         <div class="stats">

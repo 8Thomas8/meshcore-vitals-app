@@ -4,7 +4,7 @@ import { mdiChevronRight, mdiPower, mdiRefresh } from '@mdi/js'
 // The layout only shows the pages while a node is connected.
 const { connection, status, disconnect } = useMeshCore()
 const { t } = useI18n()
-const { ago, duration, offset, formatNumber } = useFormat()
+const { ago, duration, offset, formatNumber, marginLabel } = useFormat()
 
 const selfInfo = ref<MeshCoreSelfInfo | null>(null)
 const device = ref<DeviceSummary & { protocol: number } | null>(null)
@@ -140,7 +140,7 @@ function errorCheck(name: string, rate: number, bad: number, detail: string): He
     name,
     value: `${formatNumber(rate * 100, 1)} %`,
     tone,
-    status: t(`checks.errors.${tone}`),
+    status: t({ success: 'checks.errors.success', warning: 'checks.errors.warning', error: 'checks.errors.error' }[tone]),
     detail: t(detail, { n: formatNumber(bad) }, bad)
   }
 }
@@ -160,7 +160,7 @@ const checks = computed(() => {
       name: t('checks.margin'),
       value: `${formatNumber(margin.value.value, 1)} dB`,
       tone: margin.value.tone,
-      status: t(`margin.${margin.value.grade}`),
+      status: marginLabel(margin.value.grade),
       detail: t('checks.marginDetail', { snr: formatNumber(radio.value.lastSnr, 1), sf: selfInfo.value.radioSf, floor: formatNumber(snrFloor(selfInfo.value.radioSf), 1), fair: MARGIN_FAIR_DB })
     })
   }
@@ -259,7 +259,7 @@ const health = computed(() => {
 
     <section v-if="core && battery" class="panel card col-span-full grid grid-cols-[repeat(auto-fit,minmax(96px,1fr))] gap-3 px-4 py-3.5">
       <VitalStat :label="$t('checks.battery')" :value="formatNumber(core.batteryMilliVolts / 1000, 2)" unit="V" :tone="battery.tone" :hint="$t('battery.summary', { label: battery.label, percent: formatNumber(battery.level * 100) })" large />
-      <VitalStat v-if="margin" :label="$t('reception.margin')" :value="formatNumber(margin.value, 1)" unit="dB" :tone="margin.tone" :hint="$t(`margin.${margin.grade}`)" large />
+      <VitalStat v-if="margin" :label="$t('reception.margin')" :value="formatNumber(margin.value, 1)" unit="dB" :tone="margin.tone" :hint="marginLabel(margin.grade)" large />
       <VitalStat v-if="radio" :label="$t('reception.noiseFloor')" :value="formatNumber(radio.noiseFloor)" unit="dBm" :hint="$t('reception.lastRssiHint', { rssi: formatNumber(radio.lastRssi) })" large />
     </section>
 

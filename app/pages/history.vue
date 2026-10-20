@@ -2,7 +2,7 @@
 import { mdiChevronRight, mdiInformationOutline } from '@mdi/js'
 
 const { sessions } = useHistory()
-const { duration, time, day: dayOf } = useFormat()
+const { duration, time, day: dayOf, coverageLabel } = useFormat()
 
 const days = computed(() => {
   const groups: { day: string, items: { session: Session, level: CoverageLevel | null, direct: number }[] }[] = []
@@ -90,7 +90,7 @@ function onCloseAutoFocus(event: Event) {
                 <span class="font-medium">{{ time(session.startedAt) }}</span>
                 <span class="text-medium">{{ duration(Math.round((session.endedAt - session.startedAt) / 1000)) }}</span>
               </span>
-              <span v-if="level" class="chip chip-small" :class="`text-${COVERAGE_TONES[level]}`">{{ $t(`coverage.level.${level}`) }}</span>
+              <span v-if="level" class="chip chip-small" :class="`text-${COVERAGE_TONES[level]}`">{{ coverageLabel(level) }}</span>
             </span>
             <span class="text-small text-medium">{{ $t(session.repeaters.length > direct ? 'repeaters.counts' : 'repeaters.directOnly', { direct, relayed: $t('repeaters.relayed', session.repeaters.length - direct) }) }}</span>
             <CoverageTimeline v-if="session.scans.length" :session="session" aria-hidden="true" />

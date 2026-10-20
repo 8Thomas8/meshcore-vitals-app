@@ -7,15 +7,15 @@ const props = defineProps<{
 }>()
 
 const POINTS = [
-  { key: 'n', angle: 0 },
-  { key: 'e', angle: 90 },
-  { key: 's', angle: 180 },
-  { key: 'w', angle: 270 }
+  { key: 'compass.n', angle: 0 },
+  { key: 'compass.e', angle: 90 },
+  { key: 'compass.s', angle: 180 },
+  { key: 'compass.w', angle: 270 }
 ]
 
 const { t } = useI18n()
 // Apart from the heading, which changes many times a second.
-const labels = computed(() => POINTS.map(({ key }) => t(`compass.${key}`)))
+const labels = computed(() => POINTS.map(({ key }) => t(key)))
 
 // Letters move around the dial but stay upright.
 const points = computed(() => POINTS.map(({ key, angle }, i) => {

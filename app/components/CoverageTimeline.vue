@@ -4,7 +4,7 @@ const props = defineProps<{ session: Session }>()
 const COVERAGE_HEIGHTS = { good: '100%', fair: '70%', weak: '45%', none: '20%' } as const
 
 const { t } = useI18n()
-const { formatNumber } = useFormat()
+const { formatNumber, coverageLabel } = useFormat()
 
 const spans = computed(() => {
   const { scans, endedAt } = props.session
@@ -24,7 +24,7 @@ const summary = computed(() => {
   spans.value.forEach(({ level, weight }) => shares.set(level, (shares.get(level) ?? 0) + weight))
   return [...shares]
     .sort((a, b) => b[1] - a[1])
-    .map(([level, weight]) => t('coverage.share', { level: t(`coverage.level.${level}`), percent: formatNumber(Math.max(1, Math.round(weight / total * 100))) }))
+    .map(([level, weight]) => t('coverage.share', { level: coverageLabel(level), percent: formatNumber(Math.max(1, Math.round(weight / total * 100))) }))
     .join(', ')
 })
 </script>

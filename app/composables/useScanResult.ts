@@ -1,10 +1,19 @@
 import { useNow } from '@vueuse/core'
 
+const REASONS = {
+  'nothing-heard': 'coverage.reason.nothing-heard',
+  'confirmed': 'coverage.reason.confirmed',
+  'unconfirmed': 'coverage.reason.unconfirmed',
+  'none-solid': 'coverage.reason.none-solid',
+  'single': 'coverage.reason.single',
+  'weak': 'coverage.reason.weak'
+} as const
+
 export function useScanResult() {
   const { repeaters, selfInfo, contacts, lastFullScan } = useRepeaters()
   const { position: here } = useDevicePosition()
   const { t } = useI18n()
-  const { ago, hops, formatNumber, formatDistance } = useFormat()
+  const { ago, hops, formatNumber, formatDistance, coverageLabel } = useFormat()
   const clock = useNow({ interval: 1000 })
   const now = computed(() => clock.value.getTime())
 
@@ -85,10 +94,10 @@ export function useScanResult() {
     return {
       ...assessment,
       tone: COVERAGE_TONES[assessment.level],
-      label: t(`coverage.level.${assessment.level}`),
+      label: coverageLabel(assessment.level),
       reason: reason === 'confirmed' && unconfirmed
         ? `${t('coverage.reason.confirmed', { confirmed, solid }, solid)} ${t('coverage.reason.unscanned', unconfirmed)}`
-        : t(`coverage.reason.${reason}`, { usable, confirmed, solid, minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB }, solid)
+        : t(REASONS[reason], { usable, confirmed, solid, minutes: COVERAGE_RECENT_MS / 60_000, fair: MARGIN_FAIR_DB }, solid)
     }
   })
 
