@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.0...v1.10.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* landing page animation connect button ignore events ([#82](https://github.com/8Thomas8/meshcore-vitals-app/issues/82)) ([91b1c8d](https://github.com/8Thomas8/meshcore-vitals-app/commit/91b1c8d619d5a2585702b965c319a11b02c1a3ab))
+
 ## [1.10.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.2...v1.10.0) (2026-10-20)
 
 
