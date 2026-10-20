@@ -10,7 +10,7 @@ const { shown: footerShown } = useFooter()
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <template v-if="connection">
       <!-- A bar along the top edge, only its bottom border shows. -->
       <header class="panel fixed inset-x-0 top-0 z-(--z-bar) flex h-app-bar border-x-0 border-t-0">
@@ -44,7 +44,7 @@ const { shown: footerShown } = useFooter()
       </nav>
     </template>
     <main
-      class="relative flex min-h-dvh flex-col"
+      class="relative flex min-h-full flex-col"
       :class="{ 'pt-app-bar': connection, 'pb-[calc(var(--spacing-bottom-nav)+env(safe-area-inset-bottom))]': connection && smAndDown }"
     >
       <ConnectScreen v-if="!connection" />

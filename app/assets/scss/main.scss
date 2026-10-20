@@ -139,8 +139,13 @@
     color-scheme: dark;
   }
 
+  html,
+  body,
+  #__nuxt {
+    height: 100%;
+  }
+
   body {
-    min-height: 100dvh;
     background: var(--color-background);
     color: var(--color-on-background);
     -webkit-font-smoothing: antialiased;
