@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.1...v1.9.2) (2026-10-20)
+
+
+### Bug Fixes
+
+* stop the map view from scrolling in the installed app after a reload ([#77](https://github.com/8Thomas8/meshcore-vitals-app/issues/77)) ([7b2f2fd](https://github.com/8Thomas8/meshcore-vitals-app/commit/7b2f2fd11fe91529d507f05fa98d9e6314ac6c7e))
+
 ## [1.9.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.9.0...v1.9.1) (2026-10-16)
 
 
