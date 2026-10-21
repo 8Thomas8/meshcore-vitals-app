@@ -32,12 +32,17 @@
       "title": "Coverage history · MeshCore Vitals",
       "description": "Look back at your last MeshCore sessions: coverage along your route and the repeaters heard, with their signal, on a map."
     },
+    "legal": {
+      "title": "Legal notice and privacy · MeshCore Vitals",
+      "description": "Who publishes and hosts MeshCore Vitals, and what the app does with your data."
+    },
     "imageAlt": "MeshCore Vitals: map of the repeaters in range around your Companion, with their signal"
   },
   "footer": {
     "source": "Source on GitHub",
     "language": "Language: {name}",
-    "elevation": "Elevation {dem} via {api}"
+    "elevation": "Elevation {dem} via {api}",
+    "legal": "Legal"
   },
   "connect": {
     "button": "Connect over Bluetooth",
@@ -439,5 +444,48 @@
     "tagline": "Check your MeshCore coverage",
     "betaHint": "Sharing is still being tested: the image may change in a future version.",
     "longPress": "You can also press and hold the image to save it."
+  },
+  "legal": {
+    "title": "Legal notice and privacy",
+    "lead": "The app has no account and no backend of its own: everything runs in your browser, and your sessions stay on your device.",
+    "back": "Back",
+    "privacy": {
+      "title": "Privacy",
+      "analytics": {
+        "title": "Visit counts",
+        "text": "Like any host, Vercel sees your IP address on each load. Visits are counted with Vercel Web Analytics, which sets no cookie. That service records the page, the referrer, the city and country guessed from your IP address, the browser, the OS and the device type, but never your radio or your GPS position. It does not keep your IP address: it tells visitors apart by a hash that changes daily."
+      },
+      "services": {
+        "title": "Map and elevation",
+        "text": "The app only contacts two other services, which also see your IP address. OpenFreeMap serves the map tiles, so it sees the areas the map shows. Open-Meteo gives the ground elevation for positions rounded to about 100 m: the repeaters', yours when the GPS gives no altitude, and the points along the path between you and a repeater whose terrain profile you open."
+      },
+      "local": {
+        "title": "On your device",
+        "text": "The session history, with your positions at each scan, stays in your browser and is never sent anywhere, like your settings. The only cookie keeps the language you pick for a year."
+      },
+      "share": {
+        "title": "Shared images",
+        "text": "A shared image only shows your position or your route if you turn on \"Show my position\" or \"Show my route\". The repeaters on it still show the area."
+      },
+      "rights": {
+        "title": "Your rights",
+        "text": "This processing rests on the legitimate interest in running the site and counting its visits. The author keeps no data that identifies you: to erase everything, clear the site's data in your browser. For any question, open an issue on {github}. You can also complain to the CNIL, the French data protection authority."
+      }
+    },
+    "notice": {
+      "title": "Legal notice",
+      "publisher": {
+        "title": "Publisher",
+        "text": "MeshCore Vitals is a personal, non-commercial project published by a private individual. Their details are known to the host."
+      },
+      "host": {
+        "title": "Host",
+        "text": "Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, United States."
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "Open an issue on {github}."
+      }
+    }
   }
 }

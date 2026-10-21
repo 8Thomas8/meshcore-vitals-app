@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const route = useRoute()
+const { currentRoute } = useRouter()
 const routeBaseName = useRouteBaseName()
 
 const theme = Object.entries(THEME_COLORS)
@@ -9,9 +9,10 @@ const theme = Object.entries(THEME_COLORS)
 const SEO = {
   index: { title: 'seo.index.title', description: 'seo.index.description' },
   companion: { title: 'seo.companion.title', description: 'seo.companion.description' },
-  history: { title: 'seo.history.title', description: 'seo.history.description' }
+  history: { title: 'seo.history.title', description: 'seo.history.description' },
+  legal: { title: 'seo.legal.title', description: 'seo.legal.description' }
 }
-const page = () => String(routeBaseName(route) ?? 'index')
+const page = () => String(routeBaseName(currentRoute.value) ?? 'index')
 const seo = () => SEO[page() as keyof typeof SEO] ?? SEO.index
 const title = () => t(seo().title)
 const description = () => t(seo().description)
@@ -46,7 +47,8 @@ useSeoMeta({
   ogDescription: description,
   ogImageAlt: () => t('seo.imageAlt'),
   twitterImageAlt: () => t('seo.imageAlt'),
-  // Without a Companion, these pages show the same connect screen as the home.
+  // Without a Companion, these pages show the same connect screen as the home,
+  // and the legal notice has nothing to rank for.
   robots: () => page() === 'index' ? undefined : 'noindex, follow'
 })
 </script>

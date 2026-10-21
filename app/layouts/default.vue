@@ -3,10 +3,11 @@ import { useMediaQuery } from '@vueuse/core'
 
 const { connection } = useMeshCore()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
-const route = useRoute()
 const localePath = useLocalePath()
 const routeBaseName = useRouteBaseName()
 const { shown: footerShown } = useFooter()
+const { currentRoute } = useRouter()
+const legal = computed(() => routeBaseName(currentRoute.value) === 'legal')
 
 watch(() => !!connection.value, () => window.scrollTo(0, 0))
 </script>
@@ -20,8 +21,10 @@ watch(() => !!connection.value, () => window.scrollTo(0, 0))
     <header class="panel fixed inset-x-0 top-0 z-(--z-bar) flex h-app-bar border-x-0 border-t-0">
       <!-- Same width and gutter as the cards below. -->
       <div class="mx-auto flex w-full max-w-page items-center gap-3 px-gutter">
-        <img src="/favicon.svg" alt="" width="28" height="28">
-        <span class="text-title">MeshCore Vitals</span>
+        <NuxtLink :to="localePath('/')" class="flex items-center gap-3">
+          <img src="/favicon.svg" alt="" width="28" height="28">
+          <span class="text-title">MeshCore Vitals</span>
+        </NuxtLink>
         <nav v-if="connection && !smAndDown" class="ms-auto flex gap-1">
           <NuxtLink
             v-for="item in NAV_ITEMS"
@@ -49,11 +52,11 @@ watch(() => !!connection.value, () => window.scrollTo(0, 0))
       </nav>
     </template>
     <main class="relative flex grow flex-col pt-app-bar">
-      <ConnectScreen v-if="!connection" />
-      <!-- Every page needs a node, they only show once one is connected. -->
-      <slot v-if="connection" />
+      <ConnectScreen v-if="!connection && !legal" />
+      <!-- Every page but the legal notice needs a node, they only show once one is connected. -->
+      <slot v-if="connection || legal" />
     </main>
-    <AppFooter v-if="!connection || routeBaseName(route) !== 'index' || footerShown" />
+    <AppFooter v-if="!connection || routeBaseName(currentRoute) !== 'index' || footerShown" />
     <UpdateBanner />
     <AppToasts />
   </div>
