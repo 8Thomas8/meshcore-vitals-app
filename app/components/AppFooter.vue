@@ -10,7 +10,7 @@ const cookie = useCookie<string | null>(LOCALE_COOKIE, { maxAge: LOCALE_COOKIE_M
 </script>
 
 <template>
-  <footer class="mt-auto flex flex-wrap items-center justify-center border-t border-line px-4 pt-1.5 text-small whitespace-nowrap text-medium" :class="connection && smAndDown ? 'pb-1.5' : 'pb-[max(6px,env(safe-area-inset-bottom))]'">
+  <footer class="flex flex-wrap items-center justify-center border-t border-line px-gutter pt-1.5 text-small whitespace-nowrap text-medium" :class="connection && smAndDown ? 'pb-1.5' : 'pb-[max(6px,env(safe-area-inset-bottom))]'">
     <span class="separated">
       <span>MeshCore Vitals v{{ version }}</span>
       <span class="flex items-center">

@@ -39,7 +39,7 @@ function onCloseAutoFocus(event: Event) {
 </script>
 
 <template>
-  <div class="mx-auto flex w-full max-w-page flex-col gap-3 px-4 py-3.5">
+  <div class="mx-auto flex w-full max-w-page flex-col gap-3 px-gutter py-3.5">
     <section class="panel card flex flex-col gap-2.5 px-4 py-3.5">
       <div class="flex min-h-11 items-center gap-2">
         <h1 ref="heading" class="line-clamp-2 text-title leading-7 wrap-anywhere outline-none" tabindex="-1">{{ $t('history.title', { count: HISTORY_MAX_SESSIONS }) }}</h1>

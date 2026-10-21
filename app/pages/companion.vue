@@ -193,7 +193,7 @@ const health = computed(() => {
 </script>
 
 <template>
-  <div class="mx-auto grid w-full max-w-page grid-cols-1 items-start gap-3 px-4 py-3.5 sm:grid-cols-3">
+  <div class="mx-auto grid w-full max-w-page grid-cols-1 items-start gap-3 px-gutter py-3.5 sm:grid-cols-3">
     <section class="panel card col-span-full flex flex-col gap-2.5 px-4 py-3.5">
       <AppProgress v-if="refreshing" class="progress-top text-primary" />
       <div class="flex min-h-11 items-center gap-2">
