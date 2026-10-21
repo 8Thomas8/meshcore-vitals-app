@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.1...v1.10.2) (2026-10-21)
+
+
+### Bug Fixes
+
+* landing page polish for landscape phones, zoom and screen readers ([#84](https://github.com/8Thomas8/meshcore-vitals-app/issues/84)) ([78be549](https://github.com/8Thomas8/meshcore-vitals-app/commit/78be549cc2db9dece6a83b5c553ade70ec87ad95))
+
 ## [1.10.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.0...v1.10.1) (2026-10-20)
 
 
