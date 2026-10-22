@@ -73,6 +73,16 @@ async function remove(startedAt: number) {
   await transact('readwrite', store => store.delete(startedAt))
 }
 
+async function merge(session: Session, next: Session) {
+  const merged = mergeSessions(session, next)
+  sessions.value = sessions.value.filter(other => other.startedAt !== next.startedAt).map(other => other.startedAt === merged.startedAt ? merged : other)
+  if (current?.startedAt === next.startedAt) current = merged
+  await transact('readwrite', (store) => {
+    store.put(merged)
+    store.delete(next.startedAt)
+  })
+}
+
 function record(scan?: SessionScan) {
   const { repeaters, selfInfo, contacts } = useRepeaters()
   const now = Date.now()
@@ -126,6 +136,7 @@ export function useHistory() {
     sessions: shallowReadonly(sessions),
     start,
     addScan,
-    remove
+    remove,
+    merge
   }
 }

@@ -1,4 +1,4 @@
-import { ADV_TYPE_REPEATER, SESSION_GAP_MS } from './constants'
+import { ADV_TYPE_REPEATER, SESSION_GAP_MS, SESSION_MERGE_MS } from './constants'
 import type { DeepReadonly } from 'vue'
 import type { CoverageLevel, HeardRepeater, Position } from './constants'
 import { distanceMeters, toHex, toPosition } from './repeaters'
@@ -45,7 +45,7 @@ export function copyPosition(position: DeepReadonly<Position> | null): Position 
 }
 
 export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: DeepReadonly<HeardRepeater[]>, since: number): SessionRepeater[] {
-  return heard.filter(repeater => repeater.lastHeard >= since).map((repeater) => {
+  const summary = heard.filter(repeater => repeater.lastHeard >= since).map((repeater) => {
     const before = previous.find(other => samePrefix(other.id, repeater.id))
     return {
       id: repeater.id,
@@ -58,6 +58,7 @@ export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: 
       lastHeard: repeater.lastHeard
     }
   })
+  return [...summary, ...previous.filter(before => !summary.some(repeater => samePrefix(repeater.id, before.id)))]
 }
 
 export function fillFromContacts(repeaters: SessionRepeater[], contacts: readonly MeshCoreContact[]): SessionRepeater[] {
@@ -88,6 +89,25 @@ export function mainLevel(scans: readonly SessionScan[]): CoverageLevel | null {
   const counts = new Map<CoverageLevel, number>()
   for (const { level } of scans) counts.set(level, (counts.get(level) ?? 0) + 1)
   return [...counts].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
+}
+
+export function canMerge(session: Session, next: Session): boolean {
+  return session.companionName === next.companionName && session.spreadingFactor === next.spreadingFactor && next.startedAt - session.endedAt <= SESSION_MERGE_MS
+}
+
+export function mergeSessions(session: Session, next: Session): Session {
+  return {
+    ...session,
+    endedAt: next.endedAt,
+    repeaters: [
+      ...next.repeaters.map((repeater) => {
+        const before = session.repeaters.find(other => samePrefix(other.id, repeater.id))
+        return before ? { ...repeater, id: before.id.length > repeater.id.length ? before.id : repeater.id, name: repeater.name ?? before.name, position: repeater.position ?? before.position, rx: best(before.rx, repeater.rx), tx: best(before.tx, repeater.tx) } : repeater
+      }),
+      ...session.repeaters.filter(before => !next.repeaters.some(repeater => samePrefix(repeater.id, before.id)))
+    ],
+    scans: [...session.scans, ...next.scans]
+  }
 }
 
 export function keepLatest(sessions: readonly Session[], session: Session, max: number): { kept: Session[], dropped: Session[] } {

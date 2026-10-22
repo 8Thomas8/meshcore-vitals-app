@@ -1,5 +1,6 @@
 {
   "common": {
+    "cancel": "Cancel",
     "close": "Close",
     "na": "n/a",
     "unknown": "unknown"
@@ -409,6 +410,11 @@
     "coverage": "Coverage over time",
     "noScan": "No scan during this session.",
     "bestSnr": "Best SNR",
+    "gap": "{duration} break",
+    "merge": "Merge",
+    "merged": "Sessions merged",
+    "mergeTitle": "Merge these sessions?",
+    "mergeText": "The {first} and {second} sessions will become one. This cannot be undone.",
     "remove": "Delete this session",
     "confirmRemove": "Tap again to delete",
     "removeCancelled": "Deletion cancelled"
