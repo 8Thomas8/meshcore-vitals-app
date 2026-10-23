@@ -5,6 +5,7 @@ import { useMediaQuery } from '@vueuse/core'
 const { version } = useRuntimeConfig().public
 const { locale, locales, localeProperties, setLocale } = useI18n()
 const { connection } = useMeshCore()
+const localePath = useLocalePath()
 const smAndDown = useMediaQuery(SM_AND_DOWN_QUERY)
 const cookie = useCookie<string | null>(LOCALE_COOKIE, { maxAge: LOCALE_COOKIE_MAX_AGE_SECS, sameSite: 'lax' })
 </script>
@@ -12,13 +13,14 @@ const cookie = useCookie<string | null>(LOCALE_COOKIE, { maxAge: LOCALE_COOKIE_M
 <template>
   <footer class="flex flex-wrap items-center justify-center border-t border-line px-gutter pt-1.5 text-small whitespace-nowrap text-medium" :class="connection && smAndDown ? 'pb-1.5' : 'pb-[max(6px,env(safe-area-inset-bottom))]'">
     <span class="separated">
-      <span>MeshCore Vitals v{{ version }}</span>
+      <span><span class="max-sm:sr-only">MeshCore Vitals </span>v{{ version }}</span>
       <span class="flex items-center">
         <a :href="REPOSITORY_URL" target="_blank" rel="noopener" class="link max-sm:min-w-6 max-sm:justify-center">
           <AppIcon :icon="mdiGithub" size="14" />
           <span class="max-sm:sr-only">{{ $t('footer.source') }}</span>
         </a>
       </span>
+      <NuxtLink :to="localePath('/legal')" class="link aria-[current=page]:text-primary">{{ $t('footer.legal') }}</NuxtLink>
       <span class="flex items-center">
         <DropdownMenuRoot>
           <DropdownMenuTrigger class="link" :aria-label="$t('footer.language', { name: localeProperties.name })">

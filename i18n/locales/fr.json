@@ -32,12 +32,17 @@
       "title": "Historique de couverture · MeshCore Vitals",
       "description": "Revoyez vos dernières sessions MeshCore : la couverture le long de votre trajet et les répéteurs entendus, avec leur signal, sur une carte."
     },
+    "legal": {
+      "title": "Mentions légales et confidentialité · MeshCore Vitals",
+      "description": "Qui édite et héberge MeshCore Vitals, et ce que l'app fait de vos données."
+    },
     "imageAlt": "MeshCore Vitals : carte des répéteurs à portée autour de votre Companion, avec leur signal"
   },
   "footer": {
     "source": "Code source sur GitHub",
     "language": "Langue : {name}",
-    "elevation": "Altitudes {dem} via {api}"
+    "elevation": "Altitudes {dem} via {api}",
+    "legal": "Mentions légales"
   },
   "connect": {
     "button": "Se connecter en Bluetooth",
@@ -439,5 +444,48 @@
     "tagline": "Testez votre couverture MeshCore",
     "betaHint": "Le partage est encore en test : l'image pourra changer dans une prochaine version.",
     "longPress": "Vous pouvez aussi appuyer longuement sur l'image pour l'enregistrer."
+  },
+  "legal": {
+    "title": "Mentions légales et confidentialité",
+    "lead": "L'app n'a ni compte ni serveur à elle : tout se passe dans votre navigateur, et vos sessions restent sur votre appareil.",
+    "back": "Retour",
+    "privacy": {
+      "title": "Confidentialité",
+      "analytics": {
+        "title": "Mesure d'audience",
+        "text": "Comme tout hébergeur, Vercel voit votre adresse IP à chaque chargement. Les visites sont comptées avec Vercel Web Analytics, sans cookie. Ce service enregistre la page consultée, le site d'origine, la ville et le pays déduits de votre adresse IP, le navigateur, le système d'exploitation et le type d'appareil, mais jamais votre radio ni votre position GPS. Il ne garde pas votre adresse IP : il distingue les visiteurs par une empreinte renouvelée chaque jour."
+      },
+      "services": {
+        "title": "Carte et altitude",
+        "text": "L'app ne contacte que deux autres services, qui voient aussi votre adresse IP. OpenFreeMap fournit les tuiles de la carte et voit donc les zones affichées. Open-Meteo fournit l'altitude du sol pour des positions arrondies à environ 100 m : celles des répéteurs, la vôtre quand le GPS ne donne pas d'altitude, et les points du trajet entre vous et un répéteur dont vous ouvrez le profil du relief."
+      },
+      "local": {
+        "title": "Sur votre appareil",
+        "text": "L'historique des sessions, avec vos positions à chaque scan, reste dans votre navigateur et n'est jamais envoyé, comme vos réglages. Le seul cookie garde pendant un an la langue que vous choisissez."
+      },
+      "share": {
+        "title": "Images partagées",
+        "text": "Une image partagée ne montre votre position ou votre trajet que si vous activez « Afficher ma position » ou « Afficher mon trajet ». Les répéteurs qu'elle affiche indiquent quand même la zone."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "text": "Ces traitements reposent sur l'intérêt légitime à faire fonctionner le site et à en compter les visites. L'auteur ne garde aucune donnée qui vous identifie : pour tout effacer, videz les données du site dans votre navigateur. Pour une question, ouvrez un ticket (issue) sur {github}. Vous pouvez aussi adresser une réclamation à la CNIL."
+      }
+    },
+    "notice": {
+      "title": "Mentions légales",
+      "publisher": {
+        "title": "Éditeur",
+        "text": "MeshCore Vitals est un projet personnel et non commercial, publié par un particulier. Ses coordonnées sont connues de l'hébergeur."
+      },
+      "host": {
+        "title": "Hébergeur",
+        "text": "Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "Ouvrez un ticket (issue) sur {github}."
+      }
+    }
   }
 }
