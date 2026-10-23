@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.2...v1.11.0) (2026-10-23)
+
+
+### Features
+
+* add a legal notice and privacy page ([#87](https://github.com/8Thomas8/meshcore-vitals-app/issues/87)) ([89a6dc7](https://github.com/8Thomas8/meshcore-vitals-app/commit/89a6dc734b46658f3474537fdf14194c8304dd5e))
+* merge history sessions split by an accidental cut ([#86](https://github.com/8Thomas8/meshcore-vitals-app/issues/86)) ([e3d3cab](https://github.com/8Thomas8/meshcore-vitals-app/commit/e3d3cab2bb1c7c758a5954eeb02733b4006a72f1))
+
 ## [1.10.2](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.1...v1.10.2) (2026-10-21)
 
 
