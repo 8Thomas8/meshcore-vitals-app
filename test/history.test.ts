@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
-import { SESSION_GAP_MS } from '~/utils/constants'
+import { SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
 import type { Session, SessionRepeater, SessionScan } from '~/utils/history'
-import { copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, sessionDistance, summarizeRepeaters } from '~/utils/history'
+import { canMerge, copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, mergeSessions, sessionDistance, summarizeRepeaters } from '~/utils/history'
 
 function heard(overrides: Partial<HeardRepeater> = {}): HeardRepeater {
   return { id: 'aabb', name: 'Alpha', position: null, hops: 0, via: null, lastVia: null, rx: null, history: [], tx: null, lastHeard: 1000, ...overrides }
@@ -37,6 +37,11 @@ describe('summarizeRepeaters', () => {
     const before: SessionRepeater = { id: 'aabb', name: 'Alpha', position: null, hops: 0, via: null, rx: null, tx: 4, lastHeard: 900 }
     const [summary] = summarizeRepeaters([before], [heard({ tx: { snr: 9, at: 100 } })], 500)
     expect(summary!.tx).toBe(4)
+  })
+
+  it('keeps the repeaters saved before a reconnection', () => {
+    const before: SessionRepeater = { id: 'ccdd', name: 'Bravo', position: null, hops: 1, via: 'aa', rx: 4, tx: null, lastHeard: 500 }
+    expect(summarizeRepeaters([before], [heard()], 0).map(repeater => repeater.id)).toEqual(['aabb', 'ccdd'])
   })
 
   it('leaves out the repeaters not heard since the session started', () => {
@@ -83,6 +88,32 @@ describe('isSessionOver', () => {
   it('ends a session after a long pause', () => {
     expect(isSessionOver(session(0, { endedAt: 1000 }), 1000 + SESSION_GAP_MS)).toBe(false)
     expect(isSessionOver(session(0, { endedAt: 1000 }), 1001 + SESSION_GAP_MS)).toBe(true)
+  })
+})
+
+describe('canMerge', () => {
+  it('needs the same companion and radio within a short pause', () => {
+    const first = session(0, { endedAt: 1000, companionName: 'Alpha' })
+    expect(canMerge(first, session(1000 + SESSION_MERGE_MS, { companionName: 'Alpha' }))).toBe(true)
+    expect(canMerge(first, session(1001 + SESSION_MERGE_MS, { companionName: 'Alpha' }))).toBe(false)
+    expect(canMerge(first, session(2000, { companionName: 'Bravo' }))).toBe(false)
+    expect(canMerge(first, session(2000, { companionName: 'Alpha', spreadingFactor: 12 }))).toBe(false)
+  })
+})
+
+describe('mergeSessions', () => {
+  it('keeps the start, every scan and the best signal of each repeater', () => {
+    const alpha: SessionRepeater = { id: 'aabb', name: 'Alpha', position: { lat: 1, lon: 2 }, hops: 0, via: null, rx: 8, tx: null, lastHeard: 900 }
+    const bravo: SessionRepeater = { id: 'ccdd', name: 'Bravo', position: null, hops: 1, via: 'aa', rx: 2, tx: null, lastHeard: 800 }
+    const first = session(0, { endedAt: 1000, repeaters: [alpha, bravo], scans: [scan(500, 'good')] })
+    const charlie: SessionRepeater = { id: 'eeff', name: 'Charlie', position: null, hops: 0, via: null, rx: 1, tx: 1, lastHeard: 2600 }
+    const next = session(2000, { endedAt: 3000, repeaters: [{ ...alpha, id: 'aa', name: null, position: null, rx: 3, tx: 5, lastHeard: 2500 }, charlie], scans: [scan(2500, 'poor')] })
+    expect(mergeSessions(first, next)).toEqual({
+      ...first,
+      endedAt: 3000,
+      repeaters: [{ ...alpha, tx: 5, lastHeard: 2500 }, charlie, bravo],
+      scans: [scan(500, 'good'), scan(2500, 'poor')]
+    })
   })
 })
 

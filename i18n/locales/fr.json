@@ -1,5 +1,6 @@
 {
   "common": {
+    "cancel": "Annuler",
     "close": "Fermer",
     "na": "n/d",
     "unknown": "inconnu"
@@ -409,6 +410,11 @@
     "coverage": "Couverture dans le temps",
     "noScan": "Aucun scan pendant cette session.",
     "bestSnr": "Meilleur SNR",
+    "gap": "Coupure de {duration}",
+    "merge": "Fusionner",
+    "merged": "Sessions fusionnées",
+    "mergeTitle": "Fusionner ces sessions ?",
+    "mergeText": "Les sessions de {first} et de {second} n'en formeront plus qu'une. Impossible de les séparer ensuite.",
     "remove": "Supprimer cette session",
     "confirmRemove": "Toucher encore pour supprimer",
     "removeCancelled": "Suppression annulée"
