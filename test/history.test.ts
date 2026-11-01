@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
-import { SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
+import { MAX_REPEATERS, SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
 import type { Session, SessionRepeater, SessionScan } from '~/utils/history'
 import { canMerge, copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, mergeSessions, onlyMatch, sessionDistance, summarizeRepeaters } from '~/utils/history'
 
@@ -17,6 +17,13 @@ function scan(at: number, level: SessionScan['level'], position: SessionScan['po
 }
 
 describe('summarizeRepeaters', () => {
+  it('drops the relayed repeaters heard least recently past the cap', () => {
+    const previous = Array.from({ length: MAX_REPEATERS }, (_, i) => ({ id: `b${i}`, name: null, position: null, hops: i ? 1 : 0, via: null, rx: null, tx: null, lastHeard: i }))
+    const summary = summarizeRepeaters(previous, [heard()], 500)
+    expect(summary).toHaveLength(MAX_REPEATERS)
+    expect(summary.map(repeater => repeater.id)).toEqual(['aabb', 'b0', ...previous.slice(2).map(repeater => repeater.id)])
+  })
+
   it('keeps the best SNR heard since the session started', () => {
     const repeater = heard({
       history: [{ snr: 9, rssi: -80, at: 100 }, { snr: 3, rssi: -90, at: 600 }, { snr: 5, rssi: -85, at: 700 }],

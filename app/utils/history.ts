@@ -1,7 +1,7 @@
 import { ADV_TYPE_REPEATER, SESSION_GAP_MS, SESSION_MERGE_MS } from './constants'
 import type { DeepReadonly } from 'vue'
 import type { CoverageLevel, HeardRepeater, Position } from './constants'
-import { distanceMeters, toHex, toPosition } from './repeaters'
+import { distanceMeters, overflow, toHex, toPosition } from './repeaters'
 
 export interface SessionRepeater {
   id: string
@@ -63,7 +63,9 @@ export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: 
       lastHeard: repeater.lastHeard
     }
   })
-  return [...summary, ...previous.filter(before => !summary.some(repeater => onlyMatch(previous, repeater.id, other => other.id) === before))]
+  const all = [...summary, ...previous.filter(before => !summary.some(repeater => onlyMatch(previous, repeater.id, other => other.id) === before))]
+  const dropped = overflow(all)
+  return all.filter(repeater => !dropped.includes(repeater))
 }
 
 export function fillFromContacts(repeaters: SessionRepeater[], contacts: readonly MeshCoreContact[]): SessionRepeater[] {

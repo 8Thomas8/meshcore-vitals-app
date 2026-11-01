@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
 import { bearingDegrees, assessCoverage, discoverRequest, distanceMeters, formatDistance, isOutOfRange, parseDiscoverResponse, recordRx, recordSighting, sightings, toHex, toPosition } from '~/utils/repeaters'
-import { MAX_RX_HISTORY } from '~/utils/constants'
+import { MAX_REPEATERS, MAX_RX_HISTORY } from '~/utils/constants'
 
 const KEY = Uint8Array.from({ length: 32 }, (_, i) => 0xa0 + i)
 
@@ -142,6 +142,16 @@ describe('recordSighting', () => {
     const list: HeardRepeater[] = []
     expect(recordSighting(list, { id: toHex(KEY), hops: 0, via: null, name: 'Old', signedAt: 5 }, 1, 10)).toBeNull()
     expect(list).toEqual([])
+  })
+
+  it('drops the relayed repeater heard least recently when full', () => {
+    const list: HeardRepeater[] = []
+    recordSighting(list, { id: 'aa', hops: 0, via: null }, 0)
+    for (let i = 1; i < MAX_REPEATERS; i++) recordSighting(list, { id: i.toString(16).padStart(4, '0'), hops: 1, via: 'aa' }, i)
+    recordSighting(list, { id: 'ffff', hops: 1, via: 'aa' }, MAX_REPEATERS)
+    expect(list).toHaveLength(MAX_REPEATERS)
+    expect(list.map(repeater => repeater.id)).toContain('aa')
+    expect(list.map(repeater => repeater.id)).not.toContain('0001')
   })
 })
 
