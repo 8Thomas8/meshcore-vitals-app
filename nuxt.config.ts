@@ -21,7 +21,7 @@ const CONTENT_SECURITY_POLICY = [
 ].join('; ')
 
 const ENGLISH_PAGES = '^/$|^(/(?!fr(?:/|$))[^.]*)$'
-const FRENCH_FIRST = '^\\s*(?:(?!en(?:[-;,]|$))[^,]*,\\s*)*fr(?:[-;,]|$)'
+const FRENCH_FIRST = '^(?:(?!\\s*en(?:[-;,]|$))[^,]*,)*\\s*fr(?:[-;,].*)?$'
 
 const SECURITY_HEADERS = {
   'Content-Security-Policy': CONTENT_SECURITY_POLICY,
@@ -92,8 +92,10 @@ export default defineNuxtConfig({
   // routing go on. The second drops the trailing slash so each page has a
   // single URL, from a path that starts with a plain character so the
   // redirect never leaves the site. The next two send an English page to the
-  // French one before it loads, as the locale plugin would. The last keeps
-  // search engines off the preview deployments.
+  // French one before it loads, when the cookie or the browser asks for it.
+  // Only on a navigation: the service worker would precache the French page
+  // under the English URL. The last keeps search engines off the preview
+  // deployments.
   nitro: {
     ...DOCS_MOCK && { output: { dir: '.output-docs' } },
     vercel: {
@@ -101,8 +103,19 @@ export default defineNuxtConfig({
         routes: [
           { src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true },
           { src: '^/([\\w.-].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
-          { src: ENGLISH_PAGES, has: [{ type: 'cookie', key: LOCALE_COOKIE, value: 'fr' }], headers: { Location: '/fr$1' }, status: 307 } as { src: string, headers: Record<string, string> },
-          { src: ENGLISH_PAGES, has: [{ type: 'header', key: 'accept-language', value: FRENCH_FIRST }], missing: [{ type: 'cookie', key: LOCALE_COOKIE }], headers: { Location: '/fr$1' }, status: 307 } as { src: string, headers: Record<string, string> },
+          {
+            src: ENGLISH_PAGES,
+            has: [{ type: 'header', key: 'sec-fetch-mode', value: 'navigate' }, { type: 'cookie', key: LOCALE_COOKIE, value: 'fr' }],
+            headers: { Location: '/fr$1' },
+            status: 307
+          } as { src: string, headers: Record<string, string> },
+          {
+            src: ENGLISH_PAGES,
+            has: [{ type: 'header', key: 'sec-fetch-mode', value: 'navigate' }, { type: 'header', key: 'accept-language', value: FRENCH_FIRST }],
+            missing: [{ type: 'cookie', key: LOCALE_COOKIE }],
+            headers: { Location: '/fr$1' },
+            status: 307
+          } as { src: string, headers: Record<string, string> },
           {
             src: '/(.*)',
             missing: [{ type: 'host', value: new URL(SITE_URL).host }],
