@@ -36,7 +36,7 @@ export function useScanResult() {
   }
 
   function nameOf(id: string): string {
-    const heard = repeaters.value.find(repeater => repeater.id.startsWith(id))
+    const heard = onlyMatch(repeaters.value, id, repeater => repeater.id)
     return heard?.name ?? contactFor(heard?.id ?? id)?.advName ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
   }
 

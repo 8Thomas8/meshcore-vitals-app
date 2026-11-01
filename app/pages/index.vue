@@ -110,7 +110,7 @@ watch(() => here.value !== null && !mapShown.value, (shown) => {
 const selectedId = ref<string | null>(null)
 const selected = computed(() => {
   const id = selectedId.value
-  return id === null ? null : rows.value.find(row => row.repeater.id.startsWith(id) || id.startsWith(row.repeater.id)) ?? null
+  return id === null ? null : rows.value.find(row => row.repeater.id === id) ?? onlyMatch(rows.value, id, row => row.repeater.id) ?? null
 })
 const detailOpen = computed({
   get: () => selected.value !== null,

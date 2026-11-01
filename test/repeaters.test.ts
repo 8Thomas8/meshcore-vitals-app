@@ -5,64 +5,72 @@ import { MAX_RX_HISTORY } from '~/utils/constants'
 
 const KEY = Uint8Array.from({ length: 32 }, (_, i) => 0xa0 + i)
 
-function advert(flags: number, appData: number[], path: number[] = []): Uint8Array {
-  // Header: flood route, advert payload. Then the path.
-  return Uint8Array.from([0x11, path.length, ...path, ...KEY, ...new Array(4 + 64).fill(0), flags, ...appData])
+async function advert(flags: number, appData: number[]): Promise<Uint8Array> {
+  const pair = await crypto.subtle.generateKey('Ed25519', true, ['sign', 'verify']) as CryptoKeyPair
+  const signed = Uint8Array.from([...new Uint8Array(await crypto.subtle.exportKey('raw', pair.publicKey)), 1, 0, 0, 0, flags, ...appData])
+  const signature = new Uint8Array(await crypto.subtle.sign('Ed25519', pair.privateKey, signed))
+  return Uint8Array.from([...signed.subarray(0, 36), ...signature, ...signed.subarray(36)])
 }
 
-function int32LE(value: number): number[] {
-  const bytes = new Uint8Array(4)
-  new DataView(bytes.buffer).setInt32(0, value, true)
-  return [...bytes]
+const COUGAR = Uint8Array.from(Buffer.from('7E7662676F7F0850A8A355BAAFBFC1EB7B4174C340442D7D7161C9474A2C94006CE7CF682E58408DD8FCC51906ECA98EBF94A037886BDADE7ECD09FD92B839491DF3809C9454F5286D1D3370AC31A34593D569E9A042A3B41FD331DFFB7E18599CE1E60992A076D50238C5B8F85757375354522F50756765744D65736820436F75676172', 'hex'))
+
+function heard(payload: Uint8Array, path: number[] = []): Uint8Array {
+  return Uint8Array.from([0x11, path.length, ...path, ...payload])
 }
 
 describe('sightings', () => {
-  it('reads a flood path back from the repeater in direct range', () => {
-    expect(sightings(Uint8Array.from([0x15, 0x03, 0x11, 0x22, 0x33, 0xff]))).toEqual([
+  it('reads a flood path back from the repeater in direct range', async () => {
+    expect(await sightings(Uint8Array.from([0x15, 0x03, 0x11, 0x22, 0x33, 0xff]))).toEqual([
       { id: '11', hops: 2, via: '33' },
       { id: '22', hops: 1, via: '33' },
       { id: '33', hops: 0, via: null }
     ])
   })
 
-  it('reads multi-byte path hashes', () => {
-    expect(sightings(Uint8Array.from([0x15, 0x42, 0x11, 0x22, 0x33, 0x44, 0xff])).map(s => s.id)).toEqual(['1122', '3344'])
+  it('reads multi-byte path hashes', async () => {
+    expect((await sightings(Uint8Array.from([0x15, 0x42, 0x11, 0x22, 0x33, 0x44, 0xff]))).map(s => s.id)).toEqual(['1122', '3344'])
   })
 
-  it('skips the transport codes', () => {
-    expect(sightings(Uint8Array.from([0x14, 1, 2, 3, 4, 0x01, 0x7c, 0xff]))).toEqual([{ id: '7c', hops: 0, via: null }])
+  it('skips the transport codes', async () => {
+    expect(await sightings(Uint8Array.from([0x14, 1, 2, 3, 4, 0x01, 0x7c, 0xff]))).toEqual([{ id: '7c', hops: 0, via: null }])
   })
 
-  it('cannot tell who sent a direct packet', () => {
-    expect(sightings(Uint8Array.from([0x0a, 0x01, 0x11, 0xff]))).toEqual([])
+  it('cannot tell who sent a direct packet', async () => {
+    expect(await sightings(Uint8Array.from([0x0a, 0x01, 0x11, 0xff]))).toEqual([])
   })
 
-  it('drops a packet shorter than its path', () => {
-    expect(sightings(Uint8Array.from([0x15, 0x45, 0x11, 0x22, 0x33]))).toEqual([])
-    expect(sightings(Uint8Array.from([0x15, 0x42, 0x11, 0x22, 0x33]))).toEqual([])
+  it('drops a packet shorter than its path', async () => {
+    expect(await sightings(Uint8Array.from([0x15, 0x45, 0x11, 0x22, 0x33]))).toEqual([])
+    expect(await sightings(Uint8Array.from([0x15, 0x42, 0x11, 0x22, 0x33]))).toEqual([])
   })
 
-  it('reads a repeater advert heard straight from it', () => {
-    const name = [...new TextEncoder().encode('Hilltop')]
-    expect(sightings(advert(0x92, [...int32LE(48_856_600), ...int32LE(2_352_200), ...name]))).toEqual([{
-      id: toHex(KEY),
+  it('reads a repeater advert heard straight from it', async () => {
+    expect(await sightings(heard(COUGAR))).toEqual([{
+      id: toHex(COUGAR.subarray(0, 32)),
       hops: 0,
       via: null,
-      name: 'Hilltop',
-      position: { lat: 48.8566, lon: 2.3522 }
+      name: 'WW7STR/PugetMesh Cougar',
+      position: { lat: 47.543968, lon: -122.108616 },
+      signedAt: 1_758_455_660
     }])
   })
 
-  it('names a repeater advert heard through a path', () => {
-    expect(sightings(advert(0x02, [], [0x11, 0x22])).at(-1)).toMatchObject({ id: toHex(KEY), hops: 2, via: '22' })
+  it('names a repeater advert heard through a path', async () => {
+    expect((await sightings(heard(COUGAR, [0x11, 0x22]))).at(-1)).toMatchObject({ id: toHex(COUGAR.subarray(0, 32)), hops: 2, via: '22' })
   })
 
-  it('keeps only the path of an advert from another node type', () => {
-    expect(sightings(advert(0x81, [0x41], [0x22]))).toEqual([{ id: '22', hops: 0, via: null }])
+  it.each([5, 33, 50, 105, 131])('keeps only the path of a repeater advert altered at byte %i', async (byte) => {
+    const forged = COUGAR.slice()
+    forged[byte] ^= 1
+    expect(await sightings(heard(forged, [0x22]))).toEqual([{ id: '22', hops: 0, via: null }])
   })
 
-  it('stops at an advert cut short before its position', () => {
-    expect(sightings(advert(0x12, [1, 2, 3], [0x22]))).toEqual([{ id: '22', hops: 0, via: null }])
+  it('keeps only the path of an advert from another node type', async () => {
+    expect(await sightings(heard(await advert(0x81, [0x41]), [0x22]))).toEqual([{ id: '22', hops: 0, via: null }])
+  })
+
+  it('stops at an advert cut short before its position', async () => {
+    expect(await sightings(heard(await advert(0x12, [1, 2, 3]), [0x22]))).toEqual([{ id: '22', hops: 0, via: null }])
   })
 })
 
@@ -109,6 +117,31 @@ describe('recordSighting', () => {
     recordSighting(list, { id: 'a0b1', hops: 0, via: null }, 1)
     recordSighting(list, { id: 'a0c2', hops: 0, via: null }, 1)
     expect(recordSighting(list, { id: 'a0', hops: 0, via: null }, 2)).toBeNull()
+  })
+
+  it('ignores an advert older than the last one taken', () => {
+    const list: HeardRepeater[] = []
+    recordSighting(list, { id: toHex(KEY), hops: 0, via: null, name: 'New', signedAt: 10 }, 1)
+    expect(recordSighting(list, { id: toHex(KEY), hops: 0, via: null, name: 'Old', signedAt: 5 }, 2)).toBeNull()
+    expect(list[0]).toMatchObject({ name: 'New', signedAt: 10, lastHeard: 1 })
+  })
+
+  it('takes the same advert again through another path', () => {
+    const list: HeardRepeater[] = []
+    recordSighting(list, { id: toHex(KEY), hops: 2, via: '22', signedAt: 10 }, 1, 10)
+    expect(recordSighting(list, { id: toHex(KEY), hops: 1, via: '33', signedAt: 10 }, 2, 10)).toMatchObject({ hops: 1, lastHeard: 2 })
+  })
+
+  it('still takes unsigned sightings of a repeater whose advert was taken', () => {
+    const list: HeardRepeater[] = []
+    recordSighting(list, { id: toHex(KEY), hops: 0, via: null, signedAt: 10 }, 1, 10)
+    expect(recordSighting(list, { id: 'a0', hops: 0, via: null }, 2, 10)).toMatchObject({ lastHeard: 2 })
+  })
+
+  it('ignores an advert older than the one the companion holds', () => {
+    const list: HeardRepeater[] = []
+    expect(recordSighting(list, { id: toHex(KEY), hops: 0, via: null, name: 'Old', signedAt: 5 }, 1, 10)).toBeNull()
+    expect(list).toEqual([])
   })
 })
 

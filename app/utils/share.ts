@@ -3,6 +3,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import type { CoverageLevel, Position } from './constants'
 import { COVERAGE_TONES, MAP_CREDIT, MAP_MAX_ZOOM, MAP_MUTED_COLOR, MAP_STYLE_URL, SHARE_JPEG_QUALITY, SHARE_PRIVATE_MAX_ZOOM, SHARE_MAP_TIMEOUT_MS, SHARE_ROWS, SITE_URL, THEME_COLORS } from './constants'
 import { withTimeout } from './timeout'
+import { onlyMatch } from './history'
 import { freePlacement, labelPlacements, paintDark, pointBox } from './map'
 import type { Box, ScreenPoint } from './map'
 
@@ -145,13 +146,13 @@ function drawDot(context: CanvasRenderingContext2D, [x, y]: ScreenPoint, radius:
   context.stroke()
 }
 
-function drawLinks(context: CanvasRenderingContext2D, here: ScreenPoint | null, placed: ShareRepeater[], at: (position: Position) => ScreenPoint): [ScreenPoint, ScreenPoint][] {
+function drawLinks(context: CanvasRenderingContext2D, here: ScreenPoint | null, shown: ShareRepeater[], placed: ShareRepeater[], at: (position: Position) => ScreenPoint): [ScreenPoint, ScreenPoint][] {
   const links: [ScreenPoint, ScreenPoint][] = []
   context.lineWidth = 4
   context.globalAlpha = 0.75
   for (const repeater of placed) {
-    const through = repeater.via ? placed.filter(other => !other.hops && other.id.startsWith(repeater.via!)) : []
-    const source = repeater.hops ? through.length === 1 ? through[0]! : null : repeater
+    const through = repeater.via ? onlyMatch(shown.filter(other => !other.hops), repeater.via, other => other.id) : undefined
+    const source = repeater.hops ? through?.position && through : repeater
     const from = repeater.hops ? source && at(source.position!) : here
     if (!from || !source) continue
     const to = at(repeater.position!)
@@ -216,7 +217,7 @@ function drawMesh(context: CanvasRenderingContext2D, scan: ShareScan, shown: Sha
   const placed = shown.filter(repeater => repeater.position)
   const at = (position: Position) => project([position.lon, position.lat])
   const here = scan.here && at(scan.here)
-  const links = [...drawTrack(context, scan.track, at), ...drawLinks(context, here, placed, at)]
+  const links = [...drawTrack(context, scan.track, at), ...drawLinks(context, here, shown, placed, at)]
   const taken: Box[] = []
   for (const repeater of placed) {
     const point = at(repeater.position!)

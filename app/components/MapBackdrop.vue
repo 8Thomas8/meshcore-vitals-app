@@ -64,8 +64,8 @@ const features = computed(() => {
       // A path hash can match several repeaters, then no line is drawn.
       ...placed.flatMap((row) => {
         const via = row.repeater.via
-        const matches = via ? placed.filter(other => !other.repeater.hops && other.repeater.id.startsWith(via)) : []
-        if (matches.length !== 1) return []
+        const matches = via ? props.rows.filter(other => !other.repeater.hops && other.repeater.id.startsWith(via)) : []
+        if (matches.length !== 1 || !matches[0]!.position) return []
         const through = matches[0]!
         return [{
           type: 'Feature' as const,
