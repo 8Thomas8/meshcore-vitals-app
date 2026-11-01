@@ -1,7 +1,7 @@
 import { ADV_TYPE_REPEATER, SESSION_GAP_MS, SESSION_MERGE_MS } from './constants'
 import type { DeepReadonly } from 'vue'
 import type { CoverageLevel, HeardRepeater, Position } from './constants'
-import { distanceMeters, toHex, toPosition } from './repeaters'
+import { distanceMeters, toHex, toPosition, trimRepeaters } from './repeaters'
 
 export interface SessionRepeater {
   id: string
@@ -63,7 +63,7 @@ export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: 
       lastHeard: repeater.lastHeard
     }
   })
-  return [...summary, ...previous.filter(before => !summary.some(repeater => onlyMatch(previous, repeater.id, other => other.id) === before))]
+  return trimRepeaters([...summary, ...previous.filter(before => !summary.some(repeater => onlyMatch(previous, repeater.id, other => other.id) === before))])
 }
 
 export function fillFromContacts(repeaters: SessionRepeater[], contacts: readonly MeshCoreContact[]): SessionRepeater[] {
@@ -104,13 +104,13 @@ export function mergeSessions(session: Session, next: Session): Session {
   return {
     ...session,
     endedAt: next.endedAt,
-    repeaters: [
+    repeaters: trimRepeaters([
       ...next.repeaters.map((repeater) => {
         const before = onlyMatch(session.repeaters, repeater.id, other => other.id)
         return before ? { ...repeater, id: before.id.length > repeater.id.length ? before.id : repeater.id, name: repeater.name ?? before.name, position: repeater.position ?? before.position, rx: best(before.rx, repeater.rx), tx: best(before.tx, repeater.tx) } : repeater
       }),
       ...session.repeaters.filter(before => !next.repeaters.some(repeater => onlyMatch(session.repeaters, repeater.id, other => other.id) === before))
-    ],
+    ]),
     scans: [...session.scans, ...next.scans]
   }
 }

@@ -22,6 +22,7 @@ async function onLogRx(payload: unknown) {
     const repeater = recordSighting(repeaters.value, sighting, at, lastAdverts.value.get(sighting.id))
     if (repeater && !sighting.hops) recordRx(repeater, { snr: lastSnr, rssi: lastRssi, at })
   }
+  trimRepeaters(repeaters.value)
 }
 
 function onFrame(payload: unknown) {
@@ -32,6 +33,7 @@ function onFrame(payload: unknown) {
   if (!repeater) return
   recordRx(repeater, { snr: response.rxSnr, rssi: response.rxRssi, at })
   repeater.tx = { snr: response.txSnr, at }
+  trimRepeaters(repeaters.value)
 }
 
 class CommandRefused extends Error {

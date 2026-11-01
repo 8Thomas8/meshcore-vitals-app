@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
-import { bearingDegrees, assessCoverage, discoverRequest, distanceMeters, formatDistance, isOutOfRange, parseDiscoverResponse, recordRx, recordSighting, sightings, toHex, toPosition } from '~/utils/repeaters'
-import { MAX_RX_HISTORY } from '~/utils/constants'
+import { bearingDegrees, assessCoverage, discoverRequest, distanceMeters, formatDistance, isOutOfRange, parseDiscoverResponse, recordRx, recordSighting, sightings, toHex, toPosition, trimRepeaters } from '~/utils/repeaters'
+import { MAX_REPEATERS, MAX_RX_HISTORY } from '~/utils/constants'
 
 const KEY = Uint8Array.from({ length: 32 }, (_, i) => 0xa0 + i)
 
@@ -142,6 +142,20 @@ describe('recordSighting', () => {
     const list: HeardRepeater[] = []
     expect(recordSighting(list, { id: toHex(KEY), hops: 0, via: null, name: 'Old', signedAt: 5 }, 1, 10)).toBeNull()
     expect(list).toEqual([])
+  })
+})
+
+describe('trimRepeaters', () => {
+  it('drops the relayed repeaters heard least recently first', () => {
+    const list = Array.from({ length: MAX_REPEATERS + 2 }, (_, i) => ({ id: `r${i}`, hops: i % 2 ? 1 : 0, lastHeard: i }))
+    const kept = list.map(repeater => repeater.id).filter(id => id !== 'r1' && id !== 'r3')
+    expect(trimRepeaters(list).map(repeater => repeater.id)).toEqual(kept)
+  })
+
+  it('drops the direct ones heard least recently once no relayed one is left', () => {
+    const list = Array.from({ length: MAX_REPEATERS + 1 }, (_, i) => ({ id: `r${i}`, hops: 0, lastHeard: MAX_REPEATERS - i }))
+    trimRepeaters(list)
+    expect(list.map(repeater => repeater.id)).toEqual(Array.from({ length: MAX_REPEATERS }, (_, i) => `r${i}`))
   })
 })
 

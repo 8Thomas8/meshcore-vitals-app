@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
-import { SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
+import { MAX_REPEATERS, SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
 import type { Session, SessionRepeater, SessionScan } from '~/utils/history'
 import { canMerge, copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, mergeSessions, onlyMatch, sessionDistance, summarizeRepeaters } from '~/utils/history'
 
@@ -17,6 +17,13 @@ function scan(at: number, level: SessionScan['level'], position: SessionScan['po
 }
 
 describe('summarizeRepeaters', () => {
+  it('drops the relayed repeaters heard least recently past the cap', () => {
+    const previous = Array.from({ length: MAX_REPEATERS }, (_, i) => ({ id: `b${i}`, name: null, position: null, hops: i ? 1 : 0, via: null, rx: null, tx: null, lastHeard: i }))
+    const summary = summarizeRepeaters(previous, [heard()], 500)
+    expect(summary).toHaveLength(MAX_REPEATERS)
+    expect(summary.map(repeater => repeater.id)).toEqual(['aabb', 'b0', ...previous.slice(2).map(repeater => repeater.id)])
+  })
+
   it('keeps the best SNR heard since the session started', () => {
     const repeater = heard({
       history: [{ snr: 9, rssi: -80, at: 100 }, { snr: 3, rssi: -90, at: 600 }, { snr: 5, rssi: -85, at: 700 }],
@@ -117,6 +124,12 @@ describe('canMerge', () => {
 })
 
 describe('mergeSessions', () => {
+  it('caps the repeaters', () => {
+    const repeaters = (start: number) => Array.from({ length: MAX_REPEATERS }, (_, i): SessionRepeater => ({ id: `r${start + i}`, name: null, position: null, hops: 1, via: null, rx: null, tx: null, lastHeard: start + i }))
+    const merged = mergeSessions(session(0, { repeaters: repeaters(0) }), session(1000, { repeaters: repeaters(MAX_REPEATERS) }))
+    expect(merged.repeaters.map(repeater => repeater.id)).toEqual(repeaters(MAX_REPEATERS).map(repeater => repeater.id))
+  })
+
   it('keeps the start, every scan and the best signal of each repeater', () => {
     const alpha: SessionRepeater = { id: 'aabb', name: 'Alpha', position: { lat: 1, lon: 2 }, hops: 0, via: null, rx: 8, tx: null, lastHeard: 900 }
     const bravo: SessionRepeater = { id: 'ccdd', name: 'Bravo', position: null, hops: 1, via: 'aa', rx: 2, tx: null, lastHeard: 800 }

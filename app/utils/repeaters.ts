@@ -1,4 +1,4 @@
-import { ADV_TYPE_REPEATER, CMD_SEND_CONTROL_DATA, COVERAGE_GOOD_USABLE, DEFAULT_LANGUAGE, MARGIN_COMFORTABLE_DB, MARGIN_FAIR_DB, MAX_RX_HISTORY, CTL_NODE_DISCOVER_REQ, CTL_NODE_DISCOVER_RESP, PUSH_CONTROL_DATA } from './constants'
+import { ADV_TYPE_REPEATER, CMD_SEND_CONTROL_DATA, COVERAGE_GOOD_USABLE, DEFAULT_LANGUAGE, MARGIN_COMFORTABLE_DB, MARGIN_FAIR_DB, MAX_REPEATERS, MAX_RX_HISTORY, CTL_NODE_DISCOVER_REQ, CTL_NODE_DISCOVER_RESP, PUSH_CONTROL_DATA } from './constants'
 import type { DeepReadonly } from 'vue'
 import type { CoverageLevel, HeardRepeater, Position, RxSample } from './constants'
 import { formatNumber } from './vitals'
@@ -156,6 +156,12 @@ export function parseDiscoverResponse(frame: Uint8Array): DiscoverResponse | nul
     rxSnr: int8(frame[1]!) / 4,
     rxRssi: int8(frame[2]!)
   }
+}
+
+export function trimRepeaters<T extends { hops: number, lastHeard: number }>(list: T[]) {
+  const dropped = [...list].sort((a, b) => Number(!a.hops) - Number(!b.hops) || a.lastHeard - b.lastHeard).slice(0, Math.max(0, list.length - MAX_REPEATERS))
+  for (const repeater of dropped) list.splice(list.indexOf(repeater), 1)
+  return list
 }
 
 // A path hash is only the first bytes of a key, so an id matches a longer or

@@ -133,6 +133,8 @@ export const AUTO_SCAN_INTERVAL_MS = 60_000
 // Enough for an hour at one packet every 30 s.
 export const MAX_RX_HISTORY = 120
 
+export const MAX_REPEATERS = 200
+
 // Whether the screen is kept on, remembered on this device. Off by default,
 // it costs battery.
 export const WAKE_LOCK_STORAGE_KEY = 'keep-screen-on'
