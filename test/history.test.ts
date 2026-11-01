@@ -124,6 +124,12 @@ describe('canMerge', () => {
 })
 
 describe('mergeSessions', () => {
+  it('caps the repeaters', () => {
+    const repeaters = (start: number) => Array.from({ length: MAX_REPEATERS }, (_, i): SessionRepeater => ({ id: `r${start + i}`, name: null, position: null, hops: 1, via: null, rx: null, tx: null, lastHeard: start + i }))
+    const merged = mergeSessions(session(0, { repeaters: repeaters(0) }), session(1000, { repeaters: repeaters(MAX_REPEATERS) }))
+    expect(merged.repeaters.map(repeater => repeater.id)).toEqual(repeaters(MAX_REPEATERS).map(repeater => repeater.id))
+  })
+
   it('keeps the start, every scan and the best signal of each repeater', () => {
     const alpha: SessionRepeater = { id: 'aabb', name: 'Alpha', position: { lat: 1, lon: 2 }, hops: 0, via: null, rx: 8, tx: null, lastHeard: 900 }
     const bravo: SessionRepeater = { id: 'ccdd', name: 'Bravo', position: null, hops: 1, via: 'aa', rx: 2, tx: null, lastHeard: 800 }

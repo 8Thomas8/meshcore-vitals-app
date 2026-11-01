@@ -158,8 +158,10 @@ export function parseDiscoverResponse(frame: Uint8Array): DiscoverResponse | nul
   }
 }
 
-export function overflow<T extends { hops: number, lastHeard: number }>(list: readonly T[], max = MAX_REPEATERS): T[] {
-  return [...list].sort((a, b) => Number(!a.hops) - Number(!b.hops) || a.lastHeard - b.lastHeard).slice(0, Math.max(0, list.length - max))
+export function trimRepeaters<T extends { hops: number, lastHeard: number }>(list: T[]) {
+  const dropped = [...list].sort((a, b) => Number(!a.hops) - Number(!b.hops) || a.lastHeard - b.lastHeard).slice(0, Math.max(0, list.length - MAX_REPEATERS))
+  for (const repeater of dropped) list.splice(list.indexOf(repeater), 1)
+  return list
 }
 
 // A path hash is only the first bytes of a key, so an id matches a longer or
@@ -171,7 +173,6 @@ export function recordSighting(list: HeardRepeater[], sighting: Sighting, at: nu
   let repeater = matches[0]
   if (signedAt !== undefined && signedAt < Math.max(repeater?.signedAt ?? 0, lastAdvert)) return null
   if (!repeater) {
-    for (const dropped of overflow(list, MAX_REPEATERS - 1)) list.splice(list.indexOf(dropped), 1)
     list.push({ id, name: null, position: null, hops, via, lastVia: via, rx: null, history: [], tx: null, lastHeard: at })
     // Read back, a reactive list hands out its proxy.
     repeater = list.at(-1)!
