@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.11.1](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.11.0...v1.11.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* **security:** trust only signed, fresh repeater adverts ([#89](https://github.com/8Thomas8/meshcore-vitals-app/issues/89)) ([7ede7ff](https://github.com/8Thomas8/meshcore-vitals-app/commit/7ede7ff73dc19412b72fbec13a2c388c5bffdf25))
+
+
+### Performance
+
+* redirect French visitors before the English page loads ([#91](https://github.com/8Thomas8/meshcore-vitals-app/issues/91)) ([ef17519](https://github.com/8Thomas8/meshcore-vitals-app/commit/ef175197344c443abbe904ead9430f1879b07d2a))
+
+
+### Refactor
+
+* cap the heard repeaters list at 200 ([#92](https://github.com/8Thomas8/meshcore-vitals-app/issues/92)) ([8a49f47](https://github.com/8Thomas8/meshcore-vitals-app/commit/8a49f47d9c1290b460b449bdca7047474b9e291b))
+
 ## [1.11.0](https://github.com/8Thomas8/meshcore-vitals-app/compare/v1.10.2...v1.11.0) (2026-10-23)
 
 
