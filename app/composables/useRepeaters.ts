@@ -2,6 +2,7 @@
 const repeaters = ref<HeardRepeater[]>([])
 const selfInfo = shallowRef<MeshCoreSelfInfo | null>(null)
 const contacts = shallowRef<MeshCoreContact[]>([])
+const lastAdverts = computed(() => new Map(contacts.value.map(contact => [toHex(contact.publicKey), contact.lastAdvert])))
 const scanUntil = ref<number | null>(null)
 const scannedAt = ref<number | null>(null)
 // Failed scans count too, so auto scan does not retry every second.
@@ -14,11 +15,11 @@ let listening: MeshCoreConnection | null = null
 let scanTag: number | null = null
 let scanTimer: ReturnType<typeof setTimeout> | undefined
 
-function onLogRx(payload: unknown) {
+async function onLogRx(payload: unknown) {
   const { lastSnr, lastRssi, raw } = payload as MeshCoreLogRxData
   const at = Date.now()
-  for (const sighting of sightings(raw)) {
-    const repeater = recordSighting(repeaters.value, sighting, at)
+  for (const sighting of await sightings(raw)) {
+    const repeater = recordSighting(repeaters.value, sighting, at, lastAdverts.value.get(sighting.id))
     if (repeater && !sighting.hops) recordRx(repeater, { snr: lastSnr, rssi: lastRssi, at })
   }
 }

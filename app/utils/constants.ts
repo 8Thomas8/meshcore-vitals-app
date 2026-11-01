@@ -64,6 +64,7 @@ export interface HeardRepeater {
   /** How it hears us, only known from a scan. */
   tx: LinkSample | null
   lastHeard: number
+  signedAt?: number
 }
 
 export const SITE_URL = 'https://www.meshcore-vitals.com'

@@ -36,8 +36,13 @@ function best(...values: (number | null | undefined)[]): number | null {
   return known.length ? Math.max(...known) : null
 }
 
-export function samePrefix(a: string, b: string): boolean {
+function samePrefix(a: string, b: string): boolean {
   return a.startsWith(b) || b.startsWith(a)
+}
+
+export function onlyMatch<T>(list: readonly T[], id: string, idOf: (item: T) => string): T | undefined {
+  const matches = list.filter(item => samePrefix(idOf(item), id))
+  return matches.length === 1 ? matches[0] : undefined
 }
 
 export function copyPosition(position: DeepReadonly<Position> | null): Position | null {
@@ -46,7 +51,7 @@ export function copyPosition(position: DeepReadonly<Position> | null): Position 
 
 export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: DeepReadonly<HeardRepeater[]>, since: number): SessionRepeater[] {
   const summary = heard.filter(repeater => repeater.lastHeard >= since).map((repeater) => {
-    const before = previous.find(other => samePrefix(other.id, repeater.id))
+    const before = onlyMatch(previous, repeater.id, other => other.id)
     return {
       id: repeater.id,
       name: repeater.name ?? before?.name ?? null,
@@ -58,7 +63,7 @@ export function summarizeRepeaters(previous: readonly SessionRepeater[], heard: 
       lastHeard: repeater.lastHeard
     }
   })
-  return [...summary, ...previous.filter(before => !summary.some(repeater => samePrefix(repeater.id, before.id)))]
+  return [...summary, ...previous.filter(before => !summary.some(repeater => onlyMatch(previous, repeater.id, other => other.id) === before))]
 }
 
 export function fillFromContacts(repeaters: SessionRepeater[], contacts: readonly MeshCoreContact[]): SessionRepeater[] {
@@ -101,10 +106,10 @@ export function mergeSessions(session: Session, next: Session): Session {
     endedAt: next.endedAt,
     repeaters: [
       ...next.repeaters.map((repeater) => {
-        const before = session.repeaters.find(other => samePrefix(other.id, repeater.id))
+        const before = onlyMatch(session.repeaters, repeater.id, other => other.id)
         return before ? { ...repeater, id: before.id.length > repeater.id.length ? before.id : repeater.id, name: repeater.name ?? before.name, position: repeater.position ?? before.position, rx: best(before.rx, repeater.rx), tx: best(before.tx, repeater.tx) } : repeater
       }),
-      ...session.repeaters.filter(before => !next.repeaters.some(repeater => samePrefix(repeater.id, before.id)))
+      ...session.repeaters.filter(before => !next.repeaters.some(repeater => onlyMatch(session.repeaters, repeater.id, other => other.id) === before))
     ],
     scans: [...session.scans, ...next.scans]
   }

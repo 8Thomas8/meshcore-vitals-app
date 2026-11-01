@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { HeardRepeater } from '~/utils/constants'
 import { SESSION_GAP_MS, SESSION_MERGE_MS } from '~/utils/constants'
 import type { Session, SessionRepeater, SessionScan } from '~/utils/history'
-import { canMerge, copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, mergeSessions, sessionDistance, summarizeRepeaters } from '~/utils/history'
+import { canMerge, copyPosition, fillFromContacts, hasAutoScan, isSessionOver, keepLatest, mainLevel, mergeSessions, onlyMatch, sessionDistance, summarizeRepeaters } from '~/utils/history'
 
 function heard(overrides: Partial<HeardRepeater> = {}): HeardRepeater {
   return { id: 'aabb', name: 'Alpha', position: null, hops: 0, via: null, lastVia: null, rx: null, history: [], tx: null, lastHeard: 1000, ...overrides }
@@ -44,6 +44,13 @@ describe('summarizeRepeaters', () => {
     expect(summarizeRepeaters([before], [heard()], 0).map(repeater => repeater.id)).toEqual(['aabb', 'ccdd'])
   })
 
+  it('takes nothing from repeaters saved before under the same path hash', () => {
+    const saved = (id: string, name: string): SessionRepeater => ({ id, name, position: null, hops: 0, via: null, rx: 9, tx: null, lastHeard: 500 })
+    const [summary, ...rest] = summarizeRepeaters([saved('aabb', 'Alpha'), saved('aacc', 'Fake')], [heard({ id: 'aa', name: null })], 0)
+    expect(summary).toMatchObject({ id: 'aa', name: null, rx: null })
+    expect(rest.map(repeater => repeater.name)).toEqual(['Alpha', 'Fake'])
+  })
+
   it('leaves out the repeaters not heard since the session started', () => {
     expect(summarizeRepeaters([], [heard({ lastHeard: 100 })], 500)).toEqual([])
   })
@@ -77,6 +84,14 @@ describe('fillFromContacts', () => {
   it('ignores contacts that are not repeaters or match several', () => {
     expect(fillFromContacts([repeater], [{ ...contact, type: 1 }])[0]!.name).toBeNull()
     expect(fillFromContacts([repeater], [contact, contact])[0]!.name).toBeNull()
+  })
+})
+
+describe('onlyMatch', () => {
+  it('needs a single repeater under the id', () => {
+    const list = [{ id: 'aabb' }, { id: 'aacc' }, { id: 'ddee' }]
+    expect(onlyMatch(list, 'dd', item => item.id)).toBe(list[2])
+    expect(onlyMatch(list, 'aa', item => item.id)).toBeUndefined()
   })
 })
 

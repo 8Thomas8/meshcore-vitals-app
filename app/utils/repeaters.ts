@@ -59,14 +59,15 @@ export interface Sighting {
   via: string | null
   name?: string | null
   position?: Position | null
+  signedAt?: number
 }
 
 // Repeaters seen in a packet the companion logged. A flood packet carries the
 // hashes of the repeaters it went through: the last one is in direct range and
-// the earlier ones are further away behind it. A repeater's own advert also
-// names it. A direct packet drops each hop from its path as it goes, so it
+// the earlier ones are further away behind it. A repeater's own advert, when
+// its signature holds, also names and places it. A direct packet drops each hop from its path as it goes, so it
 // tells nothing.
-export function sightings(raw: Uint8Array): Sighting[] {
+export async function sightings(raw: Uint8Array): Promise<Sighting[]> {
   const view = new DataView(raw.buffer, raw.byteOffset, raw.byteLength)
   const header = raw[0]!
   const route = header & 0x03
@@ -103,7 +104,21 @@ export function sightings(raw: Uint8Array): Sighting[] {
   const name = flags & ADVERT_HAS_NAME
     ? new TextDecoder().decode(raw.subarray(j)).split('\0')[0]!.trim() || null
     : null
-  return [...seen, { id: toHex(payload.subarray(0, 32)), hops, via, name, position }]
+  if (!await isSigned(payload)) return seen
+  return [...seen, { id: toHex(payload.subarray(0, 32)), hops, via, name, position, signedAt: view.getUint32(payloadStart + 32, true) }]
+}
+
+async function isSigned(payload: Uint8Array): Promise<boolean> {
+  const message = new Uint8Array(payload.length - 64)
+  message.set(payload.subarray(0, 36))
+  message.set(payload.subarray(100), 36)
+  try {
+    const key = await crypto.subtle.importKey('raw', payload.slice(0, 32), 'Ed25519', false, ['verify'])
+    return await crypto.subtle.verify('Ed25519', key, payload.slice(36, 100), message)
+  }
+  catch {
+    return false
+  }
 }
 
 // Zero-hop request that asks the repeaters in range to answer with their full
@@ -145,11 +160,12 @@ export function parseDiscoverResponse(frame: Uint8Array): DiscoverResponse | nul
 
 // A path hash is only the first bytes of a key, so an id matches a longer or
 // shorter one it prefixes. Returns null when the id could be several repeaters.
-export function recordSighting(list: HeardRepeater[], sighting: Sighting, at: number): HeardRepeater | null {
-  const { id, hops, via, name, position } = sighting
+export function recordSighting(list: HeardRepeater[], sighting: Sighting, at: number, lastAdvert = 0): HeardRepeater | null {
+  const { id, hops, via, name, position, signedAt } = sighting
   const matches = list.filter(repeater => repeater.id.startsWith(id) || id.startsWith(repeater.id))
   if (matches.length > 1) return null
   let repeater = matches[0]
+  if (signedAt !== undefined && signedAt < Math.max(repeater?.signedAt ?? 0, lastAdvert)) return null
   if (!repeater) {
     list.push({ id, name: null, position: null, hops, via, lastVia: via, rx: null, history: [], tx: null, lastHeard: at })
     // Read back, a reactive list hands out its proxy.
@@ -163,6 +179,7 @@ export function recordSighting(list: HeardRepeater[], sighting: Sighting, at: nu
   }
   if (name) repeater.name = name
   if (position) repeater.position = position
+  if (signedAt !== undefined) repeater.signedAt = signedAt
   repeater.lastVia = via
   repeater.lastHeard = at
   return repeater

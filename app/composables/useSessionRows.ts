@@ -7,7 +7,7 @@ export function useSessionRows(source: MaybeRefOrGetter<Session>) {
   return computed(() => {
     const session = toValue(source)
     const margin = (snr: number | null) => snr === null || session.spreadingFactor === null ? null : linkMargin(snr, session.spreadingFactor)
-    const nameOf = (id: string) => session.repeaters.find(repeater => samePrefix(repeater.id, id))?.name ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
+    const nameOf = (id: string) => onlyMatch(session.repeaters, id, repeater => repeater.id)?.name ?? t('repeaters.unnamed', { id: id.slice(0, 8).toUpperCase() })
     return session.repeaters
       .map(repeater => ({
         repeater,
