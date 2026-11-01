@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { version } from './package.json'
-import { ELEVATION_API_URL, MAP_STYLE_URL, SITE_URL } from './app/utils/constants'
+import { ELEVATION_API_URL, LOCALE_COOKIE, MAP_STYLE_URL, SITE_URL } from './app/utils/constants'
 
 // The prerendered pages inline Nuxt's config as a script and the theme colors
 // as a style attribute on <html>, hence 'unsafe-inline'. The rest only allows
@@ -19,6 +19,9 @@ const CONTENT_SECURITY_POLICY = [
   `form-action 'self'`,
   `frame-ancestors 'none'`
 ].join('; ')
+
+const ENGLISH_PAGES = '^/$|^(/(?!fr(?:/|$))[^.]*)$'
+const FRENCH_FIRST = '^\\s*(?:(?!en(?:[-;,]|$))[^,]*,\\s*)*fr(?:[-;,]|$)'
 
 const SECURITY_HEADERS = {
   'Content-Security-Policy': CONTENT_SECURITY_POLICY,
@@ -88,8 +91,9 @@ export default defineNuxtConfig({
   // routing, so the assets would miss the headers. The first route lets the
   // routing go on. The second drops the trailing slash so each page has a
   // single URL, from a path that starts with a plain character so the
-  // redirect never leaves the site. The third keeps search engines off the
-  // preview deployments.
+  // redirect never leaves the site. The next two send an English page to the
+  // French one before it loads, as the locale plugin would. The last keeps
+  // search engines off the preview deployments.
   nitro: {
     ...DOCS_MOCK && { output: { dir: '.output-docs' } },
     vercel: {
@@ -97,6 +101,8 @@ export default defineNuxtConfig({
         routes: [
           { src: '/(.*)', headers: SECURITY_HEADERS as Record<string, string>, continue: true },
           { src: '^/([\\w.-].*)/$', headers: { Location: '/$1' }, status: 308 } as { src: string, headers: Record<string, string> },
+          { src: ENGLISH_PAGES, has: [{ type: 'cookie', key: LOCALE_COOKIE, value: 'fr' }], headers: { Location: '/fr$1' }, status: 307 } as { src: string, headers: Record<string, string> },
+          { src: ENGLISH_PAGES, has: [{ type: 'header', key: 'accept-language', value: FRENCH_FIRST }], missing: [{ type: 'cookie', key: LOCALE_COOKIE }], headers: { Location: '/fr$1' }, status: 307 } as { src: string, headers: Record<string, string> },
           {
             src: '/(.*)',
             missing: [{ type: 'host', value: new URL(SITE_URL).host }],
